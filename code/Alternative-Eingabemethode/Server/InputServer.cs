@@ -19,6 +19,8 @@ namespace Server
         private Timer t;
         private BinaryFormatter bf;
         private long windowStamp = 0;
+        private long cursorStamp = 0;
+
         /// <summary>
         /// 
         /// </summary>
@@ -47,7 +49,8 @@ namespace Server
         }
 
         /// <summary>
-        /// 
+        /// Sends the current State of a Window (Position, size...) to each client via udp.
+        /// This Method is automatically called at a specified interval
         /// </summary>
         /// <param name="o">Ignored, Always Null</param>
         public void SendWindowStates(Object o)
@@ -62,9 +65,11 @@ namespace Server
 
                 sender.SendTo(send, c.WindowEndPoint);
             }
-                
+
+            windowStamp++;   
         }
 
+        #region IDisposable implementation
         public void Dispose()
         {
             Dispose(true);
@@ -79,5 +84,6 @@ namespace Server
                 if (sender != null) sender.Dispose();
             }
         }
+        #endregion
     }
 }

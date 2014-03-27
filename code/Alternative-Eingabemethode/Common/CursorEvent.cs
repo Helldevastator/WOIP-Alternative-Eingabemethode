@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Common
 {
     [Serializable]
-    public class CursorEvent
+    public sealed struct CursorEvent
     {
         public int EventType {public get; private set;}
-        
+
     }
 }

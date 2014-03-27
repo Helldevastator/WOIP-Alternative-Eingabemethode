@@ -22,23 +22,17 @@ namespace Server
         /// </summary>
         public readonly int TileCountX { public get; private set; }
         public readonly int TileCountY { public get; private set; }
-        private readonly List<Window> Windows;
+
+        //threadsave?
+        public readonly List<Window> Windows  { public get; private set; }
         public readonly int pixelXSize { public get; private set; }
         public readonly int pixelYSize { public get; private set; }
         //what ir-bar configuration this user has.
 
         public Client()
         {
-            this.WindowEndPoint = new IPEndPoint(IPAddress.Parse("10.0.0.1"), 3000);
+            //this.WindowEndPoint = new IPEndPoint(IPAddress.Parse("10.0.0.1"), 3000);
         }
 
-        public void writeWindowData(byte[] arr,int offset)
-        {
-            foreach (Window w in Windows)
-            {
-                w.EncodeToByteArray(arr, offset);
-                offset += Window.CHUNK_SIZE;
-            }
-        }
     }
 }

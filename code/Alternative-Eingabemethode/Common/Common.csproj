@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CursorEvent.cs" />
+    <Compile Include="FileReceiver.cs" />
+    <Compile Include="Resource.cs" />
     <Compile Include="Window.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
