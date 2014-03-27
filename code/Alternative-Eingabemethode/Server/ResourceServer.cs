@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
 using Common;
 
 namespace Server
@@ -15,15 +17,14 @@ namespace Server
         private readonly Thread server;
         private readonly Socket serverSocket;
         private readonly Dictionary<int, Resource> resources;
-        private readonly string resourceFolder;
+        private readonly DirectoryInfo resourceFolder;
 
-        public ResourceServer(string resourceFolder)
+        public ResourceServer(string resourceFolder, EndPoint serverAdress)
         {
             bufferSize = 1048576 << 3; // 8 MiBytes;
-            /*string IpAddressString = "192.168.1.102";
-            ipEnd_server = new IPEndPoint(IPAddress.Parse(IpAddressString), 5656);
-            sock_server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-            sock_server.Bind(ipEnd_server);*/
+         
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+            serverSocket.Bind(serverAdress);
         }
 
         private void ServerLoop()
@@ -35,9 +36,8 @@ namespace Server
             {
                 using (Socket client = serverSocket.Accept())
                 {
-                    int received = serverSocket.Receive(buffer,8,SocketFlags.None);
+                    NetworkFileIO.ReadExact(client, 4, buffer, 0);
                     int type = BitConverter.Toint32(buffer,0);
-                    int second = BitConverter.Toint32(buffer, 4);
                     switch (type)
                     {
                         
@@ -47,14 +47,40 @@ namespace Server
             }
         }
 
-        private void handleNewResource(Socket client, byte[] buffer, int resourceType)
+        private void handleNewResource(Socket client, byte[] buffer)
         {
-            
+            NetworkFileIO.ReadExact(client, 4, buffer, 0);
+            int resourceType = BitConverter.Toint32(buffer, 0);
+            try
+            {
+                Resource r = new Resource(resourceType);
+                FileInfo file = new FileInfo(Path.Combine(this.resourceFolder.FullName, r.ResourceId.ToString()));
+                NetworkFileIO.Receive(file, client, buffer);
+                this.resources.Add(r.ResourceId, r);
+
+                client.Send(BitConverter.GetBytes(r.ResourceId));
+            }
+            catch (SocketException e)
+            {
+                //programming error
+                System.Console.Write(e);
+                Thread current = Thread.CurrentThread;
+                current.Abort();
+            }
+            catch (Exception e)
+            {
+                //what to do?
+                System.Console.Write(e);
+            }
+
             //send back new resourceId
         }
 
-        private void handleResourceRequest(Socket client, byte[] buffer, int resourceId)
+        private void handleResourceRequest(Socket client, byte[] buffer)
         {
+            NetworkFileIO.ReadExact(client, 4, buffer, 0);
+            int resourceId = BitConverter.Toint32(buffer, 0);
+
             if (this.resources.ContainsKey(resourceId))
             {
                 Resource r = resources[resourceId];

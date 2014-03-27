@@ -9,38 +9,29 @@ using System.IO;
 namespace Common
 {
     /// <summary>
-    /// Receives a File from a Websocket and saves it on the local disk.
-    /// Binary Format expected:
-    ///     -Filename String Lenth (int)
-    ///     -Data Length in Bytes (int)
-    ///     -String (encoded utf8)
-    ///     -Data
+    /// Helper functions for sending Files over the network
     /// </summary>
-    public class FileReceiver
+    public static class NetworkFileIO
     {
         /// <summary>
-        /// 
+        ///Receives a File from a Websocket and saves it on the local disk.
+        /// Binary Format expected:
+        ///     -Data Length in Bytes (int)
+        ///     -Data
         /// </summary>
-        /// <param name="saveDir"></param>
+        /// <param name="file">File to save data to</param>
         /// <param name="receiver"></param>
         /// <param name="buffer">has to be able to contain the Filename String in UTF-8</param>
-        public static void Receive(DirectoryInfo saveDir, Socket receiver, byte[] buffer) {
-            if (!saveDir.Exists)
-                saveDir.Create();
-
-            string name;
+        public static void Receive(FileInfo file, Socket receiver, byte[] buffer) {
+            if (!file.Directory.Exists)
+                file.Directory.Create();
 
             //readTotal header
-            ReadExact(receiver, 8, buffer, 0);
-            int stringLen = BitConverter.ToInt32(buffer, 0);
-            int dataLen = BitConverter.ToInt32(buffer, 4);
-
-            //readTotal string
-            ReadExact(receiver, stringLen, buffer, 0);
-            name = Encoding.UTF8.GetString(buffer, 0, stringLen);
+            ReadExact(receiver, 4, buffer, 0);
+            int dataLen = BitConverter.ToInt32(buffer, 0);
 
             //readTotal binary and save to file
-            BinaryWriter w = new BinaryWriter(File.OpenWrite(Path.Combine(saveDir.FullName, name)));
+            BinaryWriter w = new BinaryWriter(file);
             try
             {
                 int readTotal = 0;
@@ -61,6 +52,11 @@ namespace Common
                 w.Close();
             }
            
+        }
+
+        public static void SendFile(Socket sender, FileInfo file, byte[] buffer)
+        {
+
         }
 
         /// <summary>

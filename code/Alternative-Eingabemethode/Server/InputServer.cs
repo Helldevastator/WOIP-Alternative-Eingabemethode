@@ -25,11 +25,14 @@ namespace Server
         /// 
         /// </summary>
         /// <param name="clients"></param>
+        /// <param name="serverAdress">Adress to send from</param>
         /// <param name="updateInterval">interval in milliseconds</param>
-        public InputServer(List<Client> clients,int updateInterval = 100)
+        public InputServer(List<Client> clients,EndPoint serverAdress,int updateInterval = 100)
         {
             this.clients = clients;
             sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram,ProtocolType.Udp);
+            sender.Bind(serverAdress);
+
             t = new Timer(SendWindowStates,null,0,updateInterval);
             bf = new BinaryFormatter();
         }
@@ -41,7 +44,7 @@ namespace Server
         /// <param name="cursorEvent"></param>
         public void SendInputEvent(Client c, CursorEvent cursorEvent)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream(sizeof(CursorEvent)))
             {
                 bf.Serialize(ms, cursorEvent);
                 sender.SendTo(ms.GetBuffer(), c.CursorEndPoint);

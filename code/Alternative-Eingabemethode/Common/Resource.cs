@@ -10,9 +10,8 @@ namespace Common
 
          public readonly int ResourceId {public get; private set;}
          public readonly int ResourceType { public get; private set; } 
-         public readonly string ResourceName {public get; private set;}
 
-         public Resource(string resourceName, int resourceType)
+         public Resource(int resourceType)
          {
 
              lock (nextIdLock)
@@ -22,7 +21,6 @@ namespace Common
              }
 
              this.ResourceType = resourceType;
-             this.ResourceName = resourceName;
          }
     }
 }
