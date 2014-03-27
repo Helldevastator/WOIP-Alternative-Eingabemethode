@@ -11,7 +11,7 @@ namespace Common
     /// Represents a Window somewhere on a client.
     /// </summary>
     [Serializable]
-    public sealed struct Window
+    public sealed class Window
     {
         private static Object nextIdLock = new Object();
         private static int nextId = 0;
@@ -21,8 +21,8 @@ namespace Common
         public int TileWidth { get; set; }
         public int TileHeight { get; set; }
         public int ResourceId { public get; private set; }
-        //fullscreen?
         //stateID??
+        public bool isFullscreen { get; set; }
 
         public Window(int resourceId)
         {
