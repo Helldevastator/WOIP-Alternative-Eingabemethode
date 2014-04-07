@@ -40,11 +40,11 @@ namespace Server
         /// <summary>
         /// Send cursor event to client
         /// </summary>
-        /// <param name="c"></param>
+        /// <param name="i"></param>
         /// <param name="cursorEvent"></param>
         public void SendInputEvent(Client c, CursorEvent cursorEvent)
         {
-            using (MemoryStream ms = new MemoryStream(sizeof(CursorEvent)))
+            using (MemoryStream ms = new MemoryStream())
             {
                 bf.Serialize(ms, cursorEvent);
                 sender.SendTo(ms.GetBuffer(), c.CursorEndPoint);
@@ -60,13 +60,13 @@ namespace Server
         {
             foreach (Client c in clients)
             {
-                byte[] send = new byte[sizeof(Window) * c.Windows.Count + sizeof(long)];
-                bf.Serialize(send, windowStamp);
+                MemoryStream ms = new MemoryStream();
+                bf.Serialize(ms, windowStamp);
 
                 foreach (Window w in c.Windows)
-                    bf.Serialize(send, w);
+                    bf.Serialize(ms, w);
 
-                sender.SendTo(send, c.WindowEndPoint);
+                sender.SendTo(ms.ToArray(), c.WindowEndPoint);
             }
 
             windowStamp++;   

@@ -12,21 +12,21 @@ namespace Server
     {
         //possible performance increase: save writeWindowData() byte array and update modified
 
-        public readonly long Id { public get; private set; }
-        public readonly EndPoint WindowEndPoint { public get; private set; }
-        public readonly EndPoint CursorEndPoint { public get; private set; }
-        public readonly EndPoint ResourceEndPoint { public get; private set; } 
+        public long Id { get; private set; }
+        public EndPoint WindowEndPoint { get; private set; }
+        public EndPoint CursorEndPoint { get; private set; }
+        public EndPoint ResourceEndPoint { get; private set; } 
 
         /// <summary>
         /// Represents the number of tiles in a row on a client
         /// </summary>
-        public readonly int TileCountX { public get; private set; }
-        public readonly int TileCountY { public get; private set; }
+        public int TileCountX { get; private set; }
+        public int TileCountY { get; private set; }
 
         //threadsave?
-        public readonly List<Window> Windows  { public get; private set; }
-        public readonly int pixelXSize { public get; private set; }
-        public readonly int pixelYSize { public get; private set; }
+        public List<Window> Windows  { get; private set; }
+        public int pixelXSize { get; private set; }
+        public int pixelYSize { get; private set; }
         //what ir-bar configuration this user has.
 
         public Client()

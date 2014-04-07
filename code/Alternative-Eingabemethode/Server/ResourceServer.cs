@@ -37,7 +37,7 @@ namespace Server
                 using (Socket client = serverSocket.Accept())
                 {
                     NetworkFileIO.ReadExact(client, 4, buffer, 0);
-                    int type = BitConverter.Toint32(buffer,0);
+                    int type = BitConverter.ToInt32(buffer,0);
                     switch (type)
                     {
                         
@@ -50,7 +50,7 @@ namespace Server
         private void handleNewResource(Socket client, byte[] buffer)
         {
             NetworkFileIO.ReadExact(client, 4, buffer, 0);
-            int resourceType = BitConverter.Toint32(buffer, 0);
+            int resourceType = BitConverter.ToInt32(buffer, 0);
             try
             {
                 Resource r = new Resource(resourceType);
@@ -79,7 +79,7 @@ namespace Server
         private void handleResourceRequest(Socket client, byte[] buffer)
         {
             NetworkFileIO.ReadExact(client, 4, buffer, 0);
-            int resourceId = BitConverter.Toint32(buffer, 0);
+            int resourceId = BitConverter.ToInt32(buffer, 0);
 
             if (this.resources.ContainsKey(resourceId))
             {

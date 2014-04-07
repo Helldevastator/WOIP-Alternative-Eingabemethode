@@ -31,7 +31,7 @@ namespace Common
             int dataLen = BitConverter.ToInt32(buffer, 0);
 
             //readTotal binary and save to file
-            BinaryWriter w = new BinaryWriter(file);
+            BinaryWriter w = new BinaryWriter(new FileStream(file.FullName,FileMode.Create));
             try
             {
                 int readTotal = 0;

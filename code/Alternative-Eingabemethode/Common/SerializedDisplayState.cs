@@ -8,7 +8,7 @@ namespace Common
 {
     public class SerializedDisplayState
     {
-        public readonly int WindowId { public get; private set; }
-        public readonly byte[] State { public get; private set; } 
+        public int WindowId { get; private set; }
+        public byte[] State { get; private set; } 
     }
 }
