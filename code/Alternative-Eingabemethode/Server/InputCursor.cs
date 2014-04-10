@@ -9,13 +9,9 @@ using WiimoteLib;
 namespace Server
 {
     public struct CursorInfo {
-        public float XAbs;
-        public float YAbs;
-        public float ZAbs;
-
-        public float XRel;
-        public float YRel;
-        public float ZRel;
+        public double yaw;
+        public double roll;
+        public double pitch;
 
         public int xPos;
         public int yPos;
@@ -25,19 +21,32 @@ namespace Server
 
     public class InputCursor : IDisposable
     {
-        private static float xThreshold = 0.05F;
-        private static float yThreshold = 0.05F;
-        private static float zThreshold = 0.05F;
-
+        #region id
         private static int nextId = 0;
         private static Object nextLock = new Object();
 
         public event CursorEvent CursorUpdated;
         public int Id { get; private set; }
+        #endregion
 
-        private float lastX = float.MaxValue;
-        private float lastY = 0;
-        private float lastZ = 0;
+        #region calibration fields
+        private float zeroX;
+        private float zeroY;
+        private float zeroZ;
+
+        private double calibrationX = 8063d;
+        private double calibrationY = 8063d;
+        private double calibrationZ = 8063d;
+        private int cCount = -1;
+        private bool isCalibrating = false;
+        private static int calibrationCount = 100;
+        #endregion
+
+        #region static constants
+        private const double toDegSlow = 1/(8192 / 595);
+        private const double toDegFast = toDegSlow * 2000 / 440;
+        #endregion
+
         private Wiimote mote;
 
         public InputCursor(Wiimote mote)
@@ -54,59 +63,41 @@ namespace Server
             mote.Connect();
             mote.SetReportType(InputReport.IRAccel, true);
             mote.SetLEDs(false, true, true, false);
-
+            mote.InitializeMotionPlus();
         }
-
 
         private void wm_WiimoteChanged(object sender, WiimoteChangedEventArgs args)
         {
             WiimoteState ws = args.WiimoteState;
-            if (this.lastX != float.MaxValue)
+            if (!this.isCalibrating)
             {
                 CursorInfo i = new CursorInfo();
 
-                i.XAbs = ws.AccelState.Values.X;
-                i.YAbs = ws.AccelState.Values.Y;
-                i.ZAbs = ws.AccelState.Values.Z;
+                double yaw, roll, pitch;
+                this.CalcToDegreesPerSec(ws, out yaw,out roll,out pitch);
 
-                i.XRel = i.XAbs - lastX;
-                i.YRel = i.YAbs - lastY;
-                i.ZRel = i.ZAbs - lastZ;
-
-                
-                if (!IsNoise(i.XRel, i.YRel, i.ZRel))
-                {
-                    i.xPos = (int)(i.XRel * 50);
-                    i.yPos = (int)(i.ZRel * 50);
-                }
+                i.yaw = yaw;
+                i.roll = roll;
+                i.pitch = pitch;
 
                 if (this.CursorUpdated != null)
                     this.CursorUpdated.Invoke(this, i);
-
-                this.lastX = ws.AccelState.Values.X;
-                this.lastY = ws.AccelState.Values.Y;
-                this.lastZ = ws.AccelState.Values.Z;
             }
             else
             {
-                //init this object, 
-                this.lastX = ws.AccelState.Values.X;
-                this.lastY = ws.AccelState.Values.Y;
-                this.lastZ = ws.AccelState.Values.Z;
+                this.calibrateMote(ws);
             }
-            
 
-            
         }
 
-        private bool IsNoise(float relX, float relY, float relZ)
+        private void CalcToDegreesPerSec(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
-            bool answer = true;
-            answer &= Math.Abs(relX) < xThreshold;
-            answer &= Math.Abs(relY) < yThreshold;
-            answer &= Math.Abs(relZ) < zThreshold;
-
-            return answer;
+            yaw = ws.MotionPlusState.RawValues.X - this.calibrationX;
+            yaw = ws.MotionPlusState.YawFast ? yaw * toDegFast : yaw * toDegSlow;
+            roll = ws.MotionPlusState.RawValues.X - this.calibrationY;
+            roll = ws.MotionPlusState.RollFast ? roll * toDegFast : roll * toDegSlow;
+            pitch = ws.MotionPlusState.RawValues.Z - this.calibrationZ;
+            pitch = ws.MotionPlusState.YawFast ? pitch * toDegFast : pitch * toDegSlow;
         }
 
         private void wm_WiimoteExtensionChanged(object sender, WiimoteExtensionChangedEventArgs args)
@@ -116,6 +107,35 @@ namespace Server
             else
                 mote.SetReportType(InputReport.IRAccel, true);
         }
+
+        #region calibration method
+        public void Calibrate()
+        {
+            this.isCalibrating = true;
+            this.calibrationX = 0;
+            this.calibrationY = 0;
+            this.calibrationZ = 0;
+            this.cCount = 0;
+        }
+
+        private void calibrateMote(WiimoteState ws)
+        {
+            
+            this.calibrationX = ws.MotionPlusState.RawValues.X;
+            this.calibrationY = ws.MotionPlusState.RawValues.Y;
+            this.calibrationZ = ws.MotionPlusState.RawValues.Z;
+            this.cCount++;
+
+            if (this.cCount >= calibrationCount)
+            {
+                this.calibrationX /= cCount;
+                this.calibrationY /= cCount;
+                this.calibrationZ /= cCount;
+
+                this.isCalibrating = false;
+            }
+        }
+        #endregion
 
         #region IDisposable implementation
         public void Dispose()

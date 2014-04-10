@@ -45,18 +45,9 @@
             this.lblRelZ = new System.Windows.Forms.Label();
             this.relXPos = new System.Windows.Forms.Label();
             this.relYPos = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.varX = new System.Windows.Forms.Label();
-            this.varY = new System.Windows.Forms.Label();
-            this.varZ = new System.Windows.Forms.Label();
-            this.btnVariance = new System.Windows.Forms.Button();
             this.lblRelY = new System.Windows.Forms.Label();
             this.lblRelX = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.averageZ = new System.Windows.Forms.Label();
-            this.averageY = new System.Windows.Forms.Label();
-            this.averageX = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -200,52 +191,6 @@
             this.relYPos.TabIndex = 18;
             this.relYPos.Text = "label9";
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(35, 270);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(216, 17);
-            this.label8.TabIndex = 19;
-            this.label8.Text = "Variance over the last 100 inputs";
-            // 
-            // varX
-            // 
-            this.varX.AutoSize = true;
-            this.varX.Location = new System.Drawing.Point(35, 314);
-            this.varX.Name = "varX";
-            this.varX.Size = new System.Drawing.Size(46, 17);
-            this.varX.TabIndex = 20;
-            this.varX.Text = "label9";
-            // 
-            // varY
-            // 
-            this.varY.AutoSize = true;
-            this.varY.Location = new System.Drawing.Point(35, 331);
-            this.varY.Name = "varY";
-            this.varY.Size = new System.Drawing.Size(54, 17);
-            this.varY.TabIndex = 21;
-            this.varY.Text = "label10";
-            // 
-            // varZ
-            // 
-            this.varZ.AutoSize = true;
-            this.varZ.Location = new System.Drawing.Point(35, 348);
-            this.varZ.Name = "varZ";
-            this.varZ.Size = new System.Drawing.Size(54, 17);
-            this.varZ.TabIndex = 22;
-            this.varZ.Text = "label11";
-            // 
-            // btnVariance
-            // 
-            this.btnVariance.Location = new System.Drawing.Point(35, 369);
-            this.btnVariance.Name = "btnVariance";
-            this.btnVariance.Size = new System.Drawing.Size(75, 23);
-            this.btnVariance.TabIndex = 23;
-            this.btnVariance.Text = "Calc";
-            this.btnVariance.UseVisualStyleBackColor = true;
-            this.btnVariance.Click += new System.EventHandler(this.btnVariance_Click);
-            // 
             // lblRelY
             // 
             this.lblRelY.AutoSize = true;
@@ -264,68 +209,24 @@
             this.lblRelX.TabIndex = 25;
             this.lblRelX.Text = "label8";
             // 
-            // label9
+            // button1
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(38, 294);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(64, 17);
-            this.label9.TabIndex = 26;
-            this.label9.Text = "Variance";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(146, 294);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(61, 17);
-            this.label10.TabIndex = 30;
-            this.label10.Text = "Average";
-            // 
-            // averageZ
-            // 
-            this.averageZ.AutoSize = true;
-            this.averageZ.Location = new System.Drawing.Point(143, 348);
-            this.averageZ.Name = "averageZ";
-            this.averageZ.Size = new System.Drawing.Size(54, 17);
-            this.averageZ.TabIndex = 29;
-            this.averageZ.Text = "label11";
-            // 
-            // averageY
-            // 
-            this.averageY.AutoSize = true;
-            this.averageY.Location = new System.Drawing.Point(143, 331);
-            this.averageY.Name = "averageY";
-            this.averageY.Size = new System.Drawing.Size(54, 17);
-            this.averageY.TabIndex = 28;
-            this.averageY.Text = "label10";
-            // 
-            // averageX
-            // 
-            this.averageX.AutoSize = true;
-            this.averageX.Location = new System.Drawing.Point(143, 314);
-            this.averageX.Name = "averageX";
-            this.averageX.Size = new System.Drawing.Size(46, 17);
-            this.averageX.TabIndex = 27;
-            this.averageX.Text = "label9";
+            this.button1.Location = new System.Drawing.Point(35, 241);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 26;
+            this.button1.Text = "calibrate";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(983, 511);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.averageZ);
-            this.Controls.Add(this.averageY);
-            this.Controls.Add(this.averageX);
-            this.Controls.Add(this.label9);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.lblRelX);
             this.Controls.Add(this.lblRelY);
-            this.Controls.Add(this.btnVariance);
-            this.Controls.Add(this.varZ);
-            this.Controls.Add(this.varY);
-            this.Controls.Add(this.varX);
-            this.Controls.Add(this.label8);
             this.Controls.Add(this.relYPos);
             this.Controls.Add(this.relXPos);
             this.Controls.Add(this.lblRelZ);
@@ -370,17 +271,8 @@
         private System.Windows.Forms.Label lblRelZ;
         private System.Windows.Forms.Label relXPos;
         private System.Windows.Forms.Label relYPos;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label varX;
-        private System.Windows.Forms.Label varY;
-        private System.Windows.Forms.Label varZ;
-        private System.Windows.Forms.Button btnVariance;
         private System.Windows.Forms.Label lblRelY;
         private System.Windows.Forms.Label lblRelX;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label averageZ;
-        private System.Windows.Forms.Label averageY;
-        private System.Windows.Forms.Label averageX;
+        private System.Windows.Forms.Button button1;
     }
 }
