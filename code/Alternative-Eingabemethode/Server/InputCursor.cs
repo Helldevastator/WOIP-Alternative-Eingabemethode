@@ -55,6 +55,7 @@ namespace Server
         #endregion
 
         private Wiimote mote;
+        private Matrix rot;
 
         public InputCursor(Wiimote mote)
         {
@@ -71,6 +72,8 @@ namespace Server
             mote.SetReportType(InputReport.IRAccel, true);
             mote.SetLEDs(false, true, true, false);
             mote.InitializeMotionPlus();
+
+            rot = new Matrix();
         }
 
         private void wm_WiimoteChanged(object sender, WiimoteChangedEventArgs args)
@@ -82,10 +85,19 @@ namespace Server
                 CursorInfo i = new CursorInfo();
 
                 double yaw, roll, pitch;
-                this.CalcToDegreesPerSec(ws, out yaw,out roll,out pitch);
+                this.CalcToDegrees(ws, out yaw,out roll,out pitch);
                 i.yaw = yaw;
                 i.roll = roll;
                 i.pitch = pitch;
+
+                //calc rotation matrix, x is left, y is backwards and z is up.
+                Matrix dRotation = Matrix.rotation(yaw,0,1,0).multiply(Matrix.rotation(roll,0,0,1).multiply(Matrix.rotation(pitch,1,0,0)));
+                
+                //not sure if needed, but wiimoteChanged gets called asynchronously I think
+                lock (rot)
+                {
+                    this.rot = dRotation.multiply(rot);
+                }
 
                 i.yawRaw = ws.MotionPlusState.RawValues.X;
                 i.rollRaw = ws.MotionPlusState.RawValues.Y;
@@ -100,16 +112,19 @@ namespace Server
             }
         }
 
-        private void CalcToDegreesPerSec(WiimoteState ws, out double yaw, out double roll, out double pitch)
+        private void CalcToDegrees(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
             yaw = ws.MotionPlusState.RawValues.X - this.zeroX;
             yaw = ws.MotionPlusState.YawFast ? yaw * toDegFast : yaw * toDegSlow;
+            yaw *= dt;
 
             roll = ws.MotionPlusState.RawValues.Y - this.zeroY;
             roll = ws.MotionPlusState.RollFast ? roll * toDegFast : roll * toDegSlow;
+            roll *= dt;
 
             pitch = ws.MotionPlusState.RawValues.Z - this.zeroZ;
             pitch = ws.MotionPlusState.YawFast ? pitch * toDegFast : pitch * toDegSlow;
+            pitch *= dt;
         }
 
         private void wm_WiimoteExtensionChanged(object sender, WiimoteExtensionChangedEventArgs args)
