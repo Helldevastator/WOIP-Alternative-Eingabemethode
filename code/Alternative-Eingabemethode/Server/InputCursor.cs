@@ -51,6 +51,7 @@ namespace Server
         #region static constants
         private const double toDegSlow = 1/(8192d / 595d);
         private const double toDegFast = toDegSlow * 2000d / 440d;
+        private const double dt = 1 / 200d;
         #endregion
 
         private Wiimote mote;
@@ -75,6 +76,7 @@ namespace Server
         private void wm_WiimoteChanged(object sender, WiimoteChangedEventArgs args)
         {
             WiimoteState ws = args.WiimoteState;
+            this.eventCounter++;
             if (!this.isCalibrating)
             {
                 CursorInfo i = new CursorInfo();
