@@ -34,15 +34,17 @@ namespace Server
         #endregion
 
         #region calibration fields
-        private float zeroX;
-        private float zeroY;
-        private float zeroZ;
+        private Object calLock = new Object();
+        private double zeroX = 8063d;
+        private double zeroY= 8063d;
+        private double zeroZ= 8063d;
+        
 
-        private double calibrationX = 8063d;
-        private double calibrationY = 8063d;
-        private double calibrationZ = 8063d;
+        private double calibrationX ;
+        private double calibrationY;
+        private double calibrationZ;
         private int cCount = -1;
-        private bool isCalibrating = false;
+        private volatile bool isCalibrating = false;
         private static int calibrationCount = 100;
         #endregion
 
@@ -98,13 +100,13 @@ namespace Server
 
         private void CalcToDegreesPerSec(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
-            yaw = ws.MotionPlusState.RawValues.X - this.calibrationX;
+            yaw = ws.MotionPlusState.RawValues.X - this.zeroX;
             yaw = ws.MotionPlusState.YawFast ? yaw * toDegFast : yaw * toDegSlow;
 
-            roll = ws.MotionPlusState.RawValues.Y - this.calibrationY;
+            roll = ws.MotionPlusState.RawValues.Y - this.zeroY;
             roll = ws.MotionPlusState.RollFast ? roll * toDegFast : roll * toDegSlow;
 
-            pitch = ws.MotionPlusState.RawValues.Z - this.calibrationZ;
+            pitch = ws.MotionPlusState.RawValues.Z - this.zeroZ;
             pitch = ws.MotionPlusState.YawFast ? pitch * toDegFast : pitch * toDegSlow;
         }
 
@@ -128,21 +130,25 @@ namespace Server
 
         private void calibrateMote(WiimoteState ws)
         {
-            this.calibrationX = ws.MotionPlusState.RawValues.X;
-            this.calibrationY = ws.MotionPlusState.RawValues.Y;
-            this.calibrationZ = ws.MotionPlusState.RawValues.Z;
-            this.cCount++;
-
-            if (this.cCount >= calibrationCount)
+            lock (this.calLock)
             {
-                this.calibrationX = this.calibrationX/ cCount;
-                this.calibrationY = this.calibrationY /cCount;
-                this.calibrationZ = this.calibrationZ/ cCount;
+                if (this.cCount < calibrationCount)
+                {
+                    this.calibrationX += ws.MotionPlusState.RawValues.X;
+                    this.calibrationY += ws.MotionPlusState.RawValues.Y;
+                    this.calibrationZ += ws.MotionPlusState.RawValues.Z;
+                    this.cCount++;
 
-                System.Console.WriteLine(this.calibrationX);
-                System.Console.WriteLine(this.calibrationY);
-                System.Console.WriteLine(this.calibrationZ);
-                this.isCalibrating = false;
+                    if (this.cCount >= calibrationCount)
+                    {
+                        System.Console.WriteLine("");
+                        this.zeroX = this.calibrationX / cCount;
+                        this.zeroY = this.calibrationY / cCount;
+                        this.zeroZ = this.calibrationZ / cCount;
+
+                        this.isCalibrating = false;
+                    }
+                }
             }
         }
         #endregion
