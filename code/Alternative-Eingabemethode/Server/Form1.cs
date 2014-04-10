@@ -38,10 +38,9 @@ namespace Server
 
         private void Update(InputCursor sender, CursorInfo c)
         {
-
-            this.lblRelX.Text = c.yaw.ToString("0.0000")+"yaw deg/s";
-            this.lblRelY.Text = c.pitch.ToString("0.0000") + "pitch deg/s";
-            this.lblRelZ.Text = c.roll.ToString("0.0000") + "roll deg/s";
+            this.lblRelX.Text = c.yaw.ToString("0.0")+" yaw deg/s";
+            this.lblRelY.Text = c.pitch.ToString("0.0") + " pitch deg/s";
+            this.lblRelZ.Text = c.rollRaw.ToString("0.0") + " roll deg/s";
 /*
             this.rec.X += c.xPos;
             this.rec.Y += c.yPos;

@@ -13,6 +13,10 @@ namespace Server
         public double roll;
         public double pitch;
 
+        public double yawRaw;
+        public double rollRaw;
+        public double pitchRaw;
+
         public int xPos;
         public int yPos;
     }
@@ -43,8 +47,8 @@ namespace Server
         #endregion
 
         #region static constants
-        private const double toDegSlow = 1/(8192 / 595);
-        private const double toDegFast = toDegSlow * 2000 / 440;
+        private const double toDegSlow = 1/(8192d / 595d);
+        private const double toDegFast = toDegSlow * 2000d / 440d;
         #endregion
 
         private Wiimote mote;
@@ -75,10 +79,13 @@ namespace Server
 
                 double yaw, roll, pitch;
                 this.CalcToDegreesPerSec(ws, out yaw,out roll,out pitch);
-
                 i.yaw = yaw;
                 i.roll = roll;
                 i.pitch = pitch;
+
+                i.yawRaw = ws.MotionPlusState.RawValues.X;
+                i.rollRaw = ws.MotionPlusState.RawValues.Y;
+                i.pitchRaw = ws.MotionPlusState.RawValues.Z;
 
                 if (this.CursorUpdated != null)
                     this.CursorUpdated.Invoke(this, i);
@@ -87,15 +94,16 @@ namespace Server
             {
                 this.calibrateMote(ws);
             }
-
         }
 
         private void CalcToDegreesPerSec(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
             yaw = ws.MotionPlusState.RawValues.X - this.calibrationX;
             yaw = ws.MotionPlusState.YawFast ? yaw * toDegFast : yaw * toDegSlow;
-            roll = ws.MotionPlusState.RawValues.X - this.calibrationY;
+
+            roll = ws.MotionPlusState.RawValues.Y - this.calibrationY;
             roll = ws.MotionPlusState.RollFast ? roll * toDegFast : roll * toDegSlow;
+
             pitch = ws.MotionPlusState.RawValues.Z - this.calibrationZ;
             pitch = ws.MotionPlusState.YawFast ? pitch * toDegFast : pitch * toDegSlow;
         }
@@ -120,7 +128,6 @@ namespace Server
 
         private void calibrateMote(WiimoteState ws)
         {
-            
             this.calibrationX = ws.MotionPlusState.RawValues.X;
             this.calibrationY = ws.MotionPlusState.RawValues.Y;
             this.calibrationZ = ws.MotionPlusState.RawValues.Z;
@@ -128,10 +135,13 @@ namespace Server
 
             if (this.cCount >= calibrationCount)
             {
-                this.calibrationX /= cCount;
-                this.calibrationY /= cCount;
-                this.calibrationZ /= cCount;
+                this.calibrationX = this.calibrationX/ cCount;
+                this.calibrationY = this.calibrationY /cCount;
+                this.calibrationZ = this.calibrationZ/ cCount;
 
+                System.Console.WriteLine(this.calibrationX);
+                System.Console.WriteLine(this.calibrationY);
+                System.Console.WriteLine(this.calibrationZ);
                 this.isCalibrating = false;
             }
         }
