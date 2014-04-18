@@ -8,103 +8,55 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using Common;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Server
 {
-    class ResourceServer : IDisposable
+    class ResourceServer
     {
+        private delegate void SendResourceDelegate(Client client, int resourceId);
+
         private readonly int bufferSize;
-        private readonly Thread server;
-        private readonly Socket serverSocket;
+
+        private readonly BinaryFormatter bf = new BinaryFormatter();
         private readonly Dictionary<int, Resource> resources;
         private readonly DirectoryInfo resourceFolder;
+        private readonly SendResourceDelegate sender;
 
         public ResourceServer(string resourceFolder, EndPoint serverAdress)
         {
             bufferSize = 1048576 << 3; // 8 MiBytes;
-         
-            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-            serverSocket.Bind(serverAdress);
+            sender = new SendResourceDelegate(SendAsync);
         }
 
-        private void ServerLoop()
+        private void SendAsync(Client client, int resourceId) 
         {
-            serverSocket.Listen(100);
-            byte[] buffer = new byte[bufferSize];
+            Resource r = this.resources[resourceId];
 
-            while (true)
+            using (Socket toClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
-                using (Socket client = serverSocket.Accept())
+
+                toClient.Connect(client.ResourceEndPoint);
+                byte[] buffer = new byte[this.bufferSize];
+                using (MemoryStream ms = new MemoryStream(buffer)) 
                 {
-                    NetworkFileIO.ReadExact(client, 4, buffer, 0);
-                    int type = BitConverter.ToInt32(buffer,0);
-                    switch (type)
-                    {
-                        
-                    }
+                    bf.Serialize(ms,r.ResourceId);
+                    bf.Serialize(ms, r.ResourceType);
+
+                    toClient.Send(ms.ToArray(),sizeof(int) * 2,SocketFlags.None);
                 }
-                
+
+                FileInfo f = new FileInfo(Path.Combine(resourceFolder.FullName,resourceId.ToString()));
+                NetworkFileIO.SendFile(toClient, f, buffer);
             }
         }
 
-        private void handleNewResource(Socket client, byte[] buffer)
+        
+
+        public void SendResource(Client client, int resourceId)
         {
-            NetworkFileIO.ReadExact(client, 4, buffer, 0);
-            int resourceType = BitConverter.ToInt32(buffer, 0);
-            try
-            {
-                Resource r = new Resource(resourceType);
-                FileInfo file = new FileInfo(Path.Combine(this.resourceFolder.FullName, r.ResourceId.ToString()));
-                NetworkFileIO.Receive(file, client, buffer);
-                this.resources.Add(r.ResourceId, r);
-
-                client.Send(BitConverter.GetBytes(r.ResourceId));
-            }
-            catch (SocketException e)
-            {
-                //programming error
-                System.Console.Write(e);
-                Thread current = Thread.CurrentThread;
-                current.Abort();
-            }
-            catch (Exception e)
-            {
-                //what to do?
-                System.Console.Write(e);
-            }
-
-            //send back new resourceId
+            this.sender.BeginInvoke(client, resourceId, null, null);
         }
 
-        private void handleResourceRequest(Socket client, byte[] buffer)
-        {
-
-            if (this.resources.ContainsKey(resourceId))
-            {
-                Resource r = resources[resourceId];
-
-            }
-            else
-            {
-                client.Close();
-            }
-        }
-
-        #region IDisposable implementation
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (this.server != null) server.Abort();
-                if (this.serverSocket != null) serverSocket.Dispose();
-            }
-        }
-        #endregion
     }
 }

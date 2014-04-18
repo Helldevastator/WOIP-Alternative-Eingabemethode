@@ -25,7 +25,7 @@ namespace Server
         public int yPos;
     }
 
-    public delegate void CursorEvent(InputCursor sender, CursorInfo i);
+    public delegate void Cursor(InputCursor sender, CursorInfo i);
 
     public class InputCursor : IDisposable
     {
@@ -33,7 +33,7 @@ namespace Server
         private static int nextId = 0;
         private static Object nextLock = new Object();
 
-        public event CursorEvent CursorUpdated;
+        public event Cursor CursorUpdated;
         public int Id { get; private set; }
         #endregion
 

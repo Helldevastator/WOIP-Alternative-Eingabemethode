@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common
+namespace Client.ResourceHandler
 {
-    [Serializable]
-    public struct Cursor
+    class NoResourceHandler
     {
-        public int cursorId;
-        public int x;
-        public int y;
     }
 }

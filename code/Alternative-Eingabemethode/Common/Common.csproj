@@ -42,6 +42,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientState.cs" />
     <Compile Include="CursorEvent.cs" />
     <Compile Include="SerializedDisplayState.cs" />
     <Compile Include="NetworkFileIO.cs" />

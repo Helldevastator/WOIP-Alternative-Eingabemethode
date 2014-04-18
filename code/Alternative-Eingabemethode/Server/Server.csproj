@@ -55,7 +55,7 @@
     </Compile>
     <Compile Include="InputController.cs" />
     <Compile Include="InputCursor.cs" />
-    <Compile Include="InputServer.cs" />
+    <Compile Include="UpdateSender.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceServer.cs" />

@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    [Serializable]
-    public struct Cursor
+    class ClientState
     {
-        public int cursorId;
-        public int x;
-        public int y;
     }
 }

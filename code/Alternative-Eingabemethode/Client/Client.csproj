@@ -56,6 +56,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Display.cs" />
+    <Compile Include="DisplayCursor.cs" />
+    <Compile Include="DisplayWindow.cs" />
+    <Compile Include="ResourceHandler\IResourceHandler.cs" />
+    <Compile Include="ResourceHandler\NoResourceHandler.cs" />
+    <Compile Include="ResourceHandler\PictureHander.cs" />
+    <Compile Include="ResourceListener.cs" />
+    <Compile Include="UpdateListener.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -95,6 +103,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{e986ba92-3838-4e13-9050-fe383676bbbe}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

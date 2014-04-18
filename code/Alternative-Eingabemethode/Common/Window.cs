@@ -17,12 +17,11 @@ namespace Common
         private static int nextId = 0;
 
         public int WindowId { get; private set; }
-        public int TileId { get; set; }
-        public int TileWidth { get; set; }
-        public int TileHeight { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
         public int ResourceId { get; private set; }
-        //stateID??
-        public bool isFullscreen { get; set; }
 
         public Window(int resourceId) : this()
         {
@@ -32,7 +31,7 @@ namespace Common
                 nextId++;
             }
 
-            isFullscreen = false;
+           
             this.ResourceId = resourceId;
         }
     }

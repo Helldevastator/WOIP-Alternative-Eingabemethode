@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using Common;
+using System.Net.Sockets;
 
 namespace Server
 {
@@ -13,19 +14,14 @@ namespace Server
         //possible performance increase: save writeWindowData() byte array and update modified
 
         public long Id { get; private set; }
-        public EndPoint WindowEndPoint { get; private set; }
+        public Socket UpdateSocket { get; private set; }
         public EndPoint ResourceEndPoint { get; private set; } 
-
-        /// <summary>
-        /// Represents the number of tiles in a row on a client
-        /// </summary>
-        public int TileCountX { get; private set; }
-        public int TileCountY { get; private set; }
 
         //threadsave?
         public List<Window> Windows  { get; private set; }
-        public int pixelXSize { get; private set; }
-        public int pixelYSize { get; private set; }
+        public List<Cursor> Cursors { get; private set; }
+        public int PixelWidth { get; private set; }
+        public int PixelHeight { get; private set; }
         //what ir-bar configuration this user has.
 
         public Client()

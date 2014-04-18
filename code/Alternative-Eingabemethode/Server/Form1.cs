@@ -24,7 +24,7 @@ namespace Server
             this.rec = new Rectangle(this.picBox.Size.Width / 2, this.picBox.Size.Height / 2, 20, 20);
             im = new Bitmap(picBox.Width, picBox.Height);
             cursor = new InputCursor(new Wiimote());
-            cursor.CursorUpdated += new CursorEvent(CursorListener);
+            cursor.CursorUpdated += new Cursor(CursorListener);
 
         }
 
