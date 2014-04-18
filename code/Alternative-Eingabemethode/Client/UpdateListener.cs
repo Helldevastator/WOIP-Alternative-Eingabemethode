@@ -13,6 +13,9 @@ namespace Client
 {
     class UpdateListener : IDisposable
     {
+        public delegate void UpdateClientListener(ClientState state);
+
+        public event UpdateClientListener UpdateEvent;
         private Socket clientSocket;
         private NetworkStream toServer;
         private Display display;
@@ -22,7 +25,6 @@ namespace Client
         {
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             clientSocket.Bind(adress);
-
         }
 
         private void ListenerMethod()
@@ -37,7 +39,9 @@ namespace Client
             {
                 if (toServer.CanRead)
                 {
-                   
+                    ClientState state = (ClientState)bf.Deserialize(toServer);
+                    if (UpdateEvent != null)
+                        UpdateEvent.BeginInvoke(state, null, null);
                 }
             }
         }

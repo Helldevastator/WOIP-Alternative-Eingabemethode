@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    class ClientState
+    [Serializable]
+    public sealed class ClientState
     {
+        List<Window> Windows;
+        List<Cursor> Cursors;
     }
 }

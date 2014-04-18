@@ -13,9 +13,9 @@ using System.IO;
 namespace Server
 {
     /// <summary>
-    /// Class which is responsible for sending state updates to the client
+    /// Class which is responsible for sending State updates to the client
     /// </summary>
-    sealed class UpdateSender :IDisposable
+    sealed class UpdateSender
     {
         private BinaryFormatter bf;
 
@@ -32,40 +32,9 @@ namespace Server
         /// </summary>
         public void UpdateClient(Client client)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bf.Serialize(ms, client.Windows.Count);
-                foreach (Window w in client.Windows)
-                    bf.Serialize(ms, w);
-
-                bf.Serialize(ms, client.Cursors.Count);
-                foreach (Cursor c in client.Cursors)
-                    bf.Serialize(ms, c);
-
-                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-                byte[] buffer = ms.ToArray();
-                args.SetBuffer(buffer,0,buffer.Length);
-
-                client.UpdateSocket.SendAsync(args);
-            }  
+            NetworkStream ns = client.UpdateStream;
+            bf.Serialize(ns, client.State); 
         }
 
-       
-
-        #region IDisposable implementation
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {  
-                //if (sender != null) sender.Dispose();
-            }
-        }
-        #endregion
     }
 }

@@ -14,12 +14,11 @@ namespace Server
         //possible performance increase: save writeWindowData() byte array and update modified
 
         public long Id { get; private set; }
-        public Socket UpdateSocket { get; private set; }
+        public NetworkStream UpdateStream { get; private set; }
         public EndPoint ResourceEndPoint { get; private set; } 
 
         //threadsave?
-        public List<Window> Windows  { get; private set; }
-        public List<Cursor> Cursors { get; private set; }
+        public ClientState State { get; private set; }
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
         //what ir-bar configuration this user has.
