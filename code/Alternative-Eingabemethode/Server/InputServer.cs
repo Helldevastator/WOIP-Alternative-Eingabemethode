@@ -46,8 +46,7 @@ namespace Server
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                bf.Serialize(ms, cursorEvent);
-                sender.SendTo(ms.GetBuffer(), c.CursorEndPoint);
+               
             }  
         }
 

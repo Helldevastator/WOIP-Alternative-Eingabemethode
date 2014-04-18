@@ -13,6 +13,10 @@ namespace Server
         public double roll;
         public double pitch;
 
+        public double yawMat;
+        public double rollMat;
+        public double pitchMat;
+
         public double yawRaw;
         public double rollRaw;
         public double pitchRaw;
@@ -55,7 +59,8 @@ namespace Server
         #endregion
 
         private Wiimote mote;
-        private Matrix rot;
+        private Object rotLock = new Object();
+        private Matrix rot = new Matrix();
 
         public InputCursor(Wiimote mote)
         {
@@ -72,37 +77,40 @@ namespace Server
             mote.SetReportType(InputReport.IRAccel, true);
             mote.SetLEDs(false, true, true, false);
             mote.InitializeMotionPlus();
-
-            rot = new Matrix();
         }
 
         private void wm_WiimoteChanged(object sender, WiimoteChangedEventArgs args)
         {
             WiimoteState ws = args.WiimoteState;
-            this.eventCounter++;
+
             if (!this.isCalibrating)
             {
                 CursorInfo i = new CursorInfo();
 
                 double yaw, roll, pitch;
                 this.CalcToDegrees(ws, out yaw,out roll,out pitch);
-                i.yaw = yaw;
-                i.roll = roll;
-                i.pitch = pitch;
 
-                //calc rotation matrix, x is left, y is backwards and z is up.
-                Matrix dRotation = Matrix.rotation(yaw,0,1,0).multiply(Matrix.rotation(roll,0,0,1).multiply(Matrix.rotation(pitch,1,0,0)));
+                Matrix dRotation = Matrix.rotation(yaw,1,0,0).multiply(Matrix.rotation(pitch,0,1,0)).multiply(Matrix.rotation(roll,0,0,1));
+                i.yaw = yaw;
+                i.pitch = pitch;
+                i.roll = roll;
                 
                 //not sure if needed, but wiimoteChanged gets called asynchronously I think
-                lock (rot)
+                lock (rotLock)
                 {
-                    this.rot = dRotation.multiply(rot);
+                    this.rot = this.rot.multiply(dRotation);
+                    i.rollMat = dRotation.getAlpha() * 180d / Math.PI;
+                    i.pitchMat = dRotation.getBeta() * 180d / Math.PI;
+                    i.yawMat = dRotation.getGamma() * 180d / Math.PI;
                 }
+
+
 
                 i.yawRaw = ws.MotionPlusState.RawValues.X;
                 i.rollRaw = ws.MotionPlusState.RawValues.Y;
                 i.pitchRaw = ws.MotionPlusState.RawValues.Z;
 
+                
                 if (this.CursorUpdated != null)
                     this.CursorUpdated.Invoke(this, i);
             }
@@ -120,11 +128,11 @@ namespace Server
 
             roll = ws.MotionPlusState.RawValues.Y - this.zeroY;
             roll = ws.MotionPlusState.RollFast ? roll * toDegFast : roll * toDegSlow;
-            roll *= dt;
+            roll *= dt; 
 
             pitch = ws.MotionPlusState.RawValues.Z - this.zeroZ;
             pitch = ws.MotionPlusState.YawFast ? pitch * toDegFast : pitch * toDegSlow;
-            pitch *= dt;
+            pitch *= -dt;   //because otherwise delta angle is negative when turning upwards
         }
 
         private void wm_WiimoteExtensionChanged(object sender, WiimoteExtensionChangedEventArgs args)

@@ -14,7 +14,6 @@ namespace Server
 
         public long Id { get; private set; }
         public EndPoint WindowEndPoint { get; private set; }
-        public EndPoint CursorEndPoint { get; private set; }
         public EndPoint ResourceEndPoint { get; private set; } 
 
         /// <summary>

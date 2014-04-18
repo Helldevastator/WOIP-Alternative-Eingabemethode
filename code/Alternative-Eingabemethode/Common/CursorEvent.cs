@@ -10,6 +10,7 @@ namespace Common
     public struct CursorEvent
     {
         public int cursorId;
-        public int eventType;
+        public int x;
+        public int y;
     }
 }

@@ -78,8 +78,6 @@ namespace Server
 
         private void handleResourceRequest(Socket client, byte[] buffer)
         {
-            NetworkFileIO.ReadExact(client, 4, buffer, 0);
-            int resourceId = BitConverter.ToInt32(buffer, 0);
 
             if (this.resources.ContainsKey(resourceId))
             {
