@@ -30,6 +30,7 @@ namespace Server
             switch (s)
             {
                 case State.NONE:
+
                     break;
                 case State.SCALE:
                     break;
