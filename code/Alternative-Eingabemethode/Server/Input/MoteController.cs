@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using WiimoteLib;
+using System.IO;
 
 namespace Server
 {
@@ -21,6 +22,10 @@ namespace Server
         public double yaw;
         public double pitch;
         public double roll;
+
+        public double yawRaw;
+        public double pitchRaw;
+        public double rollRaw;
     }
 
     public delegate void StateListener(MoteController sender, MoteState i);
@@ -47,6 +52,7 @@ namespace Server
         private double[] delta;
         private int deltaIndex;
         private Wiimote mote;
+        private StreamWriter writer;
 
         #region id
         private static int nextId = 0;
@@ -82,6 +88,7 @@ namespace Server
                 this.Id = nextId;
                 nextId++;
             }
+            //writer = new StreamWriter("moveBla.csv");
 
             this.mote = mote;
             mote.WiimoteChanged += wm_WiimoteChanged;
@@ -100,6 +107,11 @@ namespace Server
             {
                 MoteState state = new MoteState();
 
+                /*lock (writer)
+                {
+                    writer.WriteLine("{0};{1};{2};{3};{4};{5};", ws.MotionPlusState.RawValues.X, ws.MotionPlusState.RawValues.Z, ws.MotionPlusState.RawValues.Y, ws.MotionPlusState.YawFast, ws.MotionPlusState.PitchFast, ws.MotionPlusState.RollFast);
+                }*/
+
                 double yaw, roll, pitch;
                 this.CalcToDegrees(ws, out yaw,out roll,out pitch);
 
@@ -113,6 +125,9 @@ namespace Server
                 state.yawFast = ws.MotionPlusState.YawFast;
                 state.rollFast = ws.MotionPlusState.RollFast;
                 state.pitchFast = ws.MotionPlusState.PitchFast;
+                state.yawRaw = ws.MotionPlusState.RawValues.X;
+                state.pitchRaw = ws.MotionPlusState.RawValues.Z;
+                state.rollRaw = ws.MotionPlusState.RawValues.Y;
 
                 state.configuration = this.GetIRBarConfiguration(ws, this.yaw, this.pitch, this.roll);
 
@@ -178,8 +193,6 @@ namespace Server
 
         }
 
-
-
         #region calibration method
         public void Calibrate()
         {
@@ -229,6 +242,11 @@ namespace Server
             if (disp)
             {
                 if (mote != null) mote.Dispose();
+                lock (writer)
+                {
+                    if (writer != null)
+                        writer.Dispose();
+                }
             }
         }
         #endregion

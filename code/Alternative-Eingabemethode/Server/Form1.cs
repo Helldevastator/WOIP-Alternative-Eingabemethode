@@ -38,9 +38,9 @@ namespace Server
 
         private void Update(MoteController sender, MoteState c)
         {
-            this.lblRelX.Text = c.yaw.ToString("0.0")+" yaw d deg "+c.yawFast.ToString();
-            this.lblRelY.Text = c.pitch.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();
-            this.lblRelZ.Text = c.roll.ToString("0.0") + " roll deg " + c.rollFast.ToString();
+            this.lblRelX.Text = c.yawRaw.ToString("0.0")+" yaw d deg "+c.yawFast.ToString();
+            this.lblRelY.Text = c.pitchRaw.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();
+            this.lblRelZ.Text = c.rollRaw.ToString("0.0") + " roll deg " + c.rollFast.ToString();
 /*
             this.rec.X += c.xPos;
             this.rec.Y += c.yPos;
