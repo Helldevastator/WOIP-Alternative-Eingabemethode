@@ -2,7 +2,6 @@
 
 namespace Common
 {
-    [Serializable]
     public struct Resource
     {
         private static Object nextIdLock = new Object();
@@ -19,6 +18,12 @@ namespace Common
                  nextId++;
              }
 
+             this.ResourceType = resourceType;
+         }
+
+         public Resource(int resourceId, int resourceType) : this()
+         {
+             this.ResourceId = resourceId;
              this.ResourceType = resourceType;
          }
     }

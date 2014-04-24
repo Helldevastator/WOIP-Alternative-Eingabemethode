@@ -15,7 +15,7 @@ namespace Server
     {
         private Rectangle rec;
         private Image im;
-        private InputCursor cursor;
+        private MoteController cursor;
 
 
         public Form1()
@@ -23,12 +23,12 @@ namespace Server
             InitializeComponent();
             this.rec = new Rectangle(this.picBox.Size.Width / 2, this.picBox.Size.Height / 2, 20, 20);
             im = new Bitmap(picBox.Width, picBox.Height);
-            cursor = new InputCursor(new Wiimote());
-            cursor.CursorUpdated += new Cursor(CursorListener);
+            cursor = new MoteController(new Wiimote());
+            cursor.MoteUpdated += new StateListener(CursorListener);
 
         }
 
-        private void CursorListener(InputCursor sender, CursorInfo c)
+        private void CursorListener(MoteController sender, MotionInfo c)
         {
             this.Invoke((MethodInvoker)delegate
             {
@@ -36,11 +36,11 @@ namespace Server
             });
         }
 
-        private void Update(InputCursor sender, CursorInfo c)
+        private void Update(MoteController sender, MotionInfo c)
         {
-            this.lblRelX.Text = c.yawMat.ToString("0.0")+" yaw d deg";
-            this.lblRelY.Text = c.pitchMat.ToString("0.0") + " pitch d deg";
-            this.lblRelZ.Text = c.rollMat.ToString("0.0") + " roll deg";
+            this.lblRelX.Text = c.yawInt.ToString("0.0")+" yaw d deg "+c.yawFast.ToString();
+            this.lblRelY.Text = c.pitchInt.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();
+            this.lblRelZ.Text = c.rollInt.ToString("0.0") + " roll deg " + c.rollFast.ToString();
 /*
             this.rec.X += c.xPos;
             this.rec.Y += c.yPos;

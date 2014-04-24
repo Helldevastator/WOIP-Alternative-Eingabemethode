@@ -16,21 +16,28 @@ namespace Client
         public delegate void UpdateClientListener(ClientState state);
 
         public event UpdateClientListener UpdateEvent;
-        private Socket clientSocket;
+        private Socket listenerSocket;
         private NetworkStream toServer;
         private Display display;
         private Thread listenerThread;
 
         public UpdateListener(EndPoint adress)
         {
-            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            clientSocket.Bind(adress);
+            listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            listenerSocket.Bind(adress);
+            listenerThread = new Thread(new ThreadStart(ListenerMethod));
+            listenerThread.IsBackground = true;
+            listenerThread.Start(); 
         }
 
+        /// <summary>
+        /// Start Thread for 
+        /// </summary>
         private void ListenerMethod()
         {
-            Socket handler = clientSocket.Accept();
-            handler.Listen(100);
+            listenerSocket.Listen(1);
+            Socket handler = listenerSocket.Accept();
+            
 
             BinaryFormatter bf = new BinaryFormatter();
             toServer = new NetworkStream(handler);
@@ -58,6 +65,8 @@ namespace Client
         {
             if (disp)
             {
+                if (this.toServer != null) toServer.Dispose();
+                if (this.listenerSocket != null) listenerSocket.Dispose();   
             }
         }
         #endregion

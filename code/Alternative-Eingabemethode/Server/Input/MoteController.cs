@@ -8,32 +8,44 @@ using WiimoteLib;
 
 namespace Server
 {
-    public struct CursorInfo {
+    public struct MotionInfo {
+        public bool buttonA;
+        public bool buttonB;
+
+        public bool yawFast;
+        public bool rollFast;
+        public bool pitchFast;
+        
+        public IRBarConfiguration configuration;
+
         public double yaw;
-        public double roll;
         public double pitch;
-
-        public double yawMat;
-        public double rollMat;
-        public double pitchMat;
-
-        public double yawRaw;
-        public double rollRaw;
-        public double pitchRaw;
-
-        public int xPos;
-        public int yPos;
+        public double roll;
     }
 
-    public delegate void Cursor(InputCursor sender, CursorInfo i);
+    public delegate void StateListener(MoteController sender, MotionInfo i);
 
-    public class InputCursor : IDisposable
+    public enum IRBarConfiguration
     {
+        LEFT_BOTTOM = 0,
+        RIGHT_BOTTOM = 1,
+        LEFT_TOP = 2,
+        RIGHT_TOP = 3
+    }
+
+    /// <summary>
+    /// Responsible for accessing the Wiimote and correctly reading out the yaw, pitch and roll values in relation to the screen pointed to.
+    /// </summary>
+    public class MoteController : IDisposable
+    {
+        public event StateListener MoteUpdated;
+        private double yaw = 0;
+        private double pitch = 0;
+        private double roll = 0;
+
         #region id
         private static int nextId = 0;
         private static Object nextLock = new Object();
-
-        public event Cursor CursorUpdated;
         public int Id { get; private set; }
         #endregion
 
@@ -62,7 +74,7 @@ namespace Server
         private Object rotLock = new Object();
         private Matrix rot = new Matrix();
 
-        public InputCursor(Wiimote mote)
+        public MoteController(Wiimote mote)
         {
             lock (nextLock)
             {
@@ -85,34 +97,26 @@ namespace Server
 
             if (!this.isCalibrating)
             {
-                CursorInfo i = new CursorInfo();
+                MotionInfo i = new MotionInfo();
 
                 double yaw, roll, pitch;
                 this.CalcToDegrees(ws, out yaw,out roll,out pitch);
 
                 Matrix dRotation = Matrix.rotation(yaw,1,0,0).multiply(Matrix.rotation(pitch,0,1,0)).multiply(Matrix.rotation(roll,0,0,1));
-                i.yaw = yaw;
-                i.pitch = pitch;
-                i.roll = roll;
+
+                this.yaw += yaw;
+                this.roll += roll;
+                this.pitch += pitch;
+
+                i.yaw = this.yaw;
+                i.pitch = this.pitch;
+                i.roll = this.roll;
+                i.yawFast = ws.MotionPlusState.YawFast;
+                i.rollFast = ws.MotionPlusState.RollFast;
+                i.pitchFast = ws.MotionPlusState.PitchFast;
                 
-                //not sure if needed, but wiimoteChanged gets called asynchronously I think
-                lock (rotLock)
-                {
-                    this.rot = this.rot.multiply(dRotation);
-                    i.rollMat = dRotation.getAlpha() * 180d / Math.PI;
-                    i.pitchMat = dRotation.getBeta() * 180d / Math.PI;
-                    i.yawMat = dRotation.getGamma() * 180d / Math.PI;
-                }
-
-
-
-                i.yawRaw = ws.MotionPlusState.RawValues.X;
-                i.rollRaw = ws.MotionPlusState.RawValues.Y;
-                i.pitchRaw = ws.MotionPlusState.RawValues.Z;
-
-                
-                if (this.CursorUpdated != null)
-                    this.CursorUpdated.Invoke(this, i);
+                if (this.MoteUpdated != null)
+                    this.MoteUpdated.Invoke(this, i);
             }
             else
             {
@@ -123,15 +127,18 @@ namespace Server
         private void CalcToDegrees(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
             yaw = ws.MotionPlusState.RawValues.X - this.zeroX;
-            yaw = ws.MotionPlusState.YawFast ? yaw * toDegFast : yaw * toDegSlow;
+            yaw = yaw * toDegSlow;
+            //yaw = ws.MotionPlusState.YawFast ? yaw * toDegFast : yaw * toDegSlow;
             yaw *= dt;
 
             roll = ws.MotionPlusState.RawValues.Y - this.zeroY;
-            roll = ws.MotionPlusState.RollFast ? roll * toDegFast : roll * toDegSlow;
+            roll = roll * toDegSlow;
+            //roll = ws.MotionPlusState.RollFast ? roll * toDegFast : roll * toDegSlow;
             roll *= dt; 
 
             pitch = ws.MotionPlusState.RawValues.Z - this.zeroZ;
-            pitch = ws.MotionPlusState.YawFast ? pitch * toDegFast : pitch * toDegSlow;
+            pitch = pitch * toDegSlow;
+            //pitch = ws.MotionPlusState.YawFast ? pitch * toDegFast : pitch * toDegSlow;
             pitch *= -dt;   //because otherwise delta angle is negative when turning upwards
         }
 
@@ -166,12 +173,14 @@ namespace Server
 
                     if (this.cCount >= calibrationCount)
                     {
-                        System.Console.WriteLine("");
                         this.zeroX = this.calibrationX / cCount;
                         this.zeroY = this.calibrationY / cCount;
                         this.zeroZ = this.calibrationZ / cCount;
 
                         this.isCalibrating = false;
+                        this.yaw = 0;
+                        this.pitch = 0;
+                        this.roll = 0;
                     }
                 }
             }

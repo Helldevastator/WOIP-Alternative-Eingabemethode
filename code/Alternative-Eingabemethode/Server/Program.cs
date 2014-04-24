@@ -21,9 +21,9 @@ namespace Server
             System.Console.WriteLine(rot.getBeta() * 180d / Math.PI); //pitch
             System.Console.WriteLine(rot.getGamma() * 180d / Math.PI); //yaw
 
-            /*Application.EnableVisualStyles();
+            Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());*/
+            Application.Run(new Form1());
 
         }
     }

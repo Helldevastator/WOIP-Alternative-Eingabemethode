@@ -21,7 +21,7 @@ namespace Common
         public int Y { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public int ResourceId { get; private set; }
+        public int ResourceId { get; set; }
 
         public Window(int resourceId) : this()
         {
