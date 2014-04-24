@@ -130,8 +130,8 @@ namespace Server
                 state.rollRaw = ws.MotionPlusState.RawValues.Y;
 
                 state.configuration = this.GetIRBarConfiguration(ws, this.yaw, this.pitch, this.roll);
+                this.ResetGyro(ws, state.configuration);
 
-                
                 if (this.MoteUpdated != null)
                     this.MoteUpdated.Invoke(this, state);
             }
