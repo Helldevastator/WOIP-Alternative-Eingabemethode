@@ -28,7 +28,7 @@ namespace Server
 
         }
 
-        private void CursorListener(MoteController sender, MotionInfo c)
+        private void CursorListener(MoteController sender, State c)
         {
             this.Invoke((MethodInvoker)delegate
             {
@@ -36,7 +36,7 @@ namespace Server
             });
         }
 
-        private void Update(MoteController sender, MotionInfo c)
+        private void Update(MoteController sender, State c)
         {
             this.lblRelX.Text = c.yawInt.ToString("0.0")+" yaw d deg "+c.yawFast.ToString();
             this.lblRelY.Text = c.pitchInt.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();

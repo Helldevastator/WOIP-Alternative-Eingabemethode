@@ -23,7 +23,7 @@ namespace Server
             this.mote.MoteUpdated += new StateListener(moteUpdated);
         }
 
-        private void moteUpdated(MoteController mote, MotionInfo state)
+        private void moteUpdated(MoteController mote, State state)
         {
             Client c = clients[state.configuration];
             switch (s)

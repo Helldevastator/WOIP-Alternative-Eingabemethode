@@ -8,7 +8,7 @@ using WiimoteLib;
 
 namespace Server
 {
-    public struct MotionInfo {
+    public struct State {
         public bool buttonA;
         public bool buttonB;
 
@@ -23,14 +23,15 @@ namespace Server
         public double roll;
     }
 
-    public delegate void StateListener(MoteController sender, MotionInfo i);
+    public delegate void StateListener(MoteController sender, State i);
 
     public enum IRBarConfiguration
     {
         LEFT_BOTTOM = 0,
         RIGHT_BOTTOM = 1,
         LEFT_TOP = 2,
-        RIGHT_TOP = 3
+        RIGHT_TOP = 3,
+        NONE = 4
     }
 
     /// <summary>
@@ -97,7 +98,7 @@ namespace Server
 
             if (!this.isCalibrating)
             {
-                MotionInfo i = new MotionInfo();
+                State i = new State();
 
                 double yaw, roll, pitch;
                 this.CalcToDegrees(ws, out yaw,out roll,out pitch);
@@ -124,6 +125,15 @@ namespace Server
             }
         }
 
+        private void wm_WiimoteExtensionChanged(object sender, WiimoteExtensionChangedEventArgs args)
+        {
+            if (args.Inserted)
+                mote.SetReportType(InputReport.IRExtensionAccel, true);
+            else
+                mote.SetReportType(InputReport.IRAccel, true);
+        }
+
+
         private void CalcToDegrees(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
             yaw = ws.MotionPlusState.RawValues.X - this.zeroX;
@@ -142,13 +152,27 @@ namespace Server
             pitch *= -dt;   //because otherwise delta angle is negative when turning upwards
         }
 
-        private void wm_WiimoteExtensionChanged(object sender, WiimoteExtensionChangedEventArgs args)
+        /// <summary>
+        /// Finds out what IR-Bar Configuration the Mote points to.
+        /// </summary>
+        /// <param name="ws"></param>
+        /// <returns></returns>
+        private IRBarConfiguration getIRBarConfiguration(WiimoteState ws)
         {
-            if (args.Inserted)
-                mote.SetReportType(InputReport.IRExtensionAccel, true);
-            else
-                mote.SetReportType(InputReport.IRAccel, true);
+            return 0;
         }
+
+        /// <summary>
+        /// Resets the integrated Roll, Pitch and Yaw to counter the gyro's drifting.
+        /// </summary>
+        /// <param name="ws"></param>
+        /// <param name="conf"></param>
+        private void resetGyro(WiimoteState ws, IRBarConfiguration conf)
+        {
+
+        }
+
+
 
         #region calibration method
         public void Calibrate()
