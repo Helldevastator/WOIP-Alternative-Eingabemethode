@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WiimoteLib;
 
 namespace Server
 {
-    public delegate void CursorEvent(Cursor sender);
+    public delegate void CursorEvent(CursorController sender);
 
     /// <summary>
     /// Is responsible for handling use cases like "user rotated window x"
     /// </summary>
-    class CursorController
+    public class CursorController
     {
         private MoteController mote;
         private List<Client> clients;
@@ -23,16 +24,16 @@ namespace Server
             this.mote.MoteUpdated += new StateListener(moteUpdated);
         }
 
-        private void moteUpdated(MoteController mote, State state)
+        private void moteUpdated(MoteController mote, MoteState state)
         {
-            Client c = clients[state.configuration];
+            Client c = clients[(int)state.configuration];
             switch (s)
             {
-                case NONE:
+                case State.NONE:
                     break;
-                case SCALE:
+                case State.SCALE:
                     break;
-                case MOVE:
+                case State.MOVE:
                     break;
             }
         }

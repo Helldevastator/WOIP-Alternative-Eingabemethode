@@ -14,6 +14,5 @@ namespace Server
 
 
 
-        public Window getWindow();
     }
 }

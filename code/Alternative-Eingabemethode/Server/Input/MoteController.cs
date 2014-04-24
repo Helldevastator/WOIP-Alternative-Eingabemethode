@@ -8,7 +8,7 @@ using WiimoteLib;
 
 namespace Server
 {
-    public struct State {
+    public struct MoteState {
         public bool buttonA;
         public bool buttonB;
 
@@ -23,7 +23,7 @@ namespace Server
         public double roll;
     }
 
-    public delegate void StateListener(MoteController sender, State i);
+    public delegate void StateListener(MoteController sender, MoteState i);
 
     public enum IRBarConfiguration
     {
@@ -43,6 +43,10 @@ namespace Server
         private double yaw = 0;
         private double pitch = 0;
         private double roll = 0;
+
+        private double[] delta;
+        private int deltaIndex;
+        private Wiimote mote;
 
         #region id
         private static int nextId = 0;
@@ -66,14 +70,10 @@ namespace Server
         #endregion
 
         #region static constants
-        private const double toDegSlow = 1/(8192d / 595d);
-        private const double toDegFast = toDegSlow * 2000d / 440d;
+        private const double toDegFactorSlow = 8192d / 595d;
+        private const double fastMultiplier =  2000d / 440d;
         private const double dt = 1 / 200d;
         #endregion
-
-        private Wiimote mote;
-        private Object rotLock = new Object();
-        private Matrix rot = new Matrix();
 
         public MoteController(Wiimote mote)
         {
@@ -98,26 +98,27 @@ namespace Server
 
             if (!this.isCalibrating)
             {
-                State i = new State();
+                MoteState state = new MoteState();
 
                 double yaw, roll, pitch;
                 this.CalcToDegrees(ws, out yaw,out roll,out pitch);
-
-                Matrix dRotation = Matrix.rotation(yaw,1,0,0).multiply(Matrix.rotation(pitch,0,1,0)).multiply(Matrix.rotation(roll,0,0,1));
 
                 this.yaw += yaw;
                 this.roll += roll;
                 this.pitch += pitch;
 
-                i.yaw = this.yaw;
-                i.pitch = this.pitch;
-                i.roll = this.roll;
-                i.yawFast = ws.MotionPlusState.YawFast;
-                i.rollFast = ws.MotionPlusState.RollFast;
-                i.pitchFast = ws.MotionPlusState.PitchFast;
+                state.yaw = this.yaw;
+                state.pitch = this.pitch;
+                state.roll = this.roll;
+                state.yawFast = ws.MotionPlusState.YawFast;
+                state.rollFast = ws.MotionPlusState.RollFast;
+                state.pitchFast = ws.MotionPlusState.PitchFast;
+
+                state.configuration = this.GetIRBarConfiguration(ws, this.yaw, this.pitch, this.roll);
+
                 
                 if (this.MoteUpdated != null)
-                    this.MoteUpdated.Invoke(this, i);
+                    this.MoteUpdated.Invoke(this, state);
             }
             else
             {
@@ -125,6 +126,11 @@ namespace Server
             }
         }
 
+        /// <summary>
+        /// Listener for extensions changed, not sure if needed. Sometimes the IR and Acceleration sensors only start recording when nunchuck is activated+deactivated again
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void wm_WiimoteExtensionChanged(object sender, WiimoteExtensionChangedEventArgs args)
         {
             if (args.Inserted)
@@ -133,22 +139,21 @@ namespace Server
                 mote.SetReportType(InputReport.IRAccel, true);
         }
 
-
         private void CalcToDegrees(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
             yaw = ws.MotionPlusState.RawValues.X - this.zeroX;
-            yaw = yaw * toDegSlow;
-            //yaw = ws.MotionPlusState.YawFast ? yaw * toDegFast : yaw * toDegSlow;
+            yaw = yaw / toDegFactorSlow;
+            yaw = ws.MotionPlusState.YawFast ? yaw * fastMultiplier : yaw;
             yaw *= dt;
 
             roll = ws.MotionPlusState.RawValues.Y - this.zeroY;
-            roll = roll * toDegSlow;
-            //roll = ws.MotionPlusState.RollFast ? roll * toDegFast : roll * toDegSlow;
+            roll = roll / toDegFactorSlow;
+            roll = ws.MotionPlusState.RollFast ? roll * fastMultiplier : roll;
             roll *= dt; 
 
             pitch = ws.MotionPlusState.RawValues.Z - this.zeroZ;
-            pitch = pitch * toDegSlow;
-            //pitch = ws.MotionPlusState.YawFast ? pitch * toDegFast : pitch * toDegSlow;
+            pitch = pitch / toDegFactorSlow;
+            pitch = ws.MotionPlusState.YawFast ? pitch * fastMultiplier : pitch;
             pitch *= -dt;   //because otherwise delta angle is negative when turning upwards
         }
 
@@ -157,9 +162,10 @@ namespace Server
         /// </summary>
         /// <param name="ws"></param>
         /// <returns></returns>
-        private IRBarConfiguration getIRBarConfiguration(WiimoteState ws)
+        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws,double yaw, double pitch, double roll)
         {
-            return 0;
+            
+            return IRBarConfiguration.NONE;
         }
 
         /// <summary>
@@ -167,7 +173,7 @@ namespace Server
         /// </summary>
         /// <param name="ws"></param>
         /// <param name="conf"></param>
-        private void resetGyro(WiimoteState ws, IRBarConfiguration conf)
+        private void ResetGyro(WiimoteState ws, IRBarConfiguration conf)
         {
 
         }

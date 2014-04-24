@@ -53,13 +53,14 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="InputController.cs" />
-    <Compile Include="InputCursor.cs" />
+    <Compile Include="Input\CursorController.cs" />
+    <Compile Include="Input\CursorEventArgs.cs" />
+    <Compile Include="Input\MoteController.cs" />
+    <Compile Include="ServerWindow.cs" />
     <Compile Include="UpdateSender.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceServer.cs" />
-    <Compile Include="Matrix.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -13,7 +13,7 @@ using System.IO;
 namespace Server
 {
     /// <summary>
-    /// Class which is responsible for sending State updates to the client
+    /// Class which is responsible for sending MoteState updates to the client
     /// </summary>
     sealed class UpdateSender
     {
