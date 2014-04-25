@@ -18,15 +18,30 @@ namespace Server
         public EndPoint ResourceEndPoint { get; private set; } 
 
         //threadsave?
-        public ClientState State { get; private set; }
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
-        //what ir-bar configuration this user has.
+        public Dictionary<int, CursorState> Cursors { get; private set; }
+        public List<AnimationWindow> Windows { get; private set; }
+
+        private ClientState state;
 
         public Client()
         {
             //this.WindowEndPoint = new IPEndPoint(IPAddress.Parse("10.0.0.1"), 3000);
         }
+        
+        /// <summary>
+        /// Returns the client state for serialization
+        /// </summary>
+        /// <returns></returns>
+        public ClientState GetClientState() 
+        {
+            state.Cursors = new List<CursorState>(Cursors);
+            state.Windows = new List<WindowState>(Windows.Count);
+            for (int i = 0; i < state.Windows.Count; i++)
+                state.Windows[i] = Windows[i].GetWindowState();
 
+            return state;
+        }
     }
 }

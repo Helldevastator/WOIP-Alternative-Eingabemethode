@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 namespace Common
 {
     [Serializable]
-    public struct Cursor
+    public struct CursorState
     {
         public int cursorId;
         public int x;
         public int y;
+        public bool activated;
     }
 }

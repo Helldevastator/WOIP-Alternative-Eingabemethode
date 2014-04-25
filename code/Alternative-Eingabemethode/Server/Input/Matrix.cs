@@ -98,19 +98,6 @@ using System.Threading.Tasks;
 	            //return -Math.Atan2(m[0, 2], m[1, 2]);
 	            return Math.Atan2(m[2, 1], -m[0, 1]);
 	        }
-	        
-	        public void setX(double phi)
-	        {
-	
-	        }
-	
-	        public void setY(double phi)
-	        {
-	        }
-	
-	        public void setZ(double phi)
-	        {
-	        }
 
             public double getAlpha1()
             {
@@ -143,23 +130,6 @@ using System.Threading.Tasks;
             {
                 return Math.Atan2(m[2, 1] , m[2, 2]);
             }
-
-
-            public double getAlpha3()
-            {
-                return Math.Atan2(m[0, 0], m[1, 0]);
-            }
-
-            public double getBeta3()
-            {
-                return Math.Atan2(Math.Sqrt(m[2, 1] * m[2, 1] + m[2, 2] * m[2, 2]), -m[2, 0]);
-            }
-
-            public double getGamma3()
-            {
-                return Math.Atan2(m[2, 2], m[2, 1]);
-            }
-
 
 	        public void print()
 	        {

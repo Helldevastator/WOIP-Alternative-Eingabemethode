@@ -33,7 +33,7 @@ namespace Server
         public void UpdateClient(Client client)
         {
             NetworkStream ns = client.UpdateStream;
-            bf.Serialize(ns, client.State); 
+            bf.Serialize(ns, client.GetClientState()); 
         }
 
     }

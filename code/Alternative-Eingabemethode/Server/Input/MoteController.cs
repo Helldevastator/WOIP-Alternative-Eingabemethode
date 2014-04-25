@@ -99,6 +99,7 @@ namespace Server
             mote.InitializeMotionPlus();
         }
 
+        #region wiimote listener
         private void wm_WiimoteChanged(object sender, WiimoteChangedEventArgs args)
         {
             WiimoteState ws = args.WiimoteState;
@@ -153,6 +154,7 @@ namespace Server
             else
                 mote.SetReportType(InputReport.IRAccel, true);
         }
+        #endregion
 
         private void CalcToDegrees(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
@@ -190,7 +192,7 @@ namespace Server
         /// <param name="conf"></param>
         private void ResetGyro(WiimoteState ws, IRBarConfiguration conf)
         {
-
+            
         }
 
         #region calibration method

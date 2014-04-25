@@ -9,7 +9,7 @@ namespace Common
     [Serializable]
     public sealed class ClientState
     {
-        List<Window> Windows;
-        List<Cursor> Cursors;
+        public List<WindowState> Windows;
+        public List<CursorState> Cursors;
     }
 }
