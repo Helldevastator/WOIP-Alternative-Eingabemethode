@@ -20,6 +20,8 @@ namespace Server
 
         }
 
+        //
+
         public Client GetClient(IRBarConfiguration configuration)
         {
             return null;
@@ -64,6 +66,7 @@ namespace Server
 
         public void ScaleWindow(Client client, AnimationWindow window, double factor)
         {
+
         }
 
         /// <summary>

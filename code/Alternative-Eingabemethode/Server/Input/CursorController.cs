@@ -15,18 +15,37 @@ namespace Server
     /// </summary>
     public class CursorController
     {
-        private MoteController mote;
-        private AnimationServer animator;
-        private State inputState;
+        private readonly MoteController mote;
+        private readonly AnimationServer animator;
+
+        //begin lock by lockCurrrent
+        private Object lockCurrent = new Object();
+        private State currentInputState;
         private Point currentPoint;
         private Client currentClient;
         private AnimationWindow currentWindow;
+        private bool isActivated;
+        //end lock
 
         public CursorController(MoteController mote, AnimationServer animator)
         {
             this.animator = animator;
             this.mote = mote;
             this.mote.MoteUpdated += new StateListener(moteListener);
+        }
+
+        /// <summary>
+        /// Get the current cursorstate and at which client it points to.
+        /// </summary>
+        /// <param name="currentClient"></param>
+        /// <param name="cursorState"></param>
+        public void GetCursorState(out Client currentClient, out CursorState cursorState)
+        {
+            lock (lockCurrent)
+            {
+                currentClient = this.currentClient;
+                cursorState = new CursorState() { cursorId = mote.Id, x = currentPoint.X, y = currentPoint.Y, activated = isActivated };
+            }
         }
 
         #region input to user action translation
@@ -37,42 +56,46 @@ namespace Server
         /// <param name="InputState"></param>
         private void moteListener(MoteController mote, MoteState state)
         {
-            this.currentClient = animator.GetClient(state.configuration);
-            this.currentPoint = this.CalcNewPosition(state, currentClient);
-
-            switch (inputState)
+            lock (this.lockCurrent)
             {
-                case State.NONE:
-                    this.currentWindow = animator.GetWindow(currentPoint,currentPoint);
+                this.currentClient = animator.GetClient(state.configuration);
+                this.currentPoint = this.CalcNewPosition(state, currentClient);
+                this.isActivated = state.buttonA | state.buttonB;
 
-                    if (inputState.buttonA && window != null)
-                        inputState = State.SCALE;
+                switch (currentInputState)
+                {
+                    case State.NONE:
+                        this.currentWindow = animator.GetWindow(currentPoint, currentPoint);
 
-                    if (inputState.buttonB && window != null)
-                    {
-                        animator.StartMoveWindow(currentClient,currentWindow, currentPoint);
-                        inputState = State.MOVE;
-                    }
-                    break;
+                        if (currentInputState.buttonA && window != null)
+                            currentInputState = State.SCALE;
 
-                case State.SCALE:
-                    if (!inputState.buttonA)
-                        inputState = State.NONE;
+                        if (currentInputState.buttonB && window != null)
+                        {
+                            animator.StartMoveWindow(currentClient, currentWindow, currentPoint);
+                            currentInputState = State.MOVE;
+                        }
+                        break;
 
-                    double factor = CalcFactor(state);
-                    animator.ScaleWindow(currentClient, currentWindow, factor);
-                    break;
+                    case State.SCALE:
+                        if (!currentInputState.buttonA)
+                            currentInputState = State.NONE;
 
-                case State.MOVE:
-                    if (!inputState.buttonB)
-                    {
-                        animator.FinishMove(client,currentWindow,currentPoint);
-                        inputState = State.NONE;
-                    }
-                    else
-                        animator.MoveWindow(currentwindow, window, newPosition);
-                    break;
-            } 
+                        double factor = CalcFactor(state);
+                        animator.ScaleWindow(currentClient, currentWindow, factor);
+                        break;
+
+                    case State.MOVE:
+                        if (!currentInputState.buttonB)
+                        {
+                            animator.FinishMove(client, currentWindow, currentPoint);
+                            currentInputState = State.NONE;
+                        }
+                        else
+                            animator.MoveWindow(currentwindow, window, newPosition);
+                        break;
+                }
+            }
         }
         
         private Point CalcNewPosition(MoteState state, Client client)
@@ -85,6 +108,7 @@ namespace Server
         {
             return 1.0;
         }
+
 
         private enum State
         {
