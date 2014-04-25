@@ -17,17 +17,17 @@ namespace Server
             Matrix rotC = Matrix.rotation(90, 0, 1, 0); //roll
             Matrix rot = rotA.multiply(rotB).multiply(rotC);
             
-            System.Console.WriteLine(rot.getAlpha2() * 180d / Math.PI); //pitch
-            System.Console.WriteLine(rot.getBeta2() * 180d / Math.PI); //roll
-            System.Console.WriteLine(rot.getGamma2() * 180d / Math.PI); //yaw
+            System.Console.WriteLine(rot.CalculatePitch() * 180d / Math.PI); //pitch
+            System.Console.WriteLine(rot.CalculateRoll() * 180d / Math.PI); //roll
+            System.Console.WriteLine(rot.CalculateYaw() * 180d / Math.PI); //yaw
             System.Console.WriteLine(); 
 
             Matrix rotD = Matrix.rotation(90, 0, 1, 0); //roll
             rot = rot.multiply(rotD);
 
-            System.Console.WriteLine(rot.getAlpha2() * 180d / Math.PI); //pitch
-            System.Console.WriteLine(rot.getBeta2() * 180d / Math.PI); //roll
-            System.Console.WriteLine(rot.getGamma2() * 180d / Math.PI); //yaw
+            System.Console.WriteLine(rot.CalculatePitch() * 180d / Math.PI); //pitch
+            System.Console.WriteLine(rot.CalculateRoll() * 180d / Math.PI); //roll
+            System.Console.WriteLine(rot.CalculateYaw() * 180d / Math.PI); //yaw
 
 
            /* Application.EnableVisualStyles();

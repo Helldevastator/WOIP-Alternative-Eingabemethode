@@ -43,11 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientState.cs" />
-    <Compile Include="Cursor.cs" />
+    <Compile Include="CursorState.cs" />
     <Compile Include="SerializedDisplayState.cs" />
     <Compile Include="NetworkFileIO.cs" />
     <Compile Include="Resource.cs" />
-    <Compile Include="Window.cs" />
+    <Compile Include="WindowState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

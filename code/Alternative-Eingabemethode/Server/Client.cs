@@ -36,12 +36,12 @@ namespace Server
         /// <returns></returns>
         public ClientState GetClientState() 
         {
-            state.Cursors = new List<CursorState>(Cursors);
+           /* state.Cursors = new List<CursorState>((IEnumerable<CursorState>)Cursors);
             state.Windows = new List<WindowState>(Windows.Count);
             for (int i = 0; i < state.Windows.Count; i++)
-                state.Windows[i] = Windows[i].GetWindowState();
+                state.Windows[i] = Windows[i].GetWindowState();*/
 
-            return state;
+            return null;
         }
     }
 }
