@@ -8,23 +8,24 @@ using System.Drawing;
 namespace Server
 {
     /// <summary>
-    /// Is responsible for animating the window movement on the clients. it is also responsible for sending the window state updates to the clients
+    /// Is responsible for animating the window movement on the clients. it is also responsible for sending the window InputState updates to the clients
     /// </summary>
     public class AnimationServer
     {
         private Dictionary<int, Client> clients;
+        private List<CursorController> cursors;
 
         public AnimationServer()
         {
 
         }
 
-        public Client GetClient()
+        public Client GetClient(IRBarConfiguration configuration)
         {
             return null;
         }
 
-        public AnimationWindow GetWindow(Point atPoint)
+        public AnimationWindow GetWindow(Client client, Point atPoint)
         {
             return null;
         }
@@ -34,7 +35,7 @@ namespace Server
         /// </summary>
         /// <param name="w"></param>
         /// <param name="newPosition">first new position</param>
-        public void StartMoveWindow(AnimationWindow window, Point newPosition)
+        public void StartMoveWindow(Client client,AnimationWindow window, Point newPosition)
         {
 
         }
@@ -44,18 +45,24 @@ namespace Server
         /// </summary>
         /// <param name="window"></param>
         /// <param name="newPosition"></param>
-        public void MoveWindow(AnimationWindow window, Point newPosition)
+        public void MoveWindow(Client client,AnimationWindow window, Point newPosition)
         {
+
         }
 
         /// <summary>
         /// This method has to be called! Always!
         /// It finishes up the window movement and handles corner cases
         /// </summary>
-        /// <param name="client">can be null, if the window has been moved out of the original client's window and not inside a new one</param>
+        /// <param name="client">can be null, if the window has been moved out of the original client'InputState window and not inside a new one</param>
         /// <param name="window"></param>
         /// <param name="finalPosition"></param>
         public void FinishMove(Client client, AnimationWindow window, Point finalPosition)
+        {
+
+        }
+
+        public void ScaleWindow(Client client, AnimationWindow window, double factor)
         {
         }
 

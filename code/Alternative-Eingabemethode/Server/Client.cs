@@ -31,15 +31,15 @@ namespace Server
         }
         
         /// <summary>
-        /// Returns the client state for serialization
+        /// Returns the client InputState for serialization
         /// </summary>
         /// <returns></returns>
         public ClientState GetClientState() 
         {
-           /* state.Cursors = new List<CursorState>((IEnumerable<CursorState>)Cursors);
-            state.Windows = new List<WindowState>(Windows.Count);
-            for (int i = 0; i < state.Windows.Count; i++)
-                state.Windows[i] = Windows[i].GetWindowState();*/
+           /* InputState.Cursors = new List<CursorState>((IEnumerable<CursorState>)Cursors);
+            InputState.Windows = new List<WindowState>(Windows.Count);
+            for (int i = 0; i < InputState.Windows.Count; i++)
+                InputState.Windows[i] = Windows[i].GetWindowState();*/
 
             return null;
         }

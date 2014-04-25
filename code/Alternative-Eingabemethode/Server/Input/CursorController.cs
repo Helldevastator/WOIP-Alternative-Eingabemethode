@@ -16,14 +16,15 @@ namespace Server
     public class CursorController
     {
         private MoteController mote;
-        private List<Client> clients;
-        private State s;
-        private Client lastClient;
-        private MoteState lastState;
+        private AnimationServer animator;
+        private State inputState;
+        private Point currentPoint;
+        private Client currentClient;
+        private AnimationWindow currentWindow;
 
-        public CursorController(MoteController mote, List<Client> clients)
+        public CursorController(MoteController mote, AnimationServer animator)
         {
-            this.clients = clients;
+            this.animator = animator;
             this.mote = mote;
             this.mote.MoteUpdated += new StateListener(moteListener);
         }
@@ -33,67 +34,45 @@ namespace Server
         /// Mote listener which translates mote input to user actions
         /// </summary>
         /// <param name="mote"></param>
-        /// <param name="state"></param>
+        /// <param name="InputState"></param>
         private void moteListener(MoteController mote, MoteState state)
         {
-            //if Cursor has been removed from the screen
-            if (state.configuration == IRBarConfiguration.NONE)
+            this.currentClient = animator.GetClient(state.configuration);
+            this.currentPoint = this.CalcNewPosition(state, currentClient);
+
+            switch (inputState)
             {
-                if (lastClient != null)
-                {
-                    lastClient.Cursors.Remove(mote.Id);
-                    lastClient = null;
-                }
-            }
+                case State.NONE:
+                    this.currentWindow = animator.GetWindow(currentPoint,currentPoint);
 
-            else
-            {
-                Client c = clients[(int)state.configuration];
+                    if (inputState.buttonA && window != null)
+                        inputState = State.SCALE;
 
-                //remove cursor from old client, because the client has changed now
-                if (c != lastClient)
-                    lastClient.Cursors.Remove(mote.Id);
+                    if (inputState.buttonB && window != null)
+                    {
+                        animator.StartMoveWindow(currentClient,currentWindow, currentPoint);
+                        inputState = State.MOVE;
+                    }
+                    break;
 
-                lastClient = c;
-                Point p = CalcNewPosition(state, c);
-                CursorState cursor;
+                case State.SCALE:
+                    if (!inputState.buttonA)
+                        inputState = State.NONE;
 
-                //add cursor if it isn't already present. also set cursor 
-                if (c.Cursors.ContainsKey(mote.Id))
-                {
-                    cursor = c.Cursors[mote.Id];
-                    cursor.x = p.X;
-                    cursor.y = p.Y;
-                    cursor.activated = state.buttonA | state.buttonB;
-                }
-                else
-                {
-                    cursor = new CursorState() { x = p.X, y = p.Y, activated = state.buttonA | state.buttonB };
-                    c.Cursors.Add(mote.Id,cursor);
-                }
+                    double factor = CalcFactor(state);
+                    animator.ScaleWindow(currentClient, currentWindow, factor);
+                    break;
 
-                switch (s)
-                {
-                    case State.NONE:
-                        if (state.buttonA)
-                            s = State.SCALE;
-                        if (state.buttonB)
-                            s = State.MOVE;
-                        break;
-                    case State.SCALE:
-                        ScaleWindow(state, c);
-                        if (!state.buttonA)
-                            s = State.NONE;
-                        break;
-                    case State.MOVE:
-                        MoveWindow(state, c);
-                        if (!state.buttonB)
-                            s = State.NONE;
-                        break;
-                }
-
-                lastState = state;
-            }
+                case State.MOVE:
+                    if (!inputState.buttonB)
+                    {
+                        animator.FinishMove(client,currentWindow,currentPoint);
+                        inputState = State.NONE;
+                    }
+                    else
+                        animator.MoveWindow(currentwindow, window, newPosition);
+                    break;
+            } 
         }
         
         private Point CalcNewPosition(MoteState state, Client client)
@@ -102,14 +81,9 @@ namespace Server
             return new Point(0,0);
         }
 
-        private void ScaleWindow(MoteState state, Client client)
+        private double CalcFactor(MoteState state)
         {
-
-        }
-
-        private void MoveWindow(MoteState state, Client client)
-        {
-
+            return 1.0;
         }
 
         private enum State

@@ -186,7 +186,7 @@ namespace Server
         }
 
         /// <summary>
-        /// Resets the integrated Roll, Pitch and Yaw to counter the gyro's drifting.
+        /// Resets the integrated Roll, Pitch and Yaw to counter the gyro'InputState drifting.
         /// </summary>
         /// <param name="ws"></param>
         /// <param name="conf"></param>
