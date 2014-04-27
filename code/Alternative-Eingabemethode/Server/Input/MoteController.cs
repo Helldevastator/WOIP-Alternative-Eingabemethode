@@ -22,6 +22,8 @@ namespace Server
         public double yaw;
         public double pitch;
         public double roll;
+        public double rollInterpolated;
+        public double distance;
 
         public double yawRaw;
         public double pitchRaw;
@@ -61,11 +63,10 @@ namespace Server
         #endregion
 
         #region calibration fields
-        private Object calLock = new Object();
+        private Object calibrationLock = new Object();
         private double zeroX = 8063d;
         private double zeroY= 8063d;
         private double zeroZ= 8063d;
-        
 
         private double calibrationX ;
         private double calibrationY;
@@ -79,6 +80,7 @@ namespace Server
         private const double toDegFactorSlow = 8192d / 595d;
         private const double fastMultiplier =  2000d / 440d;
         private const double dt = 1 / 200d;
+        private const double distanceFactor = 1;
         #endregion
 
         public MoteController(Wiimote mote)
@@ -107,19 +109,24 @@ namespace Server
             if (!this.isCalibrating)
             {
                 MoteState state = new MoteState();
-
+                
                 /*lock (writer)
                 {
                     writer.WriteLine("{0};{1};{2};{3};{4};{5};", ws.MotionPlusState.RawValues.X, ws.MotionPlusState.RawValues.Z, ws.MotionPlusState.RawValues.Y, ws.MotionPlusState.YawFast, ws.MotionPlusState.PitchFast, ws.MotionPlusState.RollFast);
                 }*/
 
                 double yaw, roll, pitch;
-                this.CalcToDegrees(ws, out yaw,out roll,out pitch);
+                this.CalculateToDegrees(ws, out yaw,out roll,out pitch);
 
                 this.yaw += yaw;
                 this.roll += roll;
                 this.pitch += pitch;
 
+                IRBarConfiguration configuration = GetIRBarConfiguration(ws, this.yaw, this.pitch, this.roll);
+                
+                //fill into update event
+                state.distance = CalculateDistance(ws, configuration);
+                state.configuration = configuration;
                 state.yaw = this.yaw;
                 state.pitch = this.pitch;
                 state.roll = this.roll;
@@ -156,7 +163,7 @@ namespace Server
         }
         #endregion
 
-        private void CalcToDegrees(WiimoteState ws, out double yaw, out double roll, out double pitch)
+        private void CalculateToDegrees(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
             yaw = ws.MotionPlusState.RawValues.X - this.zeroX;
             yaw = yaw / toDegFactorSlow;
@@ -186,6 +193,26 @@ namespace Server
         }
 
         /// <summary>
+        /// Calculates the distance from the wiimote to the screen using the distance between the sensor bar points.
+        /// If no points are available, it returns positive infinity
+        /// </summary>
+        /// <param name="ws"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        private double CalculateDistance(WiimoteState ws,IRBarConfiguration configuration)
+        {
+            if (configuration == IRBarConfiguration.NONE)
+                return Double.PositiveInfinity;
+
+            IRSensor point1 = ws.IRState.IRSensors[0];
+            IRSensor point2 = ws.IRState.IRSensors[1];
+            PointF manhattanDist = point1.Position - point2.Position;
+            double distance = Math.Sqrt(manhattanDist.X * manhattanDist.X + manhattanDist.Y * manhattanDist.Y);
+
+            return distance*distanceFactor;
+        }
+
+        /// <summary>
         /// Resets the integrated Roll, Pitch and Yaw to counter the gyro'InputState drifting.
         /// </summary>
         /// <param name="ws"></param>
@@ -207,7 +234,7 @@ namespace Server
 
         private void calibrateMote(WiimoteState ws)
         {
-            lock (this.calLock)
+            lock (this.calibrationLock)
             {
                 if (this.cCount < calibrationCount)
                 {
