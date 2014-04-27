@@ -57,7 +57,7 @@ namespace Server
             lock (this.lockCurrent)
             {
                 this.currentClient = animator.GetClient(state.configuration);
-                this.currentPoint = this.CalcNewPosition(state, currentClient);
+                this.currentPoint = this.CalculateScreenPosition(state, currentClient);
                 this.isActivated = state.buttonA | state.buttonB;
 
                 switch (currentInputState)
@@ -79,7 +79,7 @@ namespace Server
                         if (!currentInputState.buttonA)
                             currentInputState = State.NONE;
 
-                        double factor = CalcFactor(state);
+                        double factor = CalculateScaleFactor(state);
                         animator.ScaleWindow(currentClient, currentWindow, factor);
                         break;
 
@@ -96,13 +96,12 @@ namespace Server
             }
         }
         
-        private Point CalcNewPosition(MoteState state, Client client)
+        private Point CalculateScreenPosition(MoteState state, Client client)
         {
-
             return new Point(0,0);
         }
 
-        private double CalcFactor(MoteState state)
+        private double CalculateScaleFactor(MoteState state)
         {
             return 1.0;
         }

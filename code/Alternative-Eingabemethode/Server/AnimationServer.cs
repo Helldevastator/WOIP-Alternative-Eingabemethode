@@ -8,22 +8,51 @@ using System.Drawing;
 namespace Server
 {
     /// <summary>
-    /// Is responsible for animating the window movement on the clients. it is also responsible for sending the window InputState updates to the clients
+    /// Is responsible for animating the window movement on the clients. it is also responsible for sending the window InputState updates to the clients.
+    /// 
+    /// Threadsafe
     /// </summary>
     public class AnimationServer
     {
-        private Dictionary<int, Client> clients;
-        private List<CursorController> cursors;
-
-        public AnimationServer()
+        #region static factory method
+        /// <summary>
+        /// Factory method for this class. Creates an AnimationServer Object
+        /// </summary>
+        /// <param name="controllers"></param>
+        /// <param name="clients"></param>
+        /// <returns></returns>
+        public static AnimationServer AnimationServerFactory(List<MoteController> controllers,Dictionary<int,Client> clients)
         {
+            AnimationServer server = new AnimationServer(clients);
+
+            foreach (MoteController mote in controllers)
+                server.cursors.Add(new CursorController(mote,server));
+            
 
         }
+        #endregion
 
-        //
+        private readonly Dictionary<int, Client> clients;
+
+        //lock
+        private readonly List<CursorController> cursors;
+
+        /// <summary>
+        /// Private Constructor, otherwise the this reference would escape the constructor, which would be a problem with multithreaded apps.
+        /// </summary>
+        /// <param name="clients"></param>
+        private AnimationServer(Dictionary<int, Client> clients)
+        {
+            this.clients = clients;
+            cursors = new List<CursorController>(4);
+        }
+
 
         public Client GetClient(IRBarConfiguration configuration)
         {
+            if(configuration == IRBarConfiguration.NONE)
+                return null;
+
             return null;
         }
 

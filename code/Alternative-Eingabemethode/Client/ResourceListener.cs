@@ -6,20 +6,26 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
 using Client.ResourceHandler;
 using Common;
 
 namespace Client
 {
+    /// <summary>
+    /// 
+    /// </summary>
     sealed class ResourceListener : IDisposable
     {
         public delegate void ResourceLoadedListener(IResourceHandler handler);
 
         private Thread listenerThread;
         private Socket listenerSocket;
+        private Directory resourceFolder;
 
-        public ResourceListener(EndPoint adress)
+        public ResourceListener(EndPoint adress,Directory resourceFolder)
         {
+            this.resourceFolder = resourceFolder;
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             listenerSocket.Bind(adress);
             listenerThread = new Thread(new ThreadStart(ListenerMethod));

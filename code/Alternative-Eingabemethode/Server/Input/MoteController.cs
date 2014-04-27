@@ -29,9 +29,7 @@ namespace Server
         public double pitchRaw;
         public double rollRaw;
     }
-
-    public delegate void StateListener(MoteController sender, MoteState i);
-
+    
     public enum IRBarConfiguration
     {
         LEFT_BOTTOM = 0,
@@ -40,6 +38,8 @@ namespace Server
         RIGHT_TOP = 3,
         NONE = 4
     }
+
+    public delegate void StateListener(MoteController sender, MoteState i);
 
     /// <summary>
     /// Responsible for accessing the Wiimote and correctly reading out the yaw, pitch and roll values in relation to the screen pointed to.

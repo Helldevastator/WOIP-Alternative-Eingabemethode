@@ -11,7 +11,10 @@ using Common;
 
 namespace Client
 {
-    class UpdateListener : IDisposable
+    /// <summary>
+    /// This class listens for Update messages over the TCP/IP network stack.
+    /// </summary>
+    sealed class UpdateListener : IDisposable
     {
         public delegate void UpdateClientListener(ClientState state);
 

@@ -55,7 +55,6 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Input\CursorController.cs" />
-    <Compile Include="Input\CursorEventArgs.cs" />
     <Compile Include="Input\MoteController.cs" />
     <Compile Include="Input\Matrix.cs" />
     <Compile Include="AnimationWindow.cs" />
