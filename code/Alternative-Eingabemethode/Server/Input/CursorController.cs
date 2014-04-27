@@ -8,8 +8,6 @@ using Common;
 
 namespace Server
 {
-    public delegate void CursorEvent(CursorController sender);
-
     /// <summary>
     /// Is responsible for translating mote input to user action
     /// </summary>
