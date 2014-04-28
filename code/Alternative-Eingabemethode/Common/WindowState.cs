@@ -11,7 +11,7 @@ namespace Common
     /// Represents a Window somewhere on a client.
     /// </summary>
     [Serializable]
-    public struct WindowState
+    public sealed class WindowState
     {
         private static Object nextIdLock = new Object();
         private static int nextId = 0;
@@ -20,12 +20,12 @@ namespace Common
         public int X { get; set; }
         public int Y { get; set; }
         
-        public int Width2 { get; set; }
-        public int Height2 { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
         public double Angle { get; set; }
         public int ResourceId { get; set; }
 
-        public WindowState(int resourceId) : this()
+        public WindowState(int resourceId)
         {
             lock (nextIdLock)
             {

@@ -63,12 +63,12 @@ namespace Server
                 switch (currentInputState)
                 {
                     case State.NONE:
-                        this.currentWindow = animator.GetWindow(currentPoint, currentPoint);
+                        this.currentWindow = animator.GetWindow(currentClient, currentPoint);
 
-                        if (currentInputState.buttonA && window != null)
+                        if (state.buttonA && currentWindow != null)
                             currentInputState = State.SCALE;
 
-                        if (currentInputState.buttonB && window != null)
+                        if (state.buttonB && currentWindow != null)
                         {
                             animator.StartMoveWindow(currentClient, currentWindow, currentPoint);
                             currentInputState = State.MOVE;
@@ -76,7 +76,7 @@ namespace Server
                         break;
 
                     case State.SCALE:
-                        if (!currentInputState.buttonA)
+                        if (!state.buttonA)
                             currentInputState = State.NONE;
 
                         double factor = CalculateScaleFactor(state);
@@ -84,13 +84,13 @@ namespace Server
                         break;
 
                     case State.MOVE:
-                        if (!currentInputState.buttonB)
+                        if (!state.buttonB)
                         {
-                            animator.FinishMove(client, currentWindow, currentPoint);
+                            animator.FinishMove(currentClient, currentWindow, currentPoint);
                             currentInputState = State.NONE;
                         }
                         else
-                            animator.MoveWindow(currentwindow, window, newPosition);
+                            animator.MoveWindow(currentClient, currentWindow, currentPoint);
                         break;
                 }
             }

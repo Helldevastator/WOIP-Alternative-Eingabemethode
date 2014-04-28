@@ -10,7 +10,7 @@ namespace Client.ResourceHandler
 {
     interface IResourceHandler
     {
-        public void OnPaint(Graphics g, WindowState state);
+       void OnPaint(Graphics g, int width, int height);
         
     }
 }

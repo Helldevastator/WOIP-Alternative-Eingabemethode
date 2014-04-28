@@ -12,11 +12,10 @@ namespace Client.ResourceHandler
         private Image im;
 
 
-
-        public void OnPaint(System.Drawing.Graphics g, Common.WindowState state)
+        public void OnPaint(System.Drawing.Graphics g, int width, int height)
         {
             
-            throw new NotImplementedException();
+            g.DrawImage(im, 0, 0);
         }
     }
 }

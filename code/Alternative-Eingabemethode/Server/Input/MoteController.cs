@@ -206,8 +206,9 @@ namespace Server
 
             IRSensor point1 = ws.IRState.IRSensors[0];
             IRSensor point2 = ws.IRState.IRSensors[1];
-            PointF manhattanDist = point1.Position - point2.Position;
-            double distance = Math.Sqrt(manhattanDist.X * manhattanDist.X + manhattanDist.Y * manhattanDist.Y);
+            float x = point1.Position.X - point2.Position.X;
+            float y = point1.Position.Y - point2.Position.Y;
+            double distance = Math.Sqrt(x * x + y * y);
 
             return distance*distanceFactor;
         }

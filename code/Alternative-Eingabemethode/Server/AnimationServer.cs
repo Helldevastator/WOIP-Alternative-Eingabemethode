@@ -27,8 +27,8 @@ namespace Server
 
             foreach (MoteController mote in controllers)
                 server.cursors.Add(new CursorController(mote,server));
-            
 
+            return server;
         }
         #endregion
 

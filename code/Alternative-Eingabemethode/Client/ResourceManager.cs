@@ -15,15 +15,15 @@ namespace Client
     /// <summary>
     /// 
     /// </summary>
-    sealed class ResourceListener : IDisposable
+    sealed class ResourceManager : IDisposable
     {
-        public delegate void ResourceLoadedListener(IResourceHandler handler);
+        public delegate void ResourceLoadedCallback(IResourceHandler handler);
 
         private Thread listenerThread;
         private Socket listenerSocket;
-        private Directory resourceFolder;
+        private DirectoryInfo resourceFolder;
 
-        public ResourceListener(EndPoint adress, Directory resourceFolder)
+        public ResourceManager(EndPoint adress, DirectoryInfo resourceFolder)
         {
             this.resourceFolder = resourceFolder;
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -43,6 +43,10 @@ namespace Client
 
                 //
             }
+        }
+
+        public void SetOrUpdateResource(ResourceLoadedCallback callback,int resourceId)
+        {
         }
 
         #region IDisposable implementation

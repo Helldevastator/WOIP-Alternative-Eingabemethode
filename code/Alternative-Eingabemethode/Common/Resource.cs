@@ -2,7 +2,7 @@
 
 namespace Common
 {
-    public struct Resource
+    public class Resource
     {
         private static Object nextIdLock = new Object();
         private static int nextId = 0;
@@ -10,7 +10,7 @@ namespace Common
          public int ResourceId { get; private set;}
          public int ResourceType { get; private set; } 
 
-         public Resource(int resourceType): this()
+         public Resource(int resourceType)
          {
              lock (nextIdLock)
              {
@@ -21,7 +21,7 @@ namespace Common
              this.ResourceType = resourceType;
          }
 
-         public Resource(int resourceId, int resourceType) : this()
+         public Resource(int resourceId, int resourceType)
          {
              this.ResourceId = resourceId;
              this.ResourceType = resourceType;

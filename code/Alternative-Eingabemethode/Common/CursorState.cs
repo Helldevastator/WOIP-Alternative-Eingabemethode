@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Common
 {
     [Serializable]
-    public struct CursorState
+    public sealed class CursorState
     {
         public int cursorId;
         public int x;
