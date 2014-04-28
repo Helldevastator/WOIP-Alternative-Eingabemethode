@@ -27,7 +27,11 @@ namespace Client
         /// <param name="loadingResource">Resource to display while it waits for the actual one</param>
         public DisplayWindow(IResourceHandler loadingResource)
         {
-            this.resource = resource;
+            lock (state)
+            {
+                this.resource = resource;
+                this.state = null;
+            }
         }
 
         public void Update(WindowState state) {
@@ -40,28 +44,34 @@ namespace Client
         /// <param name="g"></param>
         public void OnPaint(Graphics g)
         {
-            Bitmap bmp = new Bitmap(state.Width, state.Height);
-            double opacity = 1;
-
-            using (Graphics window = Graphics.FromImage(bmp))
+            lock (state)
             {
-                resource.OnPaint(window, state.Width, state.Height);
+                if (state != null)
+                {
+                    Bitmap bmp = new Bitmap(state.Width, state.Height);
+                    double opacity = 1;
+
+                    using (Graphics window = Graphics.FromImage(bmp))
+                    {
+                        resource.OnPaint(window, state.Width, state.Height);
+                    }
+
+                    //rotate image
+                    Matrix translationState = g.Transform;
+                    g.TranslateTransform(state.X, state, Y);
+                    g.RotateTransform(state.Angle);
+                    g.TranslateTransform(-state.Width, state.Height);
+
+                    //draw opaque
+                    ColorMatrix matrix = new ColorMatrix();
+                    matrix.Matrix33 = opacity;
+                    ImageAttributes attributes = new ImageAttributes();
+                    attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+                    g.DrawImage(bmp, new Rectangle(0, 0, state.Width, state.Height), 0, 0, state.Width, state.Height, GraphicsUnit.Pixel, attributes);
+                    g.Transform = translationState;
+                }
             }
-
-            //rotate image
-            Matrix translationState = g.Transform;
-            g.TranslateTransform(state.X, state, Y);
-            g.RotateTransform(state.Angle);
-            g.TranslateTransform(-state.Width, state.Height);
-
-            //draw opaque
-            ColorMatrix matrix = new ColorMatrix();
-            matrix.Matrix33 = opacity;
-            ImageAttributes attributes = new ImageAttributes();
-            attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap); 
-   
-            g.DrawImage(bmp,new Rectangle(0,0,state.Width,state.Height), 0, 0,state.Width, state.Height, GraphicsUnit.Pixel, attributes);
-            g.Transform = translationState;
         }
 
         /// <summary>
@@ -70,8 +80,10 @@ namespace Client
         /// <param name="resource"></param>
         public void ResourceLoadedCallback(IResourceHandler resource)
         {
-            lock(this.resource)
+            lock (state)
+            {
                 this.resource = resource;
+            }
         }
 
     }
