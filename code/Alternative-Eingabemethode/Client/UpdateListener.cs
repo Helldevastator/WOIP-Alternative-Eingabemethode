@@ -30,7 +30,7 @@ namespace Client
             listenerSocket.Bind(adress);
             listenerThread = new Thread(new ThreadStart(ListenerMethod));
             listenerThread.IsBackground = true;
-            listenerThread.Start(); 
+            listenerThread.Start();
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Client
         {
             listenerSocket.Listen(1);
             Socket handler = listenerSocket.Accept();
-            
+
 
             BinaryFormatter bf = new BinaryFormatter();
             toServer = new NetworkStream(handler);
@@ -69,7 +69,7 @@ namespace Client
             if (disp)
             {
                 if (this.toServer != null) toServer.Dispose();
-                if (this.listenerSocket != null) listenerSocket.Dispose();   
+                if (this.listenerSocket != null) listenerSocket.Dispose();
             }
         }
         #endregion

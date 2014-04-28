@@ -23,14 +23,14 @@ namespace Client
         private Socket listenerSocket;
         private Directory resourceFolder;
 
-        public ResourceListener(EndPoint adress,Directory resourceFolder)
+        public ResourceListener(EndPoint adress, Directory resourceFolder)
         {
             this.resourceFolder = resourceFolder;
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             listenerSocket.Bind(adress);
             listenerThread = new Thread(new ThreadStart(ListenerMethod));
             listenerThread.IsBackground = true;
-            listenerThread.Start(); 
+            listenerThread.Start();
         }
 
         private void ListenerMethod()
@@ -40,7 +40,7 @@ namespace Client
             while (true)
             {
                 Socket handler = listenerSocket.Accept();
-                
+
                 //
             }
         }

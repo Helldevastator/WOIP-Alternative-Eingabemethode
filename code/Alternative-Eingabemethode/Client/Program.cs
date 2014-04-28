@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.ResourceHandler
+namespace Client
 {
-    class NoResourceHandler
+    class Program
     {
     }
 }
