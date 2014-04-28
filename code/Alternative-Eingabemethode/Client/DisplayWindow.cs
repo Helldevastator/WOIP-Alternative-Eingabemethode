@@ -30,7 +30,7 @@ namespace Client
         {
             lock (stateLock)
             {
-                this.resource = resource;
+                this.resource = loadingResource;
                 this.state = null;
             }
         }
@@ -50,27 +50,22 @@ namespace Client
             {
                 if (state != null)
                 {
-                    Bitmap bmp = new Bitmap(state.Width, state.Height);
-                    float opacity = 1;
-
-                    using (Graphics window = Graphics.FromImage(bmp))
-                    {
-                        resource.OnPaint(window, state.Width, state.Height);
-                    }
+                    float opacity = 0.50f;
 
                     //rotate image
                     Matrix translationState = g.Transform;
+                    
                     g.TranslateTransform(state.X, state.Y);
-                    g.RotateTransform(state.Angle,MatrixOrder.Append);
-                    g.TranslateTransform(-state.Width, state.Height);
+                    g.RotateTransform(state.Angle, MatrixOrder.Prepend);
+                    g.TranslateTransform(-state.Width/2, -state.Height/2);
 
+                    
                     //draw opaque
                     ColorMatrix matrix = new ColorMatrix();
                     matrix.Matrix33 = opacity;
                     ImageAttributes attributes = new ImageAttributes();
                     attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-
-                    g.DrawImage(bmp, new Rectangle(0, 0, state.Width, state.Height), 0, 0, state.Width, state.Height, GraphicsUnit.Pixel, attributes);
+                    this.resource.OnPaint(g, state.Width, state.Height,attributes);
                     g.Transform = translationState;
                 }
             }

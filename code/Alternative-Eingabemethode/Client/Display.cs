@@ -14,12 +14,13 @@ namespace Client
     public partial class Display : Form
     {
         DisplayWindow w;
+        //cursors
         public Display()
         {
             InitializeComponent();
-            PictureResource res = new PictureResource(new Bitmap("imgres.jpg"));
+            PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Documents\GitHub\WOIP-Alternative-Eingabemethode\code\Alternative-Eingabemethode\example.bmp"));
             w = new DisplayWindow(res);
-            w.Update(new Common.WindowState() { X = 150, Angle = 0, Y = 100, Height = 200, Width = 300, ResourceId = 0});
+            w.Update(new Common.WindowState() { X = 150, Angle = 45, Y = 100, Height = 200, Width = 300, ResourceId = 0});
         }
 
         public void AddWindow()

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace Client.ResourceHandler
 {
@@ -16,10 +18,17 @@ namespace Client.ResourceHandler
             this.im = im;
         }
 
-        public void OnPaint(System.Drawing.Graphics g, int width, int height)
+        public void OnPaint(Graphics g, int width, int height,ImageAttributes attributes)
         {
-            
-            g.DrawImage(im, 0, 0);
+            Matrix transformationState = g.Transform;
+
+            g.InterpolationMode = InterpolationMode.HighQualityBilinear;
+            GraphicsUnit unit = GraphicsUnit.Pixel;
+            RectangleF bounds = im.GetBounds(ref unit);
+            //g.ScaleTransform(width / bounds.Width, height/bounds.Height);
+            g.DrawImage(im, new Rectangle(0, 0, width, height), 0, 0, width, height, GraphicsUnit.Pixel, attributes);
+
+            g.Transform = transformationState;
         }
     }
 }
