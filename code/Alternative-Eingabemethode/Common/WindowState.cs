@@ -22,7 +22,7 @@ namespace Common
         
         public int Width { get; set; }
         public int Height { get; set; }
-        public double Angle { get; set; }
+        public float Angle { get; set; }
         public int ResourceId { get; set; }
 
         public WindowState(int resourceId)
@@ -34,6 +34,10 @@ namespace Common
             }
 
             this.ResourceId = resourceId;
+        }
+
+        public WindowState()
+        {
         }
     }
 }

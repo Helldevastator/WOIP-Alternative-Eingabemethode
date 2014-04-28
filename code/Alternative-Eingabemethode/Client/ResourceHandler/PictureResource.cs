@@ -11,6 +11,10 @@ namespace Client.ResourceHandler
     {
         private Image im;
 
+        public PictureResource(Image im)
+        {
+            this.im = im;
+        }
 
         public void OnPaint(System.Drawing.Graphics g, int width, int height)
         {

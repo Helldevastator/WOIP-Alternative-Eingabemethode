@@ -18,6 +18,7 @@ namespace Client
     /// </summary>
     class DisplayWindow
     {
+        private Object stateLock = new Object();
         private WindowState state;
         private IResourceHandler resource;
 
@@ -27,7 +28,7 @@ namespace Client
         /// <param name="loadingResource">Resource to display while it waits for the actual one</param>
         public DisplayWindow(IResourceHandler loadingResource)
         {
-            lock (state)
+            lock (stateLock)
             {
                 this.resource = resource;
                 this.state = null;
@@ -35,7 +36,8 @@ namespace Client
         }
 
         public void Update(WindowState state) {
-            this.state = state;
+            lock(stateLock) 
+                this.state = state;
         }
 
         /// <summary>
@@ -44,12 +46,12 @@ namespace Client
         /// <param name="g"></param>
         public void OnPaint(Graphics g)
         {
-            lock (state)
+            lock (stateLock)
             {
                 if (state != null)
                 {
                     Bitmap bmp = new Bitmap(state.Width, state.Height);
-                    double opacity = 1;
+                    float opacity = 1;
 
                     using (Graphics window = Graphics.FromImage(bmp))
                     {
@@ -58,8 +60,8 @@ namespace Client
 
                     //rotate image
                     Matrix translationState = g.Transform;
-                    g.TranslateTransform(state.X, state, Y);
-                    g.RotateTransform(state.Angle);
+                    g.TranslateTransform(state.X, state.Y);
+                    g.RotateTransform(state.Angle,MatrixOrder.Append);
                     g.TranslateTransform(-state.Width, state.Height);
 
                     //draw opaque
@@ -80,7 +82,8 @@ namespace Client
         /// <param name="resource"></param>
         public void ResourceLoadedCallback(IResourceHandler resource)
         {
-            lock (state)
+            //doesn't need to be locked but needed for happens-before relation
+            lock (stateLock)
             {
                 this.resource = resource;
             }
