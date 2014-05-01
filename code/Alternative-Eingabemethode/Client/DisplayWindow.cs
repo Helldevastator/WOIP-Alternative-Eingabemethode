@@ -14,12 +14,12 @@ namespace Client
     /// <summary>
     /// Represents a Window on the Display.
     /// 
-    /// Threadsafe
+    /// 
     /// </summary>
     class DisplayWindow
     {
-        private Object stateLock = new Object();
         private WindowState state;
+        private readonly Object resourceLock = new Object();
         private IResourceHandler resource;
 
         /// <summary>
@@ -28,16 +28,15 @@ namespace Client
         /// <param name="loadingResource">Resource to display while it waits for the actual one</param>
         public DisplayWindow(IResourceHandler loadingResource)
         {
-            lock (stateLock)
-            {
+            lock(resourceLock) {
                 this.resource = loadingResource;
                 this.state = null;
             }
+            
         }
 
         public void Update(WindowState state) {
-            lock(stateLock) 
-                this.state = state;
+            this.state = state;
         }
 
         /// <summary>
@@ -46,39 +45,37 @@ namespace Client
         /// <param name="g"></param>
         public void Draw(Graphics g)
         {
-            lock (stateLock)
+            if (state != null)
             {
-                if (state != null)
-                {
-                    float opacity = 0.50f;
+                float opacity = 0.50f;
 
-                    //rotate image
-                    Matrix translationState = g.Transform;
-                    
-                    g.TranslateTransform(state.X, state.Y);
-                    g.RotateTransform(state.Angle, MatrixOrder.Prepend);
-                    g.TranslateTransform(-state.Width/2, -state.Height/2);
+                //rotate image
+                Matrix translationState = g.Transform;
 
-                    
-                    //draw opaque
-                    ColorMatrix matrix = new ColorMatrix();
-                    matrix.Matrix33 = opacity;
-                    ImageAttributes attributes = new ImageAttributes();
-                    attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-                    this.resource.Draw(g, state.Width, state.Height,attributes);
-                    g.Transform = translationState;
-                }
+                g.TranslateTransform(state.X, state.Y);
+                g.RotateTransform(state.Angle, MatrixOrder.Prepend);
+                g.TranslateTransform(-state.Width / 2, -state.Height / 2);
+
+
+                //draw opaque
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.Matrix33 = opacity;
+                ImageAttributes attributes = new ImageAttributes();
+                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                this.resource.Draw(g, state.Width, state.Height, attributes);
+                g.Transform = translationState;
             }
         }
 
         /// <summary>
         /// Callback for when the resource is loaded.
+        /// 
+        /// Threadsafe
         /// </summary>
         /// <param name="resource"></param>
         public void ResourceLoadedCallback(IResourceHandler resource)
         {
-            //doesn't need to be locked but needed for happens-before relation
-            lock (stateLock)
+            lock (resourceLock)
             {
                 this.resource = resource;
             }

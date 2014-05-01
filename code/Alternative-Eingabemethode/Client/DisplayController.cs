@@ -24,7 +24,16 @@ namespace Client
 
         public void UpdateClient(ClientState state)
         {
-            //remove?
+            var windowStates = state.Windows;
+            var cursorStates = state.Cursors;
+
+            foreach (WindowState w in windowStates)
+            {
+            }
+
+            foreach (CursorState s in cursorStates)
+            {
+            }
 
             display.UpdateDisplay(this.windows, this.cursors);
         }
