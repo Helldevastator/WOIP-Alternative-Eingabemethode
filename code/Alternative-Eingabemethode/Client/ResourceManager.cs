@@ -23,10 +23,10 @@ namespace Client
         private readonly Socket listenerSocket;
         private readonly DirectoryInfo resourceFolder;
         private readonly IResourceHandlerFactory factory;
+
         private readonly Object resourcesLock = new Object();
-        private readonly Dictionary<int, IResourceHandler> resources;
-        private readonly Object waitSetLock = new Object();
-        private readonly Dictionary<int, List<ResourceLoadedCallback>> waitSet;
+        private readonly Dictionary<int, IResourceHandler> resources;   //guarded by resourcelock
+        private readonly Dictionary<int, List<ResourceLoadedCallback>> waitSet; //guarded by resourcelock
        
 
         public ResourceManager(EndPoint adress, DirectoryInfo resourceFolder,IResourceHandlerFactory factory)
@@ -49,25 +49,23 @@ namespace Client
         {
             lock (resourcesLock)
             {
-                lock (waitSetLock)
+                if (resources.Keys.Contains(resourceId))
                 {
-                    if (resources.Keys.Contains(resourceId))
+                    callback.Invoke(resources[resourceId]);
+                }
+                else
+                {
+                    if (waitSet.Keys.Contains(resourceId))
                     {
-                        callback.Invoke(resources[resourceId]);
+                        waitSet[resourceId].Add(callback);
                     }
                     else
                     {
-                        if (waitSet.Keys.Contains(resourceId))
-                        {
-                            waitSet[resourceId].Add(callback);
-                        }
-                        else
-                        {
-                            var list = new List<ResourceLoadedCallback>(3); //heuristic, don't expect more than three windows waiting on the same resource
-                            list.Add(callback);
-                            waitSet.Add(resourceId,list);
-                        }
+                        var list = new List<ResourceLoadedCallback>(3); //heuristic, don't expect more than three windows waiting on the same resource
+                        list.Add(callback);
+                        waitSet.Add(resourceId, list);
                     }
+
                 }
             }
         }
@@ -103,16 +101,14 @@ namespace Client
         {
             lock (resourcesLock)
             {
-                lock (waitSetLock)
+                if (waitSet.Keys.Contains(newId))
                 {
-                    if (waitSet.Keys.Contains(newId))
-                    {
-                        var list = this.waitSet[newId];
-                        var resource = this.resources[newId];
-                        foreach (ResourceLoadedCallback c in list)
-                            c.Invoke(resource);
-                    }
+                    var list = this.waitSet[newId];
+                    var resource = this.resources[newId];
+                    foreach (ResourceLoadedCallback c in list)
+                        c.Invoke(resource);
                 }
+ 
             }
         }
         #endregion

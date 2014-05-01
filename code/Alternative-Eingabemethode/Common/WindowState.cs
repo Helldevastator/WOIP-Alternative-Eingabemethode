@@ -24,6 +24,7 @@ namespace Common
         public int Height { get; set; }
         public float Angle { get; set; }
         public int ResourceId { get; set; }
+        public bool RemovedFlag { get; set; }
 
         public WindowState(int resourceId)
         {

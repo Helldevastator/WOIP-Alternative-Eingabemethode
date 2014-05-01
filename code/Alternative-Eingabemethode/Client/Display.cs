@@ -17,11 +17,11 @@ namespace Client
     /// </summary>
     public partial class Display : Form
     {
-        DisplayWindow w;
-        volatile Dictionary<int, DisplayWindow> windows;
-        volatile Dictionary<int, DisplayCursor> cursors;
+        private Object updateLock = new Object();
+        Dictionary<int, DisplayWindow> windows;
+        Dictionary<int, DisplayCursor> cursors;
         
-        public Display(Dictionary<int,DisplayWindow> windows, Dictionary<int,DisplayCursor> cursors)
+        public Display()
         {
             this.windows = windows;
             this.cursors = cursors;
@@ -32,8 +32,13 @@ namespace Client
             w.Update(new Common.WindowState() { X = 300, Angle = 45, Y = 200, Height = 400, Width = 600, ResourceId = 0});*/
         }
 
-        public void UpdateDisplay()
+        public void UpdateDisplay(Dictionary<int, DisplayWindow> windows,Dictionary<int, DisplayCursor> cursors)
         {
+            lock (updateLock)
+            {
+                this.windows = windows;
+                this.cursors = cursors;
+            }
             this.Invalidate();
         }
 
@@ -48,12 +53,14 @@ namespace Client
             this.DrawBackground(g);
             //w.Draw(g);
 
-            foreach (DisplayWindow w in windows)
-                w.Draw(g);
+            lock (updateLock)
+            {
+                foreach (DisplayWindow w in windows)
+                    w.Draw(g);
 
-            foreach (DisplayCursor c in cursors)
-                c.Draw(g);
-
+                foreach (DisplayCursor c in cursors)
+                    c.Draw(g);
+            }
         }
     }
 }

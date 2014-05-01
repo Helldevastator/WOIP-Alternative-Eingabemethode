@@ -9,13 +9,24 @@ namespace Client
 {
     class DisplayController
     {
-        Dictionary<int, DisplayWindow> windows;
-        Display display;
-        ResourceManager resources;
+        readonly Dictionary<int, DisplayWindow> windows;
+        readonly Dictionary<int, DisplayCursor> cursors;
+        readonly Display display;
+        readonly ResourceManager resources;
+
+        public DisplayController(Display display, Dictionary<int, DisplayWindow> windows, Dictionary<int, DisplayCursor> cursors, ResourceManager resources)
+        {
+            this.display = display;
+            this.windows = windows;
+            this.cursors = cursors;
+            this.resources = resources;
+        }
 
         public void UpdateClient(ClientState state)
         {
+            //remove?
 
+            display.UpdateDisplay(this.windows, this.cursors);
         }
     }
 }
