@@ -44,7 +44,7 @@ namespace Client
         /// Paint Window on Display
         /// </summary>
         /// <param name="g"></param>
-        public void OnPaint(Graphics g)
+        public void Draw(Graphics g)
         {
             lock (stateLock)
             {
@@ -65,7 +65,7 @@ namespace Client
                     matrix.Matrix33 = opacity;
                     ImageAttributes attributes = new ImageAttributes();
                     attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-                    this.resource.OnPaint(g, state.Width, state.Height,attributes);
+                    this.resource.Draw(g, state.Width, state.Height,attributes);
                     g.Transform = translationState;
                 }
             }

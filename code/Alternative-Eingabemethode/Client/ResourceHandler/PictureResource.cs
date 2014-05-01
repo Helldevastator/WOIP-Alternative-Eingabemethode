@@ -18,7 +18,7 @@ namespace Client.ResourceHandler
             this.im = im;
         }
 
-        public void OnPaint(Graphics g, int width, int height,ImageAttributes attributes)
+        public void Draw(Graphics g, int width, int height,ImageAttributes attributes)
         {
             Matrix transformationState = g.Transform;
 
