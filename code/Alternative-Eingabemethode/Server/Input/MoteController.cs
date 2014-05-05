@@ -152,7 +152,7 @@ namespace Server
         /// <summary>
         /// Listener for extensions changed, not sure if needed. Sometimes the IR and Acceleration sensors only start recording when nunchuck is activated+deactivated again
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="receiver"></param>
         /// <param name="args"></param>
         private void wm_WiimoteExtensionChanged(object sender, WiimoteExtensionChangedEventArgs args)
         {

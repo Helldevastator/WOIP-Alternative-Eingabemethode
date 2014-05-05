@@ -21,8 +21,8 @@ namespace Server
 
         public UpdateSender(EndPoint serverAdress,List<Client> clients)
         {
-            /*sender = new Socket(AddressFamily.InterNetwork, SocketType.Stream,ProtocolType.Tcp);
-            sender.Bind(serverAdress);*/
+            /*receiver = new Socket(AddressFamily.InterNetwork, SocketType.Stream,ProtocolType.Tcp);
+            receiver.Bind(serverAdress);*/
 
             bf = new BinaryFormatter();
         }

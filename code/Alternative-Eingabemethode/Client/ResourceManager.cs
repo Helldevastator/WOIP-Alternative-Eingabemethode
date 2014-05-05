@@ -33,6 +33,9 @@ namespace Client
 
         public ResourceManager(EndPoint adress, DirectoryInfo resourceFolder,IResourceHandlerFactory factory)
         {
+            this.resources = new Dictionary<int, IResourceHandler>();
+            this.waitSet = new Dictionary<int, List<ResourceLoadedCallback>>();
+
             this.factory = factory;
             this.resourceFolder = resourceFolder;
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

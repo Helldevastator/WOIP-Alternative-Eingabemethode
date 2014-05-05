@@ -19,8 +19,6 @@ namespace Server
     {
         private delegate void SendResourceDelegate(Client client, int resourceId);
 
-        private const int bufferLength = 1048576 << 3; // 8 MiBytes;
-
         private readonly BinaryFormatter bf = new BinaryFormatter();
         private readonly Object resourcesLock = new Object();
         private readonly Dictionary<int, Resource> resources;
@@ -59,19 +57,20 @@ namespace Server
             using (Socket toClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 FileInfo f = new FileInfo(Path.Combine(resourceFolder.FullName, resourceId.ToString()));
+                System.Console.WriteLine("connecting");
                 toClient.Connect(client.ResourceEndPoint);
-                byte[] buffer = new byte[bufferLength];
-                using (MemoryStream ms = new MemoryStream(buffer)) 
-                {
-                    bf.Serialize(ms,r.ResourceId);
-                    bf.Serialize(ms, r.ResourceType);
-                    bf.Serialize(ms, f.Length);
+                System.Console.WriteLine("connected");
+                byte[] buffer = BitConverter.GetBytes(r.ResourceId);
+                System.Console.WriteLine("buffee1");
+                toClient.Send(buffer);
 
-                    toClient.Send(ms.ToArray(),sizeof(int) * 2,SocketFlags.None);
-                }
+                buffer = BitConverter.GetBytes(r.ResourceType);
+                System.Console.WriteLine("buffee2");
+                toClient.Send(buffer);
+                System.Console.WriteLine("header");
 
                 
-                NetworkFileIO.SendFile(toClient, f, buffer);
+                NetworkFileIO.SendFile(toClient, f);
                 System.Console.WriteLine("finished Send");
             }
         }
@@ -84,6 +83,7 @@ namespace Server
         /// <param name="resourceId"></param>
         public void SendResource(Client client, int resourceId)
         {
+            System.Console.WriteLine("start sending");
             this.sender.BeginInvoke(client, resourceId, null, null);
         }
 

@@ -40,7 +40,9 @@ namespace Server
             Client c = new Client(point);
             server.AddResource(new Common.Resource(1, 0), new System.IO.FileInfo("bla.txt"));
             server.SendResource(c, 1);
-            
+
+            System.Threading.Thread.Sleep(15 * 1000);
+            System.Console.WriteLine("main out");
         }
     }
 }

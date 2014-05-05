@@ -19,12 +19,12 @@ namespace Client
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Display());*/
 
-            
+            System.Console.WriteLine("bla");
             EndPoint point = new IPEndPoint(IPAddress.Parse("127.0.0.1"),6556);
             ResourceManager manager = new ResourceManager(point, new System.IO.DirectoryInfo(@"C:\Users\Jon\Desktop\testClient"), new ResourceHandlerFactory());
 
             System.Threading.Thread.Sleep(15 * 1000);
-
+            System.Console.WriteLine("main out");
         }
     }
 }

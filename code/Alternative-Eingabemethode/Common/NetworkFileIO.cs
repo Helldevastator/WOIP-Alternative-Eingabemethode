@@ -58,9 +58,16 @@ namespace Common
            
         }
 
-        public static void SendFile(Socket sender, FileInfo file, byte[] buffer)
+        /// <summary>
+        /// Send a file to receiver 
+        /// </summary>
+        /// <param name="receiver"></param>
+        /// <param name="file"></param>
+        public static void SendFile(Socket receiver, FileInfo file)
         {
-
+            byte[] bytes = BitConverter.GetBytes(file.Length);
+            receiver.Send(bytes);
+            receiver.SendFile(file.FullName);
         }
 
         /// <summary>
