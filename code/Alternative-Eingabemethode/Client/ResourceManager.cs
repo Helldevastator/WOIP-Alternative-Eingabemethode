@@ -84,7 +84,6 @@ namespace Client
         #region listener implementation
         private void ListenerMethod()
         {
-            System.Console.WriteLine("STarted");
             listenerSocket.Listen(100);
 
             while (true)
@@ -100,7 +99,6 @@ namespace Client
                 NetworkIO.ReceiveFile(file, handler, new byte[bufferLength]);
                 IResourceHandler res = this.factory.CreateResourceHandler(myResource.ResourceType, file);
 
-                System.Console.WriteLine("Received: {0}, {1}", myResource.ResourceId, myResource.ResourceType);
                 lock (resourcesLock)
                     resources.Add(myResource.ResourceId, res);
 

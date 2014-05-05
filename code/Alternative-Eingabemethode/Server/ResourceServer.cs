@@ -56,13 +56,9 @@ namespace Server
             using (Socket toClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 FileInfo f = new FileInfo(Path.Combine(resourceFolder.FullName, resourceId.ToString()));
-                System.Console.WriteLine("connecting");
                 toClient.Connect(client.ResourceEndPoint);
-                System.Console.WriteLine("connected");
                 NetworkIO.SendObject(toClient, r);
-                System.Console.WriteLine("header");
                 NetworkIO.SendFile(toClient, f);
-                System.Console.WriteLine("finished Send");
             }
         }
 

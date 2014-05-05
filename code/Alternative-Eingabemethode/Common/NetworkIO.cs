@@ -95,22 +95,14 @@ namespace Common
         /// <param name="o"></param>
         public static void SendObject(Socket receiver, Object o)
         {
-            System.Console.WriteLine("startbla");
             using (MemoryStream ms = new MemoryStream())
             {
-                System.Console.WriteLine("a");
                 BinaryFormatter bf = new BinaryFormatter();
-                System.Console.WriteLine("b");
                 bf.Serialize(ms, o);
-                System.Console.WriteLine("c");
                 byte[] buffer = ms.ToArray();
-                System.Console.WriteLine("d");
                 receiver.Send(BitConverter.GetBytes(buffer.Length));
-                System.Console.WriteLine("e");
                 receiver.Send(buffer);
-                System.Console.WriteLine("f");
             }
-            System.Console.WriteLine("endbla");
         }
 
         /// <summary>
