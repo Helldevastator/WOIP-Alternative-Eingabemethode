@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using Server.Input;
 
 namespace Server
 {
@@ -47,13 +48,17 @@ namespace Server
             cursors = new List<CursorController>(4);
         }
 
-
+        /// <summary>
+        /// Returns the client which has specified IRBarConfiguration
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <returns>null if there is no configuration</returns>
         public Client GetClient(IRBarConfiguration configuration)
         {
             if(configuration == IRBarConfiguration.NONE)
                 return null;
 
-            return null;
+            return clients[(int)configuration];
         }
 
         public AnimationWindow GetWindow(Client client, Point atPoint)

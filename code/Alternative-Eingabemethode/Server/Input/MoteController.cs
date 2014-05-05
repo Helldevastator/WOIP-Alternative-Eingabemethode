@@ -137,7 +137,7 @@ namespace Server.Input
                 state.pitchRaw = ws.MotionPlusState.RawValues.Z;
                 state.rollRaw = ws.MotionPlusState.RawValues.Y;
 
-                state.configuration = this.GetIRBarConfiguration(ws, this.yaw, this.pitch, this.rollInterpolated);
+                state.configuration = this.GetIRBarConfiguration(ws, this.rollInterpolated);
                 this.ResetGyro(ws, state.configuration);
 
                 if (this.MoteUpdated != null)

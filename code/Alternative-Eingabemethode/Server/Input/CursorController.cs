@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common;
 
-namespace Server
+namespace Server.Input
 {
     /// <summary>
     /// Is responsible for translating mote input to user action
@@ -98,6 +98,10 @@ namespace Server
         
         private Point CalculateScreenPosition(MoteState state, Client client)
         {
+            double x = Math.Tan(state.yaw * Math.PI / 180) / state.distance;    //x and y distance from screen center point.
+            double y = Math.Tan(state.pitch * Math.PI / 180) / state.distance;
+
+            //calculate from distance to pixel;
             return new Point(0,0);
         }
 
