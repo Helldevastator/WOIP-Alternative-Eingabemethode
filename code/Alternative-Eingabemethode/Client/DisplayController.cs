@@ -9,8 +9,8 @@ namespace Client
 {
     class DisplayController
     {
-        readonly Dictionary<int, DisplayWindow> windows;
-        readonly Dictionary<int, DisplayCursor> cursors;
+        public readonly Dictionary<int, DisplayWindow> windows;
+        public readonly Dictionary<int, DisplayCursor> cursors;
         readonly Display display;
         readonly ResourceManager resources;
 
@@ -42,7 +42,7 @@ namespace Client
                 else
                 {
                     //add
-                    DisplayWindow window = new DisplayWindow(resources.WaitResource);
+                    DisplayWindow window = new DisplayWindow(resources.GetWaitResource());
                     resources.SetOrUpdateResource(new ResourceManager.ResourceLoadedCallback(window.ResourceLoadedCallback), w.ResourceId);
                     this.windows.Add(id, window);
                 }

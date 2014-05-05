@@ -1,6 +1,6 @@
 ﻿namespace Client
 {
-    partial class Display
+    internal partial class Display
     {
         /// <summary>
         /// Required designer variable.

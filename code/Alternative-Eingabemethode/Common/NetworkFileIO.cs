@@ -43,7 +43,7 @@ namespace Common
                 while (readTotal < dataLen)
                 {
                     //ensures that no more bytes are read than needed.
-                    int byesToRead = dataLen - readTotal > buffer.Length ? buffer.Length : dataLen - readTotal;
+                    int byesToRead = (int)(dataLen - readTotal > buffer.Length ? buffer.Length : dataLen - readTotal);
                     int read = receiver.Receive(buffer, byesToRead, SocketFlags.None);
 
                     w.Write(buffer, 0, read);

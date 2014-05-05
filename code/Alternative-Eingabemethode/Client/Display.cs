@@ -15,7 +15,7 @@ namespace Client
     /// Represents the actual display which is responsible for drawing the windows and cursors on the screen.
     /// Threadsafe
     /// </summary>
-    public partial class Display : Form
+    internal partial class Display : Form
     {
         private Object updateLock = new Object();
         Dictionary<int, DisplayWindow> windows;
@@ -55,11 +55,11 @@ namespace Client
 
             lock (updateLock)
             {
-                foreach (DisplayWindow w in windows)
-                    w.Draw(g);
+                foreach (KeyValuePair<int,DisplayWindow> entry in windows)
+                    entry.Value.Draw(g);
 
-                foreach (DisplayCursor c in cursors)
-                    c.Draw(g);
+                foreach (KeyValuePair<int,DisplayCursor> entry in cursors)
+                    entry.Value.Draw(g);
             }
         }
     }

@@ -25,8 +25,9 @@ namespace Server
 
         private ClientState state;
 
-        public Client()
+        public Client(EndPoint resourceEndPoint)
         {
+            this.ResourceEndPoint = resourceEndPoint;
             //this.WindowEndPoint = new IPEndPoint(IPAddress.Parse("10.0.0.1"), 3000);
         }
         

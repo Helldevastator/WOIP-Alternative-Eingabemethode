@@ -14,7 +14,7 @@ namespace Client.ResourceHandler
 
         public IResourceHandler CreateResourceHandler(int resourceTypeId, System.IO.FileInfo file)
         {
-            return new PictureResource(new System.Drawing.Bitmap(file));
+            return new PictureResource(new System.Drawing.Bitmap(file.FullName));
         }
     }
 }

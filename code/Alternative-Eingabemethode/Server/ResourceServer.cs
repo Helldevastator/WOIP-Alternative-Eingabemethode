@@ -27,7 +27,7 @@ namespace Server
         private readonly DirectoryInfo resourceFolder;
         private readonly SendResourceDelegate sender;
 
-        public ResourceServer(DirectoryInfo resourceFolder, EndPoint serverAdress)
+        public ResourceServer(DirectoryInfo resourceFolder)
         {
             resources = new Dictionary<int, Resource>();
             sender = new SendResourceDelegate(SendAsync);
@@ -44,6 +44,7 @@ namespace Server
 
         private void SendAsync(Client client, int resourceId) 
         {
+            System.Console.WriteLine("sending");
             Resource r;
 
             lock (resourcesLock)
@@ -71,6 +72,7 @@ namespace Server
 
                 
                 NetworkFileIO.SendFile(toClient, f, buffer);
+                System.Console.WriteLine("finished Send");
             }
         }
 
