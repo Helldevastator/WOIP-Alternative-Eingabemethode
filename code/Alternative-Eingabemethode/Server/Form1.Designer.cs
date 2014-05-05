@@ -48,6 +48,8 @@
             this.lblRelY = new System.Windows.Forms.Label();
             this.lblRelX = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.lblIRBar = new System.Windows.Forms.Label();
+            this.clb1 = new System.Windows.Forms.CheckedListBox();
             ((System.ComponentModel.ISupportInitialize)(this.picBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -219,11 +221,30 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // lblIRBar
+            // 
+            this.lblIRBar.AutoSize = true;
+            this.lblIRBar.Location = new System.Drawing.Point(56, 406);
+            this.lblIRBar.Name = "lblIRBar";
+            this.lblIRBar.Size = new System.Drawing.Size(46, 17);
+            this.lblIRBar.TabIndex = 27;
+            this.lblIRBar.Text = "label8";
+            // 
+            // clb1
+            // 
+            this.clb1.FormattingEnabled = true;
+            this.clb1.Location = new System.Drawing.Point(251, 219);
+            this.clb1.Name = "clb1";
+            this.clb1.Size = new System.Drawing.Size(120, 89);
+            this.clb1.TabIndex = 28;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(983, 511);
+            this.Controls.Add(this.clb1);
+            this.Controls.Add(this.lblIRBar);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.lblRelX);
             this.Controls.Add(this.lblRelY);
@@ -274,5 +295,7 @@
         private System.Windows.Forms.Label lblRelY;
         private System.Windows.Forms.Label lblRelX;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label lblIRBar;
+        private System.Windows.Forms.CheckedListBox clb1;
     }
 }

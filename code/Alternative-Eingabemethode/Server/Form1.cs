@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Server.Input;
 using WiimoteLib;
 
 namespace Server
@@ -25,7 +26,11 @@ namespace Server
             im = new Bitmap(picBox.Width, picBox.Height);
             cursor = new MoteController(new Wiimote());
             cursor.MoteUpdated += new StateListener(CursorListener);
-
+            clb1.Items.AddRange(new object[] {
+            "IR 1",
+            "IR 2",
+            "IR 3",
+            "IR 4"});
         }
 
         private void CursorListener(MoteController sender, MoteState c)
@@ -34,6 +39,7 @@ namespace Server
             {
                 this.Update(sender, c);
             });
+            
         }
 
         private void Update(MoteController sender, MoteState c)
@@ -41,7 +47,12 @@ namespace Server
             this.lblRelX.Text = c.yawRaw.ToString("0.0")+" yaw d deg "+c.yawFast.ToString();
             this.lblRelY.Text = c.pitchRaw.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();
             this.lblRelZ.Text = c.rollRaw.ToString("0.0") + " roll deg " + c.rollFast.ToString();
-/*
+            this.lblIRBar.Text = c.configuration.ToString();
+            this.clb1.SetItemChecked(0, c.point1);
+            this.clb1.SetItemChecked(1, c.point2);
+            this.clb1.SetItemChecked(2, c.point3);
+            this.clb1.SetItemChecked(3, c.point4);
+/*  
             this.rec.X += c.xPos;
             this.rec.Y += c.yPos;
             this.relXPos.Text = this.rec.X.ToString();

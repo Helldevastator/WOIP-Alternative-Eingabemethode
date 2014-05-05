@@ -58,6 +58,7 @@
     <Compile Include="Input\MoteController.cs" />
     <Compile Include="Input\Matrix.cs" />
     <Compile Include="AnimationWindow.cs" />
+    <Compile Include="Input\InputPoint.cs" />
     <Compile Include="UpdateSender.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

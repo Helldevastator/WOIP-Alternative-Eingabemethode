@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Server.Input;
 
 namespace Server
 {
@@ -31,18 +32,10 @@ namespace Server
             System.Console.WriteLine(rot.CalculateYaw() * 180d / Math.PI); //yaw
 
 
-           /* Application.EnableVisualStyles();
+            Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());*/
+            Application.Run(new Form1());
 
-            EndPoint point = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6556);
-            ResourceServer server = new ResourceServer(new System.IO.DirectoryInfo(@"C:\Users\Jon\Desktop\testServer"));
-            Client c = new Client(point);
-            server.AddResource(new Common.Resource(1, 0), new System.IO.FileInfo("bla.txt"));
-            server.SendResource(c, 1);
-
-            System.Threading.Thread.Sleep(15 * 1000);
-            System.Console.WriteLine("main out");
         }
     }
 }

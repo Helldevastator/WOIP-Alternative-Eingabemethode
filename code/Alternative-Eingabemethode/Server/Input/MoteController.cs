@@ -19,6 +19,11 @@ namespace Server.Input
         
         public IRBarConfiguration configuration;
 
+        public bool point1;
+        public bool point2;
+        public bool point3;
+        public bool point4;
+
         public double yaw;
         public double pitch;
         public double roll;
@@ -122,8 +127,12 @@ namespace Server.Input
                 this.rollInterpolated += roll;
                 this.pitch += pitch;
 
-                IRBarConfiguration configuration = GetIRBarConfiguration(ws, this.rollInterpolated);
-                
+                IRBarConfiguration configuration = GetIRBarConfiguration(ws, 0);
+
+                state.point1 = ws.IRState.IRSensors[0].Found;
+                state.point2 = ws.IRState.IRSensors[1].Found;
+                state.point3 = ws.IRState.IRSensors[2].Found;
+                state.point4 = ws.IRState.IRSensors[3].Found;
                 //fill into update event
                 state.distance = CalculateDistance(ws, configuration);
                 state.configuration = configuration;
@@ -195,8 +204,11 @@ namespace Server.Input
             double rotX = cosine * -sine;
             double rotY = sine * cosine;
 
-            if (ws.IRState.IRSensors.Length < 4)
-                return IRBarConfiguration.NONE;
+            for (int i = 0; i < ws.IRState.IRSensors.Length; i++)
+            {
+                if (!ws.IRState.IRSensors[i].Found)
+                    return IRBarConfiguration.NONE;
+            }
 
             //rotate
             InputPoint[] points = new InputPoint[4];
@@ -241,8 +253,8 @@ namespace Server.Input
             }
 
             //put in result integer and cast it to enum
-            int result = isTop << 1;
-            result += isRight;
+            int result = Convert.ToInt32(isTop) << 1;
+            result += Convert.ToInt32(isRight);
   
             return (IRBarConfiguration)result;
         }
