@@ -19,7 +19,7 @@ namespace Client
     {
         public delegate void ResourceLoadedCallback(IResourceHandler handler);
 
-        private static const int bufferLength = 1048576 << 3; // 8 MiBytes;
+        private static int bufferLength = 1048576 << 3; // 8 MiBytes;
 
         private readonly Thread listenerThread;
         private readonly Socket listenerSocket;
@@ -72,14 +72,15 @@ namespace Client
             }
         }
 
-        public IResourceHandler WaitResource
+        public IResourceHandler GetWaitResource()
         {
-            public get { return this.waitResource; }
-
+            return this.waitResource;
         }
+
         #region listener implementation
         private void ListenerMethod()
         {
+            System.Console.WriteLine("STarted");
             listenerSocket.Listen(100);
 
             while (true)
@@ -105,9 +106,10 @@ namespace Client
                 typeId = BitConverter.ToInt32(intBuffer, 0);
 
                 file = new FileInfo(Path.Combine(resourceFolder.FullName,resourceId.ToString()));
-                NetworkFileIO.Receive(file, handler, new buffer[bufferLength]);
+                NetworkFileIO.Receive(file, handler, new byte[bufferLength]);
                 IResourceHandler res = this.factory.CreateResourceHandler(typeId, file);
 
+                System.Console.WriteLine("Received: {0}, {1}", resourceId, typeId);
                 lock (resourcesLock)
                     resources.Add(resourceId, res);
 
@@ -144,6 +146,7 @@ namespace Client
 
         private void Dispose(bool disp)
         {
+            System.Console.WriteLine("Dispose");
             if (disp)
             {
                 if (this.listenerSocket != null) listenerSocket.Dispose();
