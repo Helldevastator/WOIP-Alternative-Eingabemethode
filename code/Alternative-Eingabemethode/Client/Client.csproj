@@ -55,8 +55,10 @@
     <Compile Include="DisplayWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceHandler\IResourceHandlerFactory.cs" />
     <Compile Include="ResourceHandler\IResourceHandler.cs" />
     <Compile Include="ResourceHandler\PictureResource.cs" />
+    <Compile Include="ResourceHandler\ResourceHandlerFactory.cs" />
     <Compile Include="ResourceManager.cs" />
     <Compile Include="UpdateListener.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />

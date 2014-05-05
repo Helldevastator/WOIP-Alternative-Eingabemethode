@@ -29,10 +29,41 @@ namespace Client
 
             foreach (WindowState w in windowStates)
             {
+                int id = w.WindowId;
+                //remove
+                if (w.RemovedFlag)
+                    this.windows.Remove(id);
+
+                if (this.windows.ContainsKey(id))
+                {
+                    //update
+                    this.windows[id].Update(w);
+                }
+                else
+                {
+                    //add
+                    DisplayWindow window = new DisplayWindow(resources.WaitResource);
+                    resources.SetOrUpdateResource(new ResourceManager.ResourceLoadedCallback(window.ResourceLoadedCallback), w.ResourceId);
+                    this.windows.Add(id, window);
+                }
             }
 
             foreach (CursorState s in cursorStates)
             {
+                //remove
+                if (s.removedFlag)
+                    this.cursors.Remove(s.cursorId);
+
+                if (this.cursors.ContainsKey(s.cursorId))
+                {
+                    //update
+                    this.cursors[s.cursorId].Update(s);
+                }
+                else
+                {
+                    //add
+                    this.cursors.Add(s.cursorId, new DisplayCursor(s));
+                }
             }
 
             display.UpdateDisplay(this.windows, this.cursors);

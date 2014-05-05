@@ -27,7 +27,7 @@ namespace Client
         private readonly Object resourcesLock = new Object();
         private readonly Dictionary<int, IResourceHandler> resources;   //guarded by resourcelock
         private readonly Dictionary<int, List<ResourceLoadedCallback>> waitSet; //guarded by resourcelock
-       
+        private readonly IResourceHandler waitResource;
 
         public ResourceManager(EndPoint adress, DirectoryInfo resourceFolder,IResourceHandlerFactory factory)
         {
@@ -70,6 +70,11 @@ namespace Client
             }
         }
 
+        public IResourceHandler WaitResource
+        {
+            public get { return this.waitResource; }
+
+        }
         #region listener implementation
         private void ListenerMethod()
         {
