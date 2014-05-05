@@ -16,7 +16,7 @@ namespace Server
     {
         private delegate void SendResourceDelegate(Client client, int resourceId);
 
-        private readonly int bufferSize;
+        private static const int bufferLength = 1048576 << 3; // 8 MiBytes;
 
         private readonly BinaryFormatter bf = new BinaryFormatter();
         private readonly Dictionary<int, Resource> resources;
@@ -25,7 +25,6 @@ namespace Server
 
         public ResourceServer(string resourceFolder, EndPoint serverAdress)
         {
-            bufferSize = 1048576 << 3; // 8 MiBytes;
             sender = new SendResourceDelegate(SendAsync);
         }
 
@@ -35,18 +34,19 @@ namespace Server
 
             using (Socket toClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
-
+                FileInfo f = new FileInfo(Path.Combine(resourceFolder.FullName, resourceId.ToString()));
                 toClient.Connect(client.ResourceEndPoint);
-                byte[] buffer = new byte[this.bufferSize];
+                byte[] buffer = new byte[this.bufferLength];
                 using (MemoryStream ms = new MemoryStream(buffer)) 
                 {
                     bf.Serialize(ms,r.ResourceId);
                     bf.Serialize(ms, r.ResourceType);
+                    bf.Serialize(ms, f.Length);
 
                     toClient.Send(ms.ToArray(),sizeof(int) * 2,SocketFlags.None);
                 }
 
-                FileInfo f = new FileInfo(Path.Combine(resourceFolder.FullName,resourceId.ToString()));
+                
                 NetworkFileIO.SendFile(toClient, f, buffer);
             }
         }

@@ -19,6 +19,8 @@ namespace Client
     {
         public delegate void ResourceLoadedCallback(IResourceHandler handler);
 
+        private static const int bufferLength = 1048576 << 3; // 8 MiBytes;
+
         private readonly Thread listenerThread;
         private readonly Socket listenerSocket;
         private readonly DirectoryInfo resourceFolder;
@@ -84,11 +86,26 @@ namespace Client
             {
                 Socket handler = listenerSocket.Accept();
 
-                //read
-                FileInfo file;
+                //read resource
                 int resourceId;
                 int typeId;
+                FileInfo file;
 
+                byte[] intBuffer = new byte[4];
+
+                NetworkFileIO.ReadExact(handler, 4, intBuffer, 0);
+                if (BitConverter.IsLittleEndian)
+                    intBuffer.Reverse();
+
+                resourceId = BitConverter.ToInt32(intBuffer, 0);
+                NetworkFileIO.ReadExact(handler, 4, intBuffer, 0);
+                if (BitConverter.IsLittleEndian)
+                    intBuffer.Reverse();
+
+                typeId = BitConverter.ToInt32(intBuffer, 0);
+
+                file = new FileInfo(Path.Combine(resourceFolder.FullName,resourceId.ToString()));
+                NetworkFileIO.Receive(file, handler, new buffer[bufferLength]);
                 IResourceHandler res = this.factory.CreateResourceHandler(typeId, file);
 
                 lock (resourcesLock)

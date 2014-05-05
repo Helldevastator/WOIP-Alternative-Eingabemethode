@@ -27,14 +27,18 @@ namespace Common
                 file.Directory.Create();
 
             //readTotal header
-            ReadExact(receiver, 4, buffer, 0);
-            int dataLen = BitConverter.ToInt32(buffer, 0);
+            byte[] dataLenBuffer = new byte[8];
+            ReadExact(receiver, 8, dataLenBuffer, 0);
+            if (BitConverter.IsLittleEndian)
+                dataLenBuffer.Reverse();
+
+            long dataLen = BitConverter.ToInt64(dataLenBuffer, 0);
 
             //readTotal binary and save to file
             BinaryWriter w = new BinaryWriter(new FileStream(file.FullName,FileMode.Create));
             try
             {
-                int readTotal = 0;
+                long readTotal = 0;
 
                 while (readTotal < dataLen)
                 {
