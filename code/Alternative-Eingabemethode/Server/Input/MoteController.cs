@@ -7,7 +7,7 @@ using System.Timers;
 using WiimoteLib;
 using System.IO;
 
-namespace Server
+namespace Server.Input
 {
     public struct MoteState {
         public bool buttonA;
@@ -42,14 +42,14 @@ namespace Server
     public delegate void StateListener(MoteController sender, MoteState i);
 
     /// <summary>
-    /// Responsible for accessing the Wiimote and correctly reading out the yaw, pitch and roll values in relation to the screen pointed to.
+    /// Responsible for accessing the Wiimote and correctly reading out the yaw, pitch and rollInterpolated values in relation to the screen pointed to.
     /// </summary>
     public class MoteController : IDisposable
     {
         public event StateListener MoteUpdated;
         private double yaw = 0;
         private double pitch = 0;
-        private double roll = 0;
+        private double rollInterpolated = 0;
 
         private double[] delta;
         private int deltaIndex;
@@ -119,17 +119,17 @@ namespace Server
                 this.CalculateToDegrees(ws, out yaw,out roll,out pitch);
 
                 this.yaw += yaw;
-                this.roll += roll;
+                this.rollInterpolated += roll;
                 this.pitch += pitch;
 
-                IRBarConfiguration configuration = GetIRBarConfiguration(ws, this.yaw, this.pitch, this.roll);
+                IRBarConfiguration configuration = GetIRBarConfiguration(ws, this.rollInterpolated);
                 
                 //fill into update event
                 state.distance = CalculateDistance(ws, configuration);
                 state.configuration = configuration;
                 state.yaw = this.yaw;
                 state.pitch = this.pitch;
-                state.roll = this.roll;
+                state.roll = this.rollInterpolated;
                 state.yawFast = ws.MotionPlusState.YawFast;
                 state.rollFast = ws.MotionPlusState.RollFast;
                 state.pitchFast = ws.MotionPlusState.PitchFast;
@@ -137,7 +137,7 @@ namespace Server
                 state.pitchRaw = ws.MotionPlusState.RawValues.Z;
                 state.rollRaw = ws.MotionPlusState.RawValues.Y;
 
-                state.configuration = this.GetIRBarConfiguration(ws, this.yaw, this.pitch, this.roll);
+                state.configuration = this.GetIRBarConfiguration(ws, this.yaw, this.pitch, this.rollInterpolated);
                 this.ResetGyro(ws, state.configuration);
 
                 if (this.MoteUpdated != null)
@@ -163,6 +163,7 @@ namespace Server
         }
         #endregion
 
+        #region helper methods for listener
         private void CalculateToDegrees(WiimoteState ws, out double yaw, out double roll, out double pitch)
         {
             yaw = ws.MotionPlusState.RawValues.X - this.zeroX;
@@ -186,10 +187,64 @@ namespace Server
         /// </summary>
         /// <param name="ws"></param>
         /// <returns></returns>
-        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws,double yaw, double pitch, double roll)
+        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws, double rollInterpolated)
         {
-            
-            return IRBarConfiguration.NONE;
+            //simplified rotation matrix
+            double sine = Math.Sin(rollInterpolated * Math.PI / 180);
+            double cosine = Math.Cos(rollInterpolated * Math.PI / 180);
+            double rotX = cosine * -sine;
+            double rotY = sine * cosine;
+
+            if (ws.IRState.IRSensors.Length < 4)
+                return IRBarConfiguration.NONE;
+
+            //rotate
+            InputPoint[] points = new InputPoint[4];
+            for (int i = 0; i < 4; i++)
+            {
+                IRSensor s = ws.IRState.IRSensors[i];
+                points[i] = new InputPoint(s.Position.X * rotX, s.Position.Y * rotY);
+            }
+
+            InputPoint point1 = points[0];
+            InputPoint point2 = points[1];  //point which is closest to point1
+            InputPoint point3 = null;       //third point which isn't point 2 or 1
+            int index = 1;
+            double distance = point1.GetDistance(point2);
+
+            //get point with shortest distance in point2
+            for (int i = 2; i < 4; i++)
+            {
+                double d = point1.GetDistance(points[i]);
+                if (d < distance)
+                {
+                    distance = d;
+                    point2 = points[i];
+                    index = i;
+                }
+            }
+
+            point3 = index == 1 ? points[2] : points[1];
+
+            //now compare the points and figure out the figure ;)
+            bool isRight = false;
+            bool isTop = false;
+            if (point1.IsHorizontal(point2))
+            {
+                isTop = point1.IsTopOf(point3);
+                isRight = point3.IsRightOf(point1);
+            }
+            else
+            {
+                isTop = point3.IsTopOf(point1);
+                isRight = point1.IsRightOf(point3);
+            }
+
+            //put in result integer and cast it to enum
+            int result = isTop << 1;
+            result += isRight;
+  
+            return (IRBarConfiguration)result;
         }
 
         /// <summary>
@@ -222,6 +277,7 @@ namespace Server
         {
             
         }
+        #endregion
 
         #region calibration method
         public void Calibrate()
@@ -253,7 +309,7 @@ namespace Server
                         this.isCalibrating = false;
                         this.yaw = 0;
                         this.pitch = 0;
-                        this.roll = 0;
+                        this.rollInterpolated = 0;
                     }
                 }
             }
