@@ -19,7 +19,6 @@ namespace Server
     {
         private delegate void SendResourceDelegate(Client client, int resourceId);
 
-        private readonly BinaryFormatter bf = new BinaryFormatter();
         private readonly Object resourcesLock = new Object();
         private readonly Dictionary<int, Resource> resources;
         private readonly DirectoryInfo resourceFolder;
@@ -60,17 +59,9 @@ namespace Server
                 System.Console.WriteLine("connecting");
                 toClient.Connect(client.ResourceEndPoint);
                 System.Console.WriteLine("connected");
-                byte[] buffer = BitConverter.GetBytes(r.ResourceId);
-                System.Console.WriteLine("buffee1");
-                toClient.Send(buffer);
-
-                buffer = BitConverter.GetBytes(r.ResourceType);
-                System.Console.WriteLine("buffee2");
-                toClient.Send(buffer);
+                NetworkIO.SendObject(toClient, r);
                 System.Console.WriteLine("header");
-
-                
-                NetworkFileIO.SendFile(toClient, f);
+                NetworkIO.SendFile(toClient, f);
                 System.Console.WriteLine("finished Send");
             }
         }

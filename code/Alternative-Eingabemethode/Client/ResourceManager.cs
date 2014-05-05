@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Client.ResourceHandler;
 using Common;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Client
 {
@@ -91,32 +92,19 @@ namespace Client
                 Socket handler = listenerSocket.Accept();
 
                 //read resource
-                int resourceId;
-                int typeId;
-                FileInfo file;
 
-                byte[] intBuffer = new byte[4];
 
-                NetworkFileIO.ReadExact(handler, 4, intBuffer, 0);
-                if (BitConverter.IsLittleEndian)
-                    intBuffer.Reverse();
+                Resource myResource = (Resource)NetworkIO.ReceiveObject(handler);
 
-                resourceId = BitConverter.ToInt32(intBuffer, 0);
-                NetworkFileIO.ReadExact(handler, 4, intBuffer, 0);
-                if (BitConverter.IsLittleEndian)
-                    intBuffer.Reverse();
+                FileInfo file = new FileInfo(Path.Combine(resourceFolder.FullName, myResource.ResourceId.ToString()));
+                NetworkIO.ReceiveFile(file, handler, new byte[bufferLength]);
+                IResourceHandler res = this.factory.CreateResourceHandler(myResource.ResourceType, file);
 
-                typeId = BitConverter.ToInt32(intBuffer, 0);
-
-                file = new FileInfo(Path.Combine(resourceFolder.FullName,resourceId.ToString()));
-                NetworkFileIO.Receive(file, handler, new byte[bufferLength]);
-                IResourceHandler res = this.factory.CreateResourceHandler(typeId, file);
-
-                System.Console.WriteLine("Received: {0}, {1}", resourceId, typeId);
+                System.Console.WriteLine("Received: {0}, {1}", myResource.ResourceId, myResource.ResourceType);
                 lock (resourcesLock)
-                    resources.Add(resourceId, res);
+                    resources.Add(myResource.ResourceId, res);
 
-                this.UpdateWaitSet(resourceId);
+                this.UpdateWaitSet(myResource.ResourceId);
             }
         }
 

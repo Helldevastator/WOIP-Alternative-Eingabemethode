@@ -2,6 +2,7 @@
 
 namespace Common
 {
+    [Serializable]
     public class Resource
     {
         private static Object nextIdLock = new Object();

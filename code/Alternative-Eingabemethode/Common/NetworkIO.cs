@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Common
 {
     /// <summary>
-    /// Helper functions for sending Files over the network
+    /// Helper functions for network IO and serialization
     /// </summary>
-    public static class NetworkFileIO
+    public static class NetworkIO
     {
         /// <summary>
         ///Receives a File from a Websocket and saves it on the local disk.
@@ -22,7 +23,7 @@ namespace Common
         /// <param name="file">File to save data to</param>
         /// <param name="receiver"></param>
         /// <param name="buffer">has to be able to contain the Filename String in UTF-8</param>
-        public static void Receive(FileInfo file, Socket receiver, byte[] buffer) {
+        public static void ReceiveFile(FileInfo file, Socket receiver, byte[] buffer) {
             if (!file.Directory.Exists)
                 file.Directory.Create();
 
@@ -62,7 +63,7 @@ namespace Common
         /// Send a file to receiver 
         /// </summary>
         /// <param name="receiver"></param>
-        /// <param name="file"></param>
+        /// <param name="file">file to send</param>
         public static void SendFile(Socket receiver, FileInfo file)
         {
             byte[] bytes = BitConverter.GetBytes(file.Length);
@@ -85,6 +86,55 @@ namespace Common
             {
                 read += receiver.Receive(buffer, offset+read, bytecount-read, SocketFlags.None);
             }
+        }
+
+        /// <summary>
+        /// serialize object from sender
+        /// </summary>
+        /// <param name="receiver"></param>
+        /// <param name="o"></param>
+        public static void SendObject(Socket receiver, Object o)
+        {
+            System.Console.WriteLine("startbla");
+            using (MemoryStream ms = new MemoryStream())
+            {
+                System.Console.WriteLine("a");
+                BinaryFormatter bf = new BinaryFormatter();
+                System.Console.WriteLine("b");
+                bf.Serialize(ms, o);
+                System.Console.WriteLine("c");
+                byte[] buffer = ms.ToArray();
+                System.Console.WriteLine("d");
+                receiver.Send(BitConverter.GetBytes(buffer.Length));
+                System.Console.WriteLine("e");
+                receiver.Send(buffer);
+                System.Console.WriteLine("f");
+            }
+            System.Console.WriteLine("endbla");
+        }
+
+        /// <summary>
+        /// Deserialize object from sender
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <returns></returns>
+        public static Object ReceiveObject(Socket sender)
+        {
+            Object result = null;
+
+            byte[] lengthBuffer = new byte[4];
+            ReadExact(sender, 4, lengthBuffer, 0);
+            int length = BitConverter.ToInt32(lengthBuffer, 0);
+            byte[] buffer = new byte[length];
+            ReadExact(sender, length, buffer, 0);
+
+            using (MemoryStream ms = new MemoryStream(buffer))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                result = bf.Deserialize(ms);
+            }
+
+            return result;
         }
 
     }

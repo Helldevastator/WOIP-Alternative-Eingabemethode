@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="ClientState.cs" />
     <Compile Include="CursorState.cs" />
-    <Compile Include="NetworkFileIO.cs" />
+    <Compile Include="NetworkIO.cs" />
     <Compile Include="Resource.cs" />
     <Compile Include="WindowState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
