@@ -33,13 +33,6 @@ namespace Server.Input
         public double yawRaw;
         public double pitchRaw;
         public double rollRaw;
-
-        public double d1x;
-        public double d1y;
-        public double d2x;
-        public double d2y;
-        public double otherx;
-        public double othery;
     }
     
     public enum IRBarConfiguration
@@ -58,15 +51,13 @@ namespace Server.Input
     /// </summary>
     public class MoteController : IDisposable
     {
-        public event StateListener MoteUpdated;
-        private double yaw = 0;
-        private double pitch = 0;
+        public event StateListener MoteUpdatedEvent;
+        private double yaw = 0; //REMOVE
+        private double pitch = 0; //REMOVE
         private double rollInterpolated = 0;
+        private IRBarConfiguration lastConfiguration = IRBarConfiguration.NONE;
 
-        private double[] delta;
-        private int deltaIndex;
         private Wiimote mote;
-        private StreamWriter writer;
 
         #region id
         private static int nextId = 0;
@@ -102,7 +93,6 @@ namespace Server.Input
                 this.Id = nextId;
                 nextId++;
             }
-            //writer = new StreamWriter("moveBla.csv");
 
             this.mote = mote;
             mote.WiimoteChanged += wm_WiimoteChanged;
@@ -121,11 +111,6 @@ namespace Server.Input
             if (!this.isCalibrating)
             {
                 MoteState state = new MoteState();
-                
-                /*lock (writer)
-                {
-                    writer.WriteLine("{0};{1};{2};{3};{4};{5};", ws.MotionPlusState.RawValues.X, ws.MotionPlusState.RawValues.Z, ws.MotionPlusState.RawValues.Y, ws.MotionPlusState.YawFast, ws.MotionPlusState.PitchFast, ws.MotionPlusState.RollFast);
-                }*/
 
                 double yaw, roll, pitch;
                 this.CalculateToDegrees(ws, out yaw,out roll,out pitch);
@@ -134,7 +119,7 @@ namespace Server.Input
                 this.rollInterpolated += roll;
                 this.pitch += pitch;
 
-                IRBarConfiguration configuration = GetIRBarConfiguration(ws, 0, ref state);
+                IRBarConfiguration configuration = GetIRBarConfiguration(ws, 0);
 
                 state.configuration = configuration;
 
@@ -155,11 +140,10 @@ namespace Server.Input
                 state.pitchRaw = ws.MotionPlusState.RawValues.Z;
                 state.rollRaw = ws.MotionPlusState.RawValues.Y;
 
-                
                 this.ResetGyro(ws, state.configuration);
 
-                if (this.MoteUpdated != null)
-                    this.MoteUpdated.Invoke(this, state);
+                if (this.MoteUpdatedEvent != null)
+                    this.MoteUpdatedEvent.Invoke(this, state);
             }
             else
             {
@@ -202,10 +186,16 @@ namespace Server.Input
 
         /// <summary>
         /// Finds out what IR-Bar Configuration the Mote points to.
+        /// 
+        /// only calculate configuration, if all IR Points are available. 
+        /// 
+        /// If none are available, return IRBarConfiguration.NONE. 
+        /// 
+        /// If some are available, return the last calculated configuration
         /// </summary>
         /// <param name="ws"></param>
         /// <returns></returns>
-        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws, double rollInterpolated, ref MoteState state)
+        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws, double rollInterpolated)
         {
             //simplified rotation matrix
             double sine = Math.Sin(rollInterpolated * Math.PI / 180);
@@ -213,13 +203,26 @@ namespace Server.Input
             double rotX = cosine * -sine;
             double rotY = sine * cosine;
 
+            bool foundNone = true;
+            bool missingOne = false;
             for (int i = 0; i < ws.IRState.IRSensors.Length; i++)
             {
-                if (!ws.IRState.IRSensors[i].Found)
-                    return IRBarConfiguration.NONE;
+                if (ws.IRState.IRSensors[i].Found)
+                    foundNone = false;
+                else
+                    missingOne = true;
             }
 
-            //rotate
+            //nothing was found, reset last configuration
+            if (foundNone)
+                lastConfiguration = IRBarConfiguration.NONE;
+
+            //at least one is missing, can't calculate configuration so return last known.
+            if (missingOne)
+                return lastConfiguration;
+
+
+            //rotate and copy
             InputPoint[] points = new InputPoint[4];
             for (int i = 0; i < 4; i++)
             {
@@ -260,14 +263,6 @@ namespace Server.Input
             InputPoint D2 = points[indexD2];
             int indexOther = indexD1 == 0 ? indexD2 == 1 ? 2 : 1 : 0;
             InputPoint other = points[indexOther];
-
-            //DEBUG
-            state.d1x = D1.X;
-            state.d1y = D1.Y;
-            state.d2x = D2.X;
-            state.d2y = D2.Y;
-            state.otherx = other.X;
-            state.othery = other.Y;
 
             //make sure that D1 is the upper diagonal point;
             if(!D1.IsTopOf(D2)) {

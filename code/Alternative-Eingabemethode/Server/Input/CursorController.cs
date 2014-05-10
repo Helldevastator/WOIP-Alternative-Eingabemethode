@@ -29,7 +29,7 @@ namespace Server.Input
         {
             this.animator = animator;
             this.mote = mote;
-            this.mote.MoteUpdated += new StateListener(moteListener);
+            this.mote.MoteUpdatedEvent += new StateListener(moteListener);
         }
 
         /// <summary>
