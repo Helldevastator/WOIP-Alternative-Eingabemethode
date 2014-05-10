@@ -84,6 +84,7 @@ namespace Server.Input
         private const double fastMultiplier =  2000d / 440d;
         private const double dt = 1 / 200d;
         private const double distanceFactor = 1;
+        private const double correctionFactor = 1;
         #endregion
 
         public MoteController(Wiimote mote)
@@ -99,8 +100,17 @@ namespace Server.Input
             mote.WiimoteExtensionChanged += wm_WiimoteExtensionChanged;
             mote.Connect();
             mote.SetReportType(InputReport.IRAccel, true);
+            System.Threading.Thread.Sleep(100); //give wiimote time to react
             mote.SetLEDs(false, true, true, false);
+            System.Threading.Thread.Sleep(100); //give wiimote time to react
             mote.InitializeMotionPlus();
+        }
+
+        public void ToZero()
+        {
+            this.yaw = 0;
+            this.rollInterpolated = 0;
+            this.pitch = 0;
         }
 
         #region wiimote listener
@@ -171,16 +181,19 @@ namespace Server.Input
             yaw = ws.MotionPlusState.RawValues.X - this.zeroX;
             yaw = yaw / toDegFactorSlow;
             yaw = ws.MotionPlusState.YawFast ? yaw * fastMultiplier : yaw;
+            yaw /= correctionFactor;
             yaw *= dt;
 
             roll = ws.MotionPlusState.RawValues.Y - this.zeroY;
             roll = roll / toDegFactorSlow;
             roll = ws.MotionPlusState.RollFast ? roll * fastMultiplier : roll;
+            roll /= correctionFactor;
             roll *= dt; 
 
             pitch = ws.MotionPlusState.RawValues.Z - this.zeroZ;
             pitch = pitch / toDegFactorSlow;
             pitch = ws.MotionPlusState.YawFast ? pitch * fastMultiplier : pitch;
+            pitch /= correctionFactor;
             pitch *= -dt;   //because otherwise delta angle is negative when turning upwards
         }
 
@@ -382,11 +395,6 @@ namespace Server.Input
             if (disp)
             {
                 if (mote != null) mote.Dispose();
-                lock (writer)
-                {
-                    if (writer != null)
-                        writer.Dispose();
-                }
             }
         }
         #endregion
