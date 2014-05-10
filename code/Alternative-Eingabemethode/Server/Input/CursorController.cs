@@ -98,7 +98,7 @@ namespace Server.Input
         
         private Point CalculateScreenPosition(MoteState state, Client client)
         {
-            double x = Math.Tan(state.yaw * Math.PI / 180) / state.distance;    //x and y distance from screen center point.
+            double x = Math.Tan(state.yaw * Math.PI / 180) / state.distance;    //X and Y distance from screen center point.
             double y = Math.Tan(state.pitch * Math.PI / 180) / state.distance;
 
             //calculate from distance to pixel;

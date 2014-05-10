@@ -33,6 +33,13 @@ namespace Server.Input
         public double yawRaw;
         public double pitchRaw;
         public double rollRaw;
+
+        public double d1x;
+        public double d1y;
+        public double d2x;
+        public double d2y;
+        public double otherx;
+        public double othery;
     }
     
     public enum IRBarConfiguration
@@ -127,7 +134,9 @@ namespace Server.Input
                 this.rollInterpolated += roll;
                 this.pitch += pitch;
 
-                IRBarConfiguration configuration = GetIRBarConfiguration(ws, 0);
+                IRBarConfiguration configuration = GetIRBarConfiguration(ws, 0, ref state);
+
+                state.configuration = configuration;
 
                 state.point1 = ws.IRState.IRSensors[0].Found;
                 state.point2 = ws.IRState.IRSensors[1].Found;
@@ -146,7 +155,7 @@ namespace Server.Input
                 state.pitchRaw = ws.MotionPlusState.RawValues.Z;
                 state.rollRaw = ws.MotionPlusState.RawValues.Y;
 
-                state.configuration = this.GetIRBarConfiguration(ws, this.rollInterpolated);
+                
                 this.ResetGyro(ws, state.configuration);
 
                 if (this.MoteUpdated != null)
@@ -196,7 +205,7 @@ namespace Server.Input
         /// </summary>
         /// <param name="ws"></param>
         /// <returns></returns>
-        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws, double rollInterpolated)
+        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws, double rollInterpolated, ref MoteState state)
         {
             //simplified rotation matrix
             double sine = Math.Sin(rollInterpolated * Math.PI / 180);
@@ -218,38 +227,76 @@ namespace Server.Input
                 points[i] = new InputPoint(s.Position.X * rotX, s.Position.Y * rotY);
             }
 
-            InputPoint point1 = points[0];
-            InputPoint point2 = points[1];  //point which is closest to point1
-            InputPoint point3 = null;       //third point which isn't point 2 or 1
-            int index = 1;
-            double distance = point1.GetDistance(point2);
+            /* 
+             * Example Configuration of IR Bars:
+             *  D1
+             *  |
+             *  |
+             *  X   X --- D2
+             *  
+             * 1. Algorithm: find the diagonal points (D1,D2), they have the biggest distance between each other.
+             * 2. Take one of the other points and compare its location to the diagonal.
+             *     
+             */
 
-            //get point with shortest distance in point2
-            for (int i = 2; i < 4; i++)
+            int indexD1 = 0;
+            int indexD2 = 0;
+            double distance = 1000000000;
+            for (int i = 0; i < 3; i++)
             {
-                double d = point1.GetDistance(points[i]);
-                if (d < distance)
+                
+                for (int j = i+1; j < 4; j++)
                 {
-                    distance = d;
-                    point2 = points[i];
-                    index = i;
+                    double curDistance = points[i].GetDistance(points[j]);
+                    if (curDistance < distance)
+                    {
+                        indexD1 = i;
+                        indexD2 = j;
+                    }
                 }
             }
 
-            point3 = index == 1 ? points[2] : points[1];
+            InputPoint D1 = points[indexD1];
+            InputPoint D2 = points[indexD2];
+            int indexOther = indexD1 == 0 ? indexD2 == 1 ? 2 : 1 : 0;
+            InputPoint other = points[indexOther];
+
+            //DEBUG
+            state.d1x = D1.X;
+            state.d1y = D1.Y;
+            state.d2x = D2.X;
+            state.d2y = D2.Y;
+            state.otherx = other.X;
+            state.othery = other.Y;
+
+            //make sure that D1 is the upper diagonal point;
+            if(!D1.IsTopOf(D2)) {
+                D1 = points[indexD2];
+                D2 = points[indexD1];
+            }
 
             //now compare the points and figure out the figure ;)
-            bool isRight = false;
-            bool isTop = false;
-            if (point1.IsHorizontal(point2))
+            bool isRight = false;   //is one IR Bar on the top?
+            bool isTop = false;     //is one IR Bar on the right?
+
+            if (D1.IsRightOf(D2))
             {
-                isTop = point1.IsTopOf(point3);
-                isRight = point3.IsRightOf(point1);
+                if (D1.IsHorizontal(other))
+                {
+                    isTop = true;
+                }
+                else
+                {
+                    isRight = true;
+                }
             }
             else
             {
-                isTop = point3.IsTopOf(point1);
-                isRight = point1.IsRightOf(point3);
+                if (D1.IsHorizontal(other))
+                {
+                    isRight = true;
+                    isTop = true;
+                }
             }
 
             //put in result integer and cast it to enum

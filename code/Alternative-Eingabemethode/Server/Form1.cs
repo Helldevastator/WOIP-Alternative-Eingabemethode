@@ -52,6 +52,10 @@ namespace Server
             this.clb1.SetItemChecked(1, c.point2);
             this.clb1.SetItemChecked(2, c.point3);
             this.clb1.SetItemChecked(3, c.point4);
+
+            this.lblIRD1.Text = c.d1x.ToString("0.0000")+" | "+c.d1y.ToString("0.0000");
+            this.lblIRD2.Text = c.d2x.ToString("0.0000") + " | " + c.d2y.ToString("0.0000");
+            this.lblIROther.Text = c.otherx.ToString("0.0000") + " | " + c.othery.ToString("0.0000");
 /*  
             this.rec.X += c.xPos;
             this.rec.Y += c.yPos;
