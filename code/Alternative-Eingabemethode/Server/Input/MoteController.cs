@@ -173,8 +173,6 @@ namespace Server.Input
 
 
 
-                this.ResetGyro(ws, state.configuration);
-
                 if (this.MoteUpdatedEvent != null)
                     this.MoteUpdatedEvent.Invoke(this, state);
             }
@@ -448,16 +446,6 @@ namespace Server.Input
             double distance = Math.Sqrt(x * x + y * y);
 
             return distance*distanceFactor;
-        }
-
-        /// <summary>
-        /// Resets the integrated Roll, Pitch and Yaw to counter the gyro'InputState drifting.
-        /// </summary>
-        /// <param name="ws"></param>
-        /// <param name="conf"></param>
-        private void ResetGyro(WiimoteState ws, IRBarConfiguration conf)
-        {
-            
         }
         #endregion
 
