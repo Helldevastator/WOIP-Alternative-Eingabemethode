@@ -117,9 +117,10 @@ namespace Client
                 if (waitSet.Keys.Contains(newId))
                 {
                     var list = this.waitSet[newId];
-                    var resource = this.resources[newId];
                     foreach (ResourceLoadedCallback c in list)
                         c.Invoke(resource);
+
+                    waitSet.Remove(newId);
                 }
  
             }

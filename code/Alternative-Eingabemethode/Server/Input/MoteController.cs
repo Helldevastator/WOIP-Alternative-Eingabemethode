@@ -9,6 +9,13 @@ using System.IO;
 
 namespace Server.Input
 {
+
+    public class BarPoints
+    {
+        public InputPoint p1;
+        public InputPoint p2;
+    }
+
     public struct MoteState {
         public bool buttonA;
         public bool buttonB;
@@ -18,6 +25,9 @@ namespace Server.Input
         public bool pitchFast;
         
         public IRBarConfiguration configuration;
+
+        public BarPoints vertical;
+        public BarPoints horizontal;
 
         public bool point1;
         public bool point2;
@@ -129,17 +139,28 @@ namespace Server.Input
                 this.rollInterpolated += roll;
                 this.pitch += pitch;
 
-                IRBarConfiguration configuration = GetIRBarConfiguration(ws, 0);
+                int irCount = 0;
+                for (int i = 0; i < ws.IRState.IRSensors.Length; i++)
+                    if (ws.IRState.IRSensors[i].Found)
+                        irCount++;
 
+                IRBarConfiguration configuration = GetIRBarConfiguration(ws, 0,irCount);
                 state.configuration = configuration;
+
+                BarPoints horizontal;
+                BarPoints vertical;
+                this.GetIRPosition(ws, irCount, out horizontal, out vertical);
+                state.vertical = vertical;
+                state.horizontal = horizontal;
 
                 state.point1 = ws.IRState.IRSensors[0].Found;
                 state.point2 = ws.IRState.IRSensors[1].Found;
                 state.point3 = ws.IRState.IRSensors[2].Found;
                 state.point4 = ws.IRState.IRSensors[3].Found;
-                //fill into update event
-                state.distance = CalculateDistance(ws, configuration);
-                state.configuration = configuration;
+
+                
+                //delete
+                state.distance = CalculateDistance(ws, configuration);//fill into update event
                 state.yaw = this.yaw;
                 state.pitch = this.pitch;
                 state.roll = this.rollInterpolated;
@@ -149,6 +170,8 @@ namespace Server.Input
                 state.yawRaw = ws.MotionPlusState.RawValues.X;
                 state.pitchRaw = ws.MotionPlusState.RawValues.Z;
                 state.rollRaw = ws.MotionPlusState.RawValues.Y;
+
+
 
                 this.ResetGyro(ws, state.configuration);
 
@@ -198,6 +221,103 @@ namespace Server.Input
         }
 
         /// <summary>
+        /// Splits the 4 IR Points into 2 Points for the horizontal Bar and 2 for the vertical Bar.
+        /// If there less than 3, it only creates the bar which is fully visible.
+        /// if there are less than 2 IR Points available, it doesn't do anything.
+        /// </summary>
+        /// <param name="ws"></param>
+        /// <param name="irCount"></param>
+        /// <param name="horizontal"></param>
+        /// <param name="vertical"></param>
+        private void GetIRPosition(WiimoteState ws, int irCount, out BarPoints horizontal, out BarPoints vertical)
+        {
+            int index = 0;
+            InputPoint[] points = new InputPoint[irCount];
+            horizontal = null;
+            vertical = null;
+
+            //copy
+            for (int i = 0; i < points.Length; i++)
+            {
+                if (ws.IRState.IRSensors[i].Found)
+                {
+                    IRSensor s = ws.IRState.IRSensors[i];
+                    points[index] = new InputPoint(s.Position.X, s.Position.Y);
+                    index++;
+                }
+            }
+
+            if (irCount == 2)
+            {
+                if (points[0].IsHorizontal(points[1]))
+                {
+                    horizontal = new BarPoints();
+                    horizontal.p1 = points[0];
+                    horizontal.p2 = points[1];
+                }
+                else
+                {
+                    vertical = new BarPoints();
+                    vertical.p1 = points[0];
+                    vertical.p2 = points[1];
+                }
+            }
+            else if (irCount > 2)
+            {
+                InputPoint px1;
+                InputPoint px2;
+                double xDistance = InputPoint.MinimumXDistance(points, px1, px2);
+
+                InputPoint py1;
+                InputPoint py2;
+                double yDistance = InputPoint.MinimumXDistance(points, py1, py2);
+
+                if (irCount == 4)
+                {
+                    horizontal = new BarPoints();
+                    horizontal.p1 = py1;
+                    horizontal.p2 = py2;
+                    vertical = new BarPoints();
+                    vertical.p1 = px1;
+                    vertical.p2 = px2;
+                }
+                else
+                {
+                    if (xDistance < yDistance)
+                    {
+                        vertical = new BarPoints();
+                        vertical.p1 = px1;
+                        vertical.p2 = px2;
+                    }
+                    else
+                    {
+                        horizontal = new BarPoints();
+                        horizontal.p1 = py1;
+                        horizontal.p2 = py2;
+                    }
+                }
+            }
+            switch (irCount)
+            {
+                case 4:
+                    //
+                    break;
+                case 3:
+                    double xDistance = 10000000;
+
+                    double yDistance = 10000000;
+                    break;
+                case 2:
+           
+                    break;
+
+                default:
+                    //nothing
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Finds out what IR-Bar Configuration the Mote points to.
         /// 
         /// only calculate configuration, if all IR Points are available. 
@@ -207,31 +327,24 @@ namespace Server.Input
         /// If some are available, return the last calculated configuration
         /// </summary>
         /// <param name="ws"></param>
+        /// <param name="irCount">Number of IR sensors with a signal</param>
         /// <returns></returns>
-        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws, double rollInterpolated)
+        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws, double rollInterpolated,int irCount)
         {
+            diagonal1 = null;
+            diagonal2 = null;
             //simplified rotation matrix
             double sine = Math.Sin(rollInterpolated * Math.PI / 180);
             double cosine = Math.Cos(rollInterpolated * Math.PI / 180);
             double rotX = cosine * -sine;
             double rotY = sine * cosine;
 
-            bool foundNone = true;
-            bool missingOne = false;
-            for (int i = 0; i < ws.IRState.IRSensors.Length; i++)
-            {
-                if (ws.IRState.IRSensors[i].Found)
-                    foundNone = false;
-                else
-                    missingOne = true;
-            }
-
             //nothing was found, reset last configuration
-            if (foundNone)
+            if (irCount == 0)
                 lastConfiguration = IRBarConfiguration.NONE;
 
             //at least one is missing, can't calculate configuration so return last known.
-            if (missingOne)
+            if (irCount < 4)
                 return lastConfiguration;
 
 
@@ -282,6 +395,8 @@ namespace Server.Input
                 D1 = points[indexD2];
                 D2 = points[indexD1];
             }
+            diagonal1 = D1;
+            diagonal2 = D2;
 
             //now compare the points and figure out the figure ;)
             bool isRight = false;   //is one IR Bar on the top?

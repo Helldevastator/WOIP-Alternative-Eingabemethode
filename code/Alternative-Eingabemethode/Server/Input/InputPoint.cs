@@ -47,5 +47,61 @@ namespace Server.Input
             double dy = p.Y - Y;
             return dy < 0 ? true : false;
         }
+
+        /// <summary>
+        /// Gets the points with the minimum distance in the X Axis.
+        /// </summary>
+        /// <param name="points">Points to search for</param>
+        /// <param name="p1">Minimum Point 1</param>
+        /// <param name="p2">Minimum Point 2</param>
+        /// <returns>Distance</returns>
+        public static double MinimumXDistance(InputPoint[] points, out InputPoint p1, out InputPoint p2)
+        {
+            double minimum = 10000;
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                for (int j = i + 1; j < points.Length; j++)
+                {
+                    double curDistance = Math.Abs(points[i].X - points[j].X);
+                    if (curDistance < minimum)
+                    {
+                        minimum = curDistance;
+                        p1 = points[i];
+                        p2 = poitns[j];
+                    }
+                }
+            }
+
+            return minimum;
+        }
+
+        /// <summary>
+        /// Gets the points with the minimum distance in the Y Axis.
+        /// </summary>
+        /// <param name="points">Points to search for</param>
+        /// <param name="p1">Minimum Point 1</param>
+        /// <param name="p2">Minimum Point 2</param>
+        /// <returns>Distance</returns>
+        public static double MinimumYDistance(InputPoint[] points, out InputPoint p1, out InputPoint p2)
+        {
+            double minimum = 10000;
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                for (int j = i + 1; j < points.Length; j++)
+                {
+                    double curDistance = Math.Abs(points[i].Y - points[j].Y);
+                    if (curDistance < minimum)
+                    {
+                        minimum = curDistance;
+                        p1 = points[i];
+                        p2 = poitns[j];
+                    }
+                }
+            }
+
+            return minimum;
+        }
     }
 }
