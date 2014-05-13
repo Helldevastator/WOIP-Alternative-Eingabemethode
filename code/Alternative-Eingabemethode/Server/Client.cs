@@ -20,6 +20,8 @@ namespace Server
         //threadsave?
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
+        public int cmWidth { get; private set; }
+        public int cmHeight { get; private set; }
         public Dictionary<int, CursorState> Cursors { get; private set; }
         public List<AnimationWindow> Windows { get; private set; }
 
