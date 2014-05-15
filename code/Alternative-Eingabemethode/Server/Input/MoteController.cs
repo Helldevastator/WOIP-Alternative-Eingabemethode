@@ -65,7 +65,7 @@ namespace Server.Input
         private double yaw = 0; //REMOVE
         private double pitch = 0; //REMOVE
         private double rollInterpolated = 0;
-        private IRBarConfiguration lastConfiguration = IRBarConfiguration.NONE;
+        private volatile IRBarConfiguration lastConfiguration = IRBarConfiguration.NONE;
 
         private Wiimote mote;
 
@@ -235,7 +235,7 @@ namespace Server.Input
             vertical = null;
 
             //copy
-            for (int i = 0; i < points.Length; i++)
+            for (int i = 0; i < 4; i++)
             {
                 if (ws.IRState.IRSensors[i].Found)
                 {
@@ -264,11 +264,11 @@ namespace Server.Input
             {
                 InputPoint px1;
                 InputPoint px2;
-                double xDistance = InputPoint.MinimumXDistance(points, px1, px2);
+                double xDistance = InputPoint.MinimumXDistance(points, out px1, out px2);
 
                 InputPoint py1;
                 InputPoint py2;
-                double yDistance = InputPoint.MinimumXDistance(points, py1, py2);
+                double yDistance = InputPoint.MinimumXDistance(points, out py1, out py2);
 
                 if (irCount == 4)
                 {
@@ -329,8 +329,6 @@ namespace Server.Input
         /// <returns></returns>
         private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws, double rollInterpolated,int irCount)
         {
-            diagonal1 = null;
-            diagonal2 = null;
             //simplified rotation matrix
             double sine = Math.Sin(rollInterpolated * Math.PI / 180);
             double cosine = Math.Cos(rollInterpolated * Math.PI / 180);
@@ -393,8 +391,6 @@ namespace Server.Input
                 D1 = points[indexD2];
                 D2 = points[indexD1];
             }
-            diagonal1 = D1;
-            diagonal2 = D2;
 
             //now compare the points and figure out the figure ;)
             bool isRight = false;   //is one IR Bar on the top?
@@ -423,8 +419,9 @@ namespace Server.Input
             //put in result integer and cast it to enum
             int result = Convert.ToInt32(isTop) << 1;
             result += Convert.ToInt32(isRight);
-  
-            return (IRBarConfiguration)result;
+
+            this.lastConfiguration = (IRBarConfiguration)result;
+            return this.lastConfiguration;
         }
 
         /// <summary>

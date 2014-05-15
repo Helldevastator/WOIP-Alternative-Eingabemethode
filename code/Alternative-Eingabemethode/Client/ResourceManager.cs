@@ -116,6 +116,7 @@ namespace Client
             {
                 if (waitSet.Keys.Contains(newId))
                 {
+                    var resource = this.resources[newId];
                     var list = this.waitSet[newId];
                     foreach (ResourceLoadedCallback c in list)
                         c.Invoke(resource);

@@ -7,7 +7,7 @@ using WiimoteLib;
 
 namespace Server.Input
 {
-    class InputPoint
+    public class InputPoint
     {
         public double X { get; private set; }
         public double Y { get; private set; }
@@ -58,7 +58,8 @@ namespace Server.Input
         public static double MinimumXDistance(InputPoint[] points, out InputPoint p1, out InputPoint p2)
         {
             double minimum = 10000;
-
+            p1 = null;
+            p2 = null;
             for (int i = 0; i < points.Length; i++)
             {
                 for (int j = i + 1; j < points.Length; j++)
@@ -68,7 +69,7 @@ namespace Server.Input
                     {
                         minimum = curDistance;
                         p1 = points[i];
-                        p2 = poitns[j];
+                        p2 = points[j];
                     }
                 }
             }
@@ -86,7 +87,8 @@ namespace Server.Input
         public static double MinimumYDistance(InputPoint[] points, out InputPoint p1, out InputPoint p2)
         {
             double minimum = 10000;
-
+            p1 = null;
+            p2 = null;
             for (int i = 0; i < points.Length; i++)
             {
                 for (int j = i + 1; j < points.Length; j++)
@@ -96,7 +98,7 @@ namespace Server.Input
                     {
                         minimum = curDistance;
                         p1 = points[i];
-                        p2 = poitns[j];
+                        p2 = points[j];
                     }
                 }
             }

@@ -52,6 +52,27 @@ namespace Server
             this.clb1.SetItemChecked(1, c.point2);
             this.clb1.SetItemChecked(2, c.point3);
             this.clb1.SetItemChecked(3, c.point4);
+            if (c.vertical == null)
+            {
+                lblV1.Text = "Vertical Point1: None";
+                lblV2.Text = "Vertical Point2: None";
+            }
+            else
+            {
+                lblV1.Text = "Vertical Point1: x:" + c.vertical.p1.X.ToString("0.0") + " y:" + c.vertical.p1.Y.ToString("0.0");
+                lblV2.Text = "Vertical Point2: x:" + c.vertical.p2.X.ToString("0.0") + " y:" + c.vertical.p2.Y.ToString("0.0");
+            }
+
+            if (c.horizontal == null)
+            {
+                lblH1.Text = "Horizontal Point1: None";
+                lblH2.Text = "Horizontal Point2: None";
+            }
+            else
+            {
+                lblH1.Text = "Horizontal Point1: x:" + c.horizontal.p1.X.ToString("0.0") + " y:" + c.horizontal.p1.Y.ToString("0.0");
+                lblH2.Text = "Horizontal Point2: y:" + c.horizontal.p2.X.ToString("0.0") + " y:" + c.horizontal.p2.Y.ToString("0.0");
+            }
 
 /*  
             this.rec.X += c.xPos;

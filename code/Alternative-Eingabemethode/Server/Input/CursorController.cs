@@ -13,7 +13,7 @@ namespace Server.Input
     /// </summary>
     public class CursorController
     {
-        private static const double barSizeCM = 20;
+        private const double barSizeCM = 20;
 
         private readonly MoteController mote;
         private readonly AnimationServer animator;
@@ -98,7 +98,7 @@ namespace Server.Input
             }
         }
         
-        private Point CalculateScreenPosition(MoteState state, Client client,IRBarConfiguration currentConfig)
+        private Point CalculateScreenPosition(MoteState state, Client client)
         {
             if (client != null && (state.horizontal != null || state.vertical != null))
             {
@@ -140,13 +140,13 @@ namespace Server.Input
                         xPointAt = (centerDistance.X * 1024 / distance * barSizeCM);
                 }
 
-                int xPixel = xPointAt / client.cmWidth * client.PixelWidth;
-                int yPixel = yPointAt / client.cmHeight * client.PixelHeight;
+                int xPixel = (int)(xPointAt / client.cmWidth * client.PixelWidth);
+                int yPixel = (int)(yPointAt / client.cmHeight * client.PixelHeight);
 
                 return new Point(xPixel, yPixel);
             }
             else
-                return null;
+                return new Point(0,0);
         }
 
         private InputPoint CalcDistanceToCenter(BarPoints bar)

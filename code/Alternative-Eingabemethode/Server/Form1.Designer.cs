@@ -43,15 +43,16 @@
             this.label7 = new System.Windows.Forms.Label();
             this.picBox = new System.Windows.Forms.PictureBox();
             this.lblRelZ = new System.Windows.Forms.Label();
-            this.lblIRD1 = new System.Windows.Forms.Label();
-            this.lblIRD2 = new System.Windows.Forms.Label();
+            this.lblV1 = new System.Windows.Forms.Label();
+            this.lblV2 = new System.Windows.Forms.Label();
             this.lblRelY = new System.Windows.Forms.Label();
             this.lblRelX = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.lblIRBar = new System.Windows.Forms.Label();
             this.clb1 = new System.Windows.Forms.CheckedListBox();
-            this.lblIROther = new System.Windows.Forms.Label();
+            this.lblH1 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
+            this.lblH2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -177,23 +178,23 @@
             this.lblRelZ.TabIndex = 16;
             this.lblRelZ.Text = "label8";
             // 
-            // lblIRD1
+            // lblV1
             // 
-            this.lblIRD1.AutoSize = true;
-            this.lblIRD1.Location = new System.Drawing.Point(248, 311);
-            this.lblIRD1.Name = "lblIRD1";
-            this.lblIRD1.Size = new System.Drawing.Size(46, 17);
-            this.lblIRD1.TabIndex = 17;
-            this.lblIRD1.Text = "label8";
+            this.lblV1.AutoSize = true;
+            this.lblV1.Location = new System.Drawing.Point(248, 311);
+            this.lblV1.Name = "lblV1";
+            this.lblV1.Size = new System.Drawing.Size(46, 17);
+            this.lblV1.TabIndex = 17;
+            this.lblV1.Text = "label8";
             // 
-            // lblIRD2
+            // lblV2
             // 
-            this.lblIRD2.AutoSize = true;
-            this.lblIRD2.Location = new System.Drawing.Point(248, 328);
-            this.lblIRD2.Name = "lblIRD2";
-            this.lblIRD2.Size = new System.Drawing.Size(46, 17);
-            this.lblIRD2.TabIndex = 18;
-            this.lblIRD2.Text = "label9";
+            this.lblV2.AutoSize = true;
+            this.lblV2.Location = new System.Drawing.Point(248, 328);
+            this.lblV2.Name = "lblV2";
+            this.lblV2.Size = new System.Drawing.Size(46, 17);
+            this.lblV2.TabIndex = 18;
+            this.lblV2.Text = "label9";
             // 
             // lblRelY
             // 
@@ -240,14 +241,14 @@
             this.clb1.Size = new System.Drawing.Size(120, 89);
             this.clb1.TabIndex = 28;
             // 
-            // lblIROther
+            // lblH1
             // 
-            this.lblIROther.AutoSize = true;
-            this.lblIROther.Location = new System.Drawing.Point(248, 345);
-            this.lblIROther.Name = "lblIROther";
-            this.lblIROther.Size = new System.Drawing.Size(46, 17);
-            this.lblIROther.TabIndex = 29;
-            this.lblIROther.Text = "label8";
+            this.lblH1.AutoSize = true;
+            this.lblH1.Location = new System.Drawing.Point(248, 345);
+            this.lblH1.Name = "lblH1";
+            this.lblH1.Size = new System.Drawing.Size(46, 17);
+            this.lblH1.TabIndex = 29;
+            this.lblH1.Text = "label8";
             // 
             // button2
             // 
@@ -259,20 +260,30 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // lblH2
+            // 
+            this.lblH2.AutoSize = true;
+            this.lblH2.Location = new System.Drawing.Point(248, 362);
+            this.lblH2.Name = "lblH2";
+            this.lblH2.Size = new System.Drawing.Size(46, 17);
+            this.lblH2.TabIndex = 31;
+            this.lblH2.Text = "label8";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(983, 511);
+            this.Controls.Add(this.lblH2);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.lblIROther);
+            this.Controls.Add(this.lblH1);
             this.Controls.Add(this.clb1);
             this.Controls.Add(this.lblIRBar);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.lblRelX);
             this.Controls.Add(this.lblRelY);
-            this.Controls.Add(this.lblIRD2);
-            this.Controls.Add(this.lblIRD1);
+            this.Controls.Add(this.lblV2);
+            this.Controls.Add(this.lblV1);
             this.Controls.Add(this.lblRelZ);
             this.Controls.Add(this.picBox);
             this.Controls.Add(this.label7);
@@ -313,14 +324,15 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.PictureBox picBox;
         private System.Windows.Forms.Label lblRelZ;
-        private System.Windows.Forms.Label lblIRD1;
-        private System.Windows.Forms.Label lblIRD2;
+        private System.Windows.Forms.Label lblV1;
+        private System.Windows.Forms.Label lblV2;
         private System.Windows.Forms.Label lblRelY;
         private System.Windows.Forms.Label lblRelX;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lblIRBar;
         private System.Windows.Forms.CheckedListBox clb1;
-        private System.Windows.Forms.Label lblIROther;
+        private System.Windows.Forms.Label lblH1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label lblH2;
     }
 }
