@@ -102,60 +102,61 @@ namespace Server.Input
         {
             if (client != null && (state.horizontal != null || state.vertical != null))
             {
+                int moteWidth = MoteController.IR_PIXEL_WIDTH;
+                int moteHeight = MoteController.IR_PIXEL_HEIGHT;
                 double xPointAt = 0;    // centimeters of where the wiimote is pointing. (0,0) is in the upper left corner
                 double yPointAt = 0;
-
-                BarPoints currentBar = null;
 
                 //convert to screen coordinates, coordinate center is the upper left screen corner;
                 if (state.horizontal != null)
                 {
-                    //calculate distance between the ir points;
-                    double dx = (state.horizontal.p2.X - state.horizontal.p1.X) * 1024;
-                    double dy = (state.horizontal.p2.Y - state.horizontal.p1.Y) * 728;
+                    //calculate distance in pixels between the ir points;
+                    double dx = (state.horizontal.p2.X - state.horizontal.p1.X)*moteWidth;
+                    double dy = (state.horizontal.p2.Y - state.horizontal.p1.Y)*moteHeight;
                     double distance = Math.Sqrt(dx * dx + dy * dy);
-
                     
                     InputPoint centerDistance = CalcDistanceToCenter(state.horizontal);
-                    xPointAt = centerDistance.X * 1024 / distance * barSizeCM + client.cmWidth/2;
+                    xPointAt = centerDistance.X * moteWidth / distance * barSizeCM + client.CmWidth / (double)2;
                     if (state.configuration == IRBarConfiguration.LEFT_TOP || state.configuration == IRBarConfiguration.RIGHT_TOP)
-                        yPointAt = (-centerDistance.Y)*728/distance*barSizeCM;
+                        yPointAt = (centerDistance.Y*moteHeight)/distance*barSizeCM;
             
                     else 
-                        yPointAt = client.cmWidth-(centerDistance.Y*728/distance*barSizeCM);
+                        yPointAt = client.CmHeight-(centerDistance.Y*moteHeight/distance*barSizeCM);
                         
                 }
                 else
                 {
                     //calculate distance between the ir points;
-                    double dx = (state.vertical.p2.X - state.vertical.p1.X) * 1024;
-                    double dy = (state.vertical.p2.Y - state.vertical.p1.Y) * 728;
+                    double dx = (state.vertical.p2.X - state.vertical.p1.X) * moteWidth;
+                    double dy = (state.vertical.p2.Y - state.vertical.p1.Y)*moteHeight;
                     double distance = Math.Sqrt(dx * dx + dy * dy);
 
                     InputPoint centerDistance = CalcDistanceToCenter(state.vertical);
-                    yPointAt = centerDistance.Y*728/distance*barSizeCM+client.cmHeight/2;
+                    yPointAt = centerDistance.Y * moteHeight / distance * barSizeCM + client.CmHeight /(double) 2;
                     if (state.configuration == IRBarConfiguration.RIGHT_BOTTOM || state.configuration == IRBarConfiguration.RIGHT_TOP)
-                        xPointAt = client.cmWidth + (centerDistance.X * 1024 / distance * barSizeCM);
+                        xPointAt = client.CmWidth + (centerDistance.X * moteWidth / distance * barSizeCM);
                     else
-                        xPointAt = (centerDistance.X * 1024 / distance * barSizeCM);
+                        xPointAt = (centerDistance.X * moteWidth / distance * barSizeCM);
                 }
 
-                int xPixel = (int)(xPointAt / client.cmWidth * client.PixelWidth);
-                int yPixel = (int)(yPointAt / client.cmHeight * client.PixelHeight);
+                int xPixel = (int)(xPointAt / client.CmWidth * client.PixelWidth);
+                int yPixel = (int)(yPointAt / client.CmHeight * client.PixelHeight);
 
                 return new Point(xPixel, yPixel);
             }
             else
-                return new Point(0,0);
+                return new Point(-1,-1);
         }
 
         private InputPoint CalcDistanceToCenter(BarPoints bar)
         {
             double x = (bar.p2.X-bar.p1.X)/2;
-            double y = (bar.p2.Y-bar.p2.Y)/2;
+            double y = (bar.p2.Y-bar.p1.Y)/2;
 
-            InputPoint barCenter = new InputPoint(bar.p2.X + x, bar.p2.Y + y);
-            return new InputPoint(0.5 - barCenter.X, 0.5 - barCenter.Y);
+            double centerX = bar.p1.X + x;
+            double centerY = bar.p1.Y+y;
+
+            return new InputPoint(0.5 - centerX, 0.5 - centerY);
         }
 
         private double CalculateScaleFactor(MoteState state)

@@ -20,17 +20,16 @@ namespace Server
         //threadsave?
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
-        public int cmWidth { get; private set; }
-        public int cmHeight { get; private set; }
-        public Dictionary<int, CursorState> Cursors { get; private set; }
-        public List<AnimationWindow> Windows { get; private set; }
+        public int CmWidth { get; private set; }
+        public int CmHeight { get; private set; }
 
         private ClientState state;
 
-        public Client(EndPoint resourceEndPoint)
+        public Client(EndPoint resourceEndPoint,int pixelWidth, int pixelHeight,int CmWidth,int cmHeight)
         {
             this.ResourceEndPoint = resourceEndPoint;
             //this.WindowEndPoint = new IPEndPoint(IPAddress.Parse("10.0.0.1"), 3000);
+
         }
         
         /// <summary>
