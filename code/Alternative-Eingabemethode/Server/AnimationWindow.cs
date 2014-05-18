@@ -8,6 +8,9 @@ using System.Drawing;
 
 namespace Server
 {
+    /// <summary>
+    /// Needs to  be threadsafe
+    /// </summary>
     public class AnimationWindow
     {
         #region idGeneration
@@ -15,6 +18,7 @@ namespace Server
         private static int nextId = 0;
         #endregion
 
+        private readonly Object moveLock = new Object();
         private bool moving = false;
         private WindowState lastState;
         private Client lastClient;
@@ -33,47 +37,78 @@ namespace Server
                 id = nextId;
                 nextId++;
             }
-            Client = lastClient = c;
-            lastState = currentState = new WindowState(id, resourceId);
+
+            lock (moveLock)
+            {
+                Client = lastClient = c;
+                lastState = currentState = new WindowState(id, resourceId);
+            }
             
         }
 
-        public void startMove()
+        public bool ContainsPoint(Point p)
         {
-            lastState = currentState;
-            lastClient = Client;
-            moving = true;
-            currentState = new WindowState(lastState.WindowId, lastState.ResourceId);
-            currentState.Angle = lastState.Angle;
-            currentState.Height = lastState.Height;
-            currentState.Width = lastState.With;
-            currentState.X = lastState.X;
-            currentState.Y = lastState.Y;
+            return false;
         }
 
+        #region moving window
+        public void startMove()
+        {
+            lock (moveLock)
+            {
+                lastState = currentState;
+                lastClient = Client;
+                moving = true;
+                currentState = new WindowState(lastState.WindowId, lastState.ResourceId);
+                currentState.Angle = lastState.Angle;
+                currentState.Height = lastState.Height;
+                currentState.Width = lastState.With;
+                currentState.X = lastState.X;
+                currentState.Y = lastState.Y;
+                currentState.MovingFlag = true;
+            }
+        }
 
+        public void resetSlide()
+        {
+            lock (moveLock)
+            {
+                this.dx = 0;
+                this.dy = 0;
+            }
+        }
         public void resetMove()
         {
-            Client = lastClient;
-            currentState = lastState;
-            dx = 0;
-            dy = 0;
-            moving = false;
+            lock (moveLock)
+            {
+                Client = lastClient;
+                currentState = lastState;
+                dx = 0;
+                dy = 0;
+                moving = false;
+            }
         }
 
         public void move(Point toPoint)
         {
-            currentState.X = toPoint.X;
-            currentState.Y = toPoint.Y;
-            this.dx = toPoint.X - lastPoint.X;
-            this.dy = toPoint.Y - lastPoint.Y;
-            lastPoint = toPoint;
+            lock (moveLock)
+            {
+                currentState.X = toPoint.X;
+                currentState.Y = toPoint.Y;
+                this.dx = toPoint.X - lastPoint.X;
+                this.dy = toPoint.Y - lastPoint.Y;
+                lastPoint = toPoint;
+            }
         }
 
         public void finishMove()
         {
-            lastState = currentState;
-            lastClient = Client;
+            lock (moveLock)
+            {
+                this.moving = false;
+                lastState = currentState;
+                lastClient = Client;
+            }
         }
 
         public WindowState GetWindowState(double dt)
@@ -81,5 +116,6 @@ namespace Server
 
             return w;
         }
+        #endregion
     }
 }

@@ -9,6 +9,9 @@ using System.Net.Sockets;
 
 namespace Server
 {
+    /// <summary>
+    /// Needs to be threadsafe
+    /// </summary>
     public class Client
     {
         //possible performance increase: save writeWindowData() byte array and update modified
@@ -17,11 +20,12 @@ namespace Server
         public NetworkStream UpdateStream { get; private set; }
         public EndPoint ResourceEndPoint { get; private set; } 
 
-        //threadsave?
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
         public int CmWidth { get; private set; }
         public int CmHeight { get; private set; }
+        
+        //threadsave?
 
         private ClientState state;
 
@@ -44,6 +48,19 @@ namespace Server
                 InputState.Windows[i] = Windows[i].GetWindowState();*/
 
             return null;
+        }
+
+        public AnimationWindow GetWindowAt(Point p)
+        {
+            return null;
+        }
+
+        public void AddWindow(AnimationWindow w)
+        {
+        }
+
+        public void RemoveWindow(AnimationWindow w)
+        {
         }
     }
 }

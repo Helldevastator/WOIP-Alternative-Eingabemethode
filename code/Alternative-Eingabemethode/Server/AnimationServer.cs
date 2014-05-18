@@ -34,7 +34,6 @@ namespace Server
         #endregion
 
         private readonly Dictionary<int, Client> clients;
-
         //lock
         private readonly List<CursorController> cursors;
 
@@ -63,17 +62,21 @@ namespace Server
 
         public AnimationWindow GetWindow(Client client, Point atPoint)
         {
-            return null;
+            if (client != null)
+                return client.GetWindowAt(atPoint);
+            else
+                return null;
         }
 
         /// <summary>
-        /// Start movement of window 
+        /// Start moving window 
         /// </summary>
         /// <param name="w"></param>
         /// <param name="newPosition">first new position</param>
         public void StartMoveWindow(Client client,AnimationWindow window, Point newPosition)
         {
-
+            window.startMove();
+            window.move(newPosition);
         }
 
         /// <summary>
@@ -83,7 +86,7 @@ namespace Server
         /// <param name="newPosition"></param>
         public void MoveWindow(Client client,AnimationWindow window, Point newPosition)
         {
-
+            window.move(newPosition);
         }
 
         /// <summary>
@@ -95,7 +98,16 @@ namespace Server
         /// <param name="finalPosition"></param>
         public void FinishMove(Client client, AnimationWindow window, Point finalPosition)
         {
-
+            if (client != null)
+            {
+                window.move(newPosition);
+                window.finishMove();
+            }
+            else
+            {
+                window.resetMove();
+                window.Client.AddWindow(window);
+            }
         }
 
         public void ScaleWindow(Client client, AnimationWindow window, double factor)
@@ -110,7 +122,7 @@ namespace Server
         /// <param name="window"></param>
         public void RemoveWindowFromClient(Client client, AnimationWindow window)
         {
-
+            client.RemoveWindow(w);
         }
 
         /// <summary>
@@ -121,7 +133,9 @@ namespace Server
         /// <param name="startPosition"></param>
         public void AddWindowToClient(Client client, AnimationWindow window, Point startPosition)
         {
-
+            client.AddWindow(window);
+            window.resetSlide();
+            window.move(startPosition);
         }
     }
 }
