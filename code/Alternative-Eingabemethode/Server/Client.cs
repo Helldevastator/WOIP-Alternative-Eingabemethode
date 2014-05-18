@@ -24,10 +24,11 @@ namespace Server
         public int PixelHeight { get; private set; }
         public int CmWidth { get; private set; }
         public int CmHeight { get; private set; }
-        
-        //threadsave?
 
-        private ClientState state;
+        private readonly Object wLock = new Object();
+        private readonly Dictionary<int, AnimationWindow> windows;
+
+        //threadsave?
 
         public Client(EndPoint resourceEndPoint,int pixelWidth, int pixelHeight,int CmWidth,int cmHeight)
         {
@@ -37,30 +38,54 @@ namespace Server
         }
         
         /// <summary>
-        /// Returns the client InputState for serialization
+        ///  Returns a ClientState class representing the state of each window on this client.
+        /// 
+        /// it does not contain information about any cursors, this is done in the AnimationServer Class
         /// </summary>
-        /// <returns></returns>
-        public ClientState GetClientState() 
+        /// <param name="dt">delta time since the last call. Used for the animation</param>
+        /// <returns>ClientState object for serialization over the network</returns>
+        public ClientState GetAnimatedClientState(double dt) 
         {
-           /* InputState.Cursors = new List<CursorState>((IEnumerable<CursorState>)Cursors);
-            InputState.Windows = new List<WindowState>(Windows.Count);
-            for (int i = 0; i < InputState.Windows.Count; i++)
-                InputState.Windows[i] = Windows[i].GetWindowState();*/
+            ClientState answer = new ClientState();
+            answer.Windows = new List<WindowState>(windows.Count);
+            answer.Cursors = null;
+            
+            lock (wLock)
+            {
+                foreach (AnimationWindow w in windows.Values)
+                    answer.Windows.Add(w.GetWindowState(dt));
+            }
 
-            return null;
+            return answer;
         }
 
         public AnimationWindow GetWindowAt(Point p)
         {
-            return null;
+            AnimationWindow answer = null;
+            lock (wLock)
+            {
+                foreach (AnimationWindow w in windows.Values)
+                {
+                    if (w.ContainsPoint(p))
+                    {
+                        answer = w;
+                        break;
+                    }
+                }
+            }
+            return anwer;
         }
 
         public void AddWindow(AnimationWindow w)
         {
+            lock (wLock)
+                windows.Add(w.WindowId, w);
         }
 
         public void RemoveWindow(AnimationWindow w)
         {
+            lock(wLock)
+             windows.Remove(w.WindowId);
         }
     }
 }

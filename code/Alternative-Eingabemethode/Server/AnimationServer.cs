@@ -34,17 +34,20 @@ namespace Server
         #endregion
 
         private readonly Dictionary<int, Client> clients;
-        //lock
+        private readonly ResourceServer resourceServer;
+
+        //lock?
         private readonly List<CursorController> cursors;
 
         /// <summary>
         /// Private Constructor, otherwise the this reference would escape the constructor, which would be a problem with multithreaded apps.
         /// </summary>
         /// <param name="clients"></param>
-        private AnimationServer(Dictionary<int, Client> clients)
+        private AnimationServer(Dictionary<int, Client> clients,ResourceServer resServer)
         {
             this.clients = clients;
             cursors = new List<CursorController>(4);
+            this.resourceServer = resServer;
         }
 
         /// <summary>
@@ -136,6 +139,7 @@ namespace Server
             client.AddWindow(window);
             window.resetSlide();
             window.move(startPosition);
+            resourceServer.SendResource(client, window.ResourceId);  
         }
     }
 }

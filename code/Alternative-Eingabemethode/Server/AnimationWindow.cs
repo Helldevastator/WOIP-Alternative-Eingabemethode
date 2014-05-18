@@ -18,6 +18,9 @@ namespace Server
         private static int nextId = 0;
         #endregion
 
+        public int ResourceId { public get; private set; }
+        public int WindowId { public get; private set; }
+
         private readonly Object moveLock = new Object();
         private bool moving = false;
         private WindowState lastState;
@@ -42,12 +45,15 @@ namespace Server
             {
                 Client = lastClient = c;
                 lastState = currentState = new WindowState(id, resourceId);
+                this.ResourceId = resourceId;
+                this.WindowId = WindowId;
             }
             
         }
 
         public bool ContainsPoint(Point p)
         {
+
             return false;
         }
 
