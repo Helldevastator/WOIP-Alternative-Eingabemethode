@@ -13,8 +13,7 @@ namespace Common
     [Serializable]
     public sealed class WindowState
     {
-        private static Object nextIdLock = new Object();
-        private static int nextId = 0;
+
 
         public int WindowId { get; private set; }
         public int X { get; set; }
@@ -26,14 +25,9 @@ namespace Common
         public int ResourceId { get; set; }
         public bool RemovedFlag { get; set; }
 
-        public WindowState(int resourceId)
+        public WindowState(int windowId ,int resourceId)
         {
-            lock (nextIdLock)
-            {
-                this.WindowId = nextId;
-                nextId++;
-            }
-
+            this.WindowId = windowId;
             this.ResourceId = resourceId;
         }
 

@@ -37,7 +37,7 @@ namespace Server.Input
         /// <summary>
         /// Get the current cursorstate and at which client it points to.
         /// </summary>
-        /// <param name="currentClient"></param>
+        /// <param name="Client"></param>
         /// <param name="cursorState"></param>
         public void GetCursorState(out Client currentClient, out CursorState cursorState)
         {
