@@ -32,6 +32,7 @@ namespace Client
             g.TranslateTransform(state.X, state.Y);
             Rectangle rec = new Rectangle(0,0,20,20);
             g.FillRectangle(Brushes.Red, rec);
+            g.Transform = translationState;
         }
     }
 }

@@ -56,7 +56,6 @@ namespace Client
                 g.RotateTransform(state.Angle, MatrixOrder.Prepend);
                 g.TranslateTransform(-state.Width / 2, -state.Height / 2);
 
-
                 //draw opaque
                 ColorMatrix matrix = new ColorMatrix();
                 matrix.Matrix33 = opacity;
