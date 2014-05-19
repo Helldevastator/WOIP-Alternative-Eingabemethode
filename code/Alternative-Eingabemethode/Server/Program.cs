@@ -45,10 +45,10 @@ namespace Server
 
             ResourceServer resServer = new ResourceServer(new System.IO.DirectoryInfo(@"C:\Users\Jon\Desktop\testServer"));
             AnimationServer anmServer = AnimationServer.AnimationServerFactory(controllers, clients, resServer);
-
-            Application.EnableVisualStyles();
+     
+            /*Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new Form1());*/
         }
     }
 }
