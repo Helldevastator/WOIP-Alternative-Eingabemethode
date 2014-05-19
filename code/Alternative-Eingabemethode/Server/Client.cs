@@ -21,7 +21,7 @@ namespace Server
         public readonly EndPoint ResourceEndPoint;
 
         #region constants
-        public readonly long Id;
+        public readonly int Id;
         public readonly double XFrictionFactor;
         public readonly double YFrictionFactor;
         public readonly int PixelWidth;
@@ -43,16 +43,15 @@ namespace Server
         /// <param name="pixelHeight"></param>
         /// <param name="cmWidth"></param>
         /// <param name="cmHeight"></param>
-        public Client(Socket updateSocket, EndPoint resourceEndPoint,int pixelWidth, int pixelHeight,int cmWidth,int cmHeight)
+        public Client(int Id,Socket updateSocket, EndPoint resourceEndPoint,int pixelWidth, int pixelHeight,int cmWidth,int cmHeight)
         {
+            this.Id = Id;
             this.UpdateSocket = updateSocket;
             this.ResourceEndPoint = resourceEndPoint;
             this.PixelHeight = pixelHeight;
             this.PixelWidth = PixelWidth;
             this.CmWidth = cmWidth;
-            this.CmHeight = CmHeight;
-            //this.WindowEndPoint = new IPEndPoint(IPAddress.Parse("10.0.0.1"), 3000);
-
+            this.CmHeight = cmHeight;
         }
 
         /// <summary>

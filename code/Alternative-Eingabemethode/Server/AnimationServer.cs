@@ -27,7 +27,7 @@ namespace Server
         /// <param name="controllers"></param>
         /// <param name="clients"></param>
         /// <returns></returns>
-        public static AnimationServer AnimationServerFactory(List<MoteController> controllers, Dictionary<int, Client> clients, ResourceServer resServer)
+        public static AnimationServer AnimationServerFactory(List<MoteController> controllers, Client[] clients, ResourceServer resServer)
         {
             AnimationServer server = new AnimationServer(clients,resServer);
 
@@ -44,7 +44,7 @@ namespace Server
         }
         #endregion
 
-        private readonly Dictionary<int, Client> clients;
+        private readonly Client[] clients;
         private readonly ResourceServer resourceServer;
         private readonly Timer updateTimer;
         private readonly Stopwatch watch;
@@ -57,7 +57,7 @@ namespace Server
         /// Private Constructor, otherwise the this reference would escape the constructor, which would be a problem with multithreaded apps.
         /// </summary>
         /// <param name="clients"></param>
-        private AnimationServer(Dictionary<int, Client> clients,ResourceServer resServer,int intervalMS = 100)
+        private AnimationServer(Client[] clients,ResourceServer resServer,int intervalMS = 100)
         {
             this.clients = clients;
             cursors = new List<CursorController>(4);
@@ -75,12 +75,27 @@ namespace Server
             {
                 watch.Stop();
                 double dt = watch.Elapsed.Seconds;
+                Dictionary<int,CursorState> cursorStates = new Dictionary<int,CursorState>(cursors.Count);
+
+                foreach(CursorController c in cursors) 
+                {
+                    Client currentClient;
+                    CursorState state;
+                    c.GetCursorState(out currentClient,out state);
+                    cursorStates.Add(currentClient.Id, state);
+                }
 
                 //paralell?
-                foreach (Client c in clients.Values)
+                foreach (Client c in clients)
                 {
                     c.Animate(dt);
-                    NetworkIO.SendObject(c.UpdateSocket, c.GetAnimatedClientState());
+                    ClientState state = c.GetAnimatedClientState();
+                    if(cursorStates.ContainsKey(c.Id))
+                    {
+                        state.Cursors = new List<CursorState>();
+                        state.Cursors.Add(cursorStates[c.Id]);
+                    }
+                    NetworkIO.SendObject(c.UpdateSocket, state);
                 }
 
                 watch.Restart();

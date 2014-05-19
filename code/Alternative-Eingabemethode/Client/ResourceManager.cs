@@ -39,6 +39,11 @@ namespace Client
 
             this.factory = factory;
             this.resourceFolder = resourceFolder;
+
+            //clear resourceFolder contents
+            foreach (FileInfo f in resourceFolder.GetFiles())
+                f.Delete();
+
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             listenerSocket.Bind(adress);
             listenerThread = new Thread(new ThreadStart(ListenerMethod));

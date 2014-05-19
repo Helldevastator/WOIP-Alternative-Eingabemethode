@@ -12,7 +12,7 @@ namespace Client.ResourceHandler
     interface IResourceHandler
     {
         /// <summary>
-        /// Draw function which displays a resource on the point (0,0) of the Graphics object.
+        /// Draw function which displays a resource on the resourceListenerPoint (0,0) of the Graphics object.
         /// Idempotent function. The call should always draw the same image in g if the attributes are the same.
         /// </summary>
         /// <param name="g"></param>

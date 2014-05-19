@@ -14,11 +14,11 @@ namespace Client
         readonly Display display;
         readonly ResourceManager resources;
 
-        public DisplayController(Display display, Dictionary<int, DisplayWindow> windows, Dictionary<int, DisplayCursor> cursors, ResourceManager resources)
+        public DisplayController(Display display, ResourceManager resources)
         {
             this.display = display;
-            this.windows = windows;
-            this.cursors = cursors;
+            this.windows = new Dictionary<int, DisplayWindow>();
+            this.cursors = new Dictionary<int, DisplayCursor>();
             this.resources = resources;
         }
 

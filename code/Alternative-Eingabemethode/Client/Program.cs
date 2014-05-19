@@ -14,17 +14,23 @@ namespace Client
         [STAThread]
         static void Main(string[] args)
         {
-            /*
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Display());*/
+            
+            
 
             System.Console.WriteLine("bla");
-            EndPoint point = new IPEndPoint(IPAddress.Parse("127.0.0.1"),6556);
-            ResourceManager manager = new ResourceManager(point, new System.IO.DirectoryInfo(@"C:\Users\Jon\Desktop\testClient"), new ResourceHandlerFactory());
+            EndPoint resourceListenerPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"),6556);
+            EndPoint updatePoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5665);
 
-            System.Threading.Thread.Sleep(15 * 1000);
-            System.Console.WriteLine("main out");
+            ResourceManager manager = new ResourceManager(resourceListenerPoint, new System.IO.DirectoryInfo(@"C:\Users\Jon\Desktop\testClient"), new ResourceHandlerFactory());
+            UpdateListener upListener = new UpdateListener(updatePoint);
+            Display display = new Display();
+
+            DisplayController controller = new DisplayController(display, manager);
+            upListener.UpdateEvent += controller.UpdateClient;
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(display);
         }
     }
 }
