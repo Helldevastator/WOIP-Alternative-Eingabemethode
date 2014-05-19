@@ -18,7 +18,7 @@ namespace Server
         //possible performance increase: save writeWindowData() byte array and update modified
 
         public long Id { get; private set; }
-        public NetworkStream UpdateStream { get; private set; }
+        public Socket UpdateSocket { get; private set; }
         public EndPoint ResourceEndPoint { get; private set; } 
 
         //constants
@@ -50,6 +50,7 @@ namespace Server
                     w.Animate(dt);
             }
         }
+
         /// <summary>
         ///  Returns a ClientState class representing the state of each window on this client.
         /// 

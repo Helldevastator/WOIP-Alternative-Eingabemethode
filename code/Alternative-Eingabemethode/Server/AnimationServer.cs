@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using System.Drawing;
 using Server.Input;
 using System.Timers;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
+using System.Net.Sockets;
+using Common;
 
 namespace Server
 {
@@ -30,7 +34,12 @@ namespace Server
             foreach (MoteController mote in controllers)
                 server.cursors.Add(new CursorController(mote, server));
 
+            
+            lock (server.watch)
+                server.watch.Start();
+            
             server.updateTimer.Start();
+
             return server;
         }
         #endregion
@@ -38,6 +47,8 @@ namespace Server
         private readonly Dictionary<int, Client> clients;
         private readonly ResourceServer resourceServer;
         private readonly Timer updateTimer;
+        private readonly Stopwatch watch;
+        private readonly BinaryFormatter bf;
 
         //lock?
         private readonly List<CursorController> cursors;
@@ -54,10 +65,26 @@ namespace Server
             updateTimer = new Timer(intervalMS);
             updateTimer.AutoReset = true;
             updateTimer.Elapsed += UpdateClients;
+            bf = new BinaryFormatter();
+            watch = new Stopwatch();
         }
 
         private void UpdateClients(Object source, ElapsedEventArgs e)
         {
+            lock (watch)
+            {
+                watch.Stop();
+                double dt = watch.Elapsed.Seconds;
+
+                //paralell?
+                foreach (Client c in clients.Values)
+                {
+                    c.Animate(dt);
+                    NetworkIO.SendObject(c.UpdateSocket, c.GetAnimatedClientState());
+                }
+
+                watch.Restart();
+            }
         }
 
         #region Window Interactions
