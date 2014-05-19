@@ -20,6 +20,9 @@ namespace Server
         public NetworkStream UpdateStream { get; private set; }
         public EndPoint ResourceEndPoint { get; private set; } 
 
+        //constants
+        public double XFrictionFactor { get; private set; }
+        public double YFrictionFactor { get; private set; }
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
         public int CmWidth { get; private set; }
@@ -36,15 +39,23 @@ namespace Server
             //this.WindowEndPoint = new IPEndPoint(IPAddress.Parse("10.0.0.1"), 3000);
 
         }
-        
+
+        public void Animate(double dt)
+        {
+            lock (wLock)
+            {
+                foreach (AnimationWindow w in windows.Values)
+                    w.Animate(dt);
+            }
+        }
         /// <summary>
         ///  Returns a ClientState class representing the state of each window on this client.
         /// 
         /// it does not contain information about any cursors, this is done in the AnimationServer Class
         /// </summary>
-        /// <param name="dt">delta time since the last call. Used for the animation</param>
+        /// <param name="dt"></param>
         /// <returns>ClientState object for serialization over the network</returns>
-        public ClientState GetAnimatedClientState(double dt) 
+        public ClientState GetAnimatedClientState() 
         {
             ClientState answer = new ClientState();
             answer.Windows = new List<WindowState>(windows.Count);
@@ -53,7 +64,7 @@ namespace Server
             lock (wLock)
             {
                 foreach (AnimationWindow w in windows.Values)
-                    answer.Windows.Add(w.GetWindowState(dt));
+                    answer.Windows.Add(w.GetWindowState());
             }
 
             return answer;

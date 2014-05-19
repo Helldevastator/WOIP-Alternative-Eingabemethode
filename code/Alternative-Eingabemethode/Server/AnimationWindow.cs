@@ -53,8 +53,15 @@ namespace Server
 
         public bool ContainsPoint(Point p)
         {
-
-            return false;
+            lock (moveLock)
+            {
+                int maxX = currentState.X + currentState.Width / 2;
+                int minX = currentState.X - currentState.Width / 2;
+                int maxY = currentState.Y + currentState.Height / 2;
+                int minY = currentState.Y - currentState.Height / 2;
+            }
+            bool answer = maxX >= p.X && minY <= p.X && maxY >= p.Y && minY <= p.Y;
+            return answer;
         }
 
         #region moving window
@@ -83,6 +90,7 @@ namespace Server
                 this.dy = 0;
             }
         }
+
         public void resetMove()
         {
             lock (moveLock)
@@ -117,10 +125,40 @@ namespace Server
             }
         }
 
-        public WindowState GetWindowState(double dt)
+        public void Animate(double dt)
         {
+            lastPoint.X = currentState.X;
+            lastPoint.Y = currentState.Y;
+            
+            currentState.X = dx * dt;
+            currentState.Y = dy * dt;
+            dx *= Client.XFrictionFactor * dt;
+            dy *= Client.YFrictionFactor * dt;
+            if (currentState.X < 0)
+            {
+                currentState.X = 0;
+                dx = -dx;
+            }
+            if (currentState.Y < 0)
+            {
+                currentState.Y = 0;
+                dy = -dy;
+            }
+            if (currentState.X >= Client.PixelWidth)
+            {
+                currentState.X = Client.PixelWidth - 1;
+                dx = -dx;
+            }
+            if (currentState.Y >= Client.PixelHeight)
+            {
+                currentState.Y = Client.PixelHeight - 1; ;
+                dy = -dy;
+            }
+        }
 
-            return w;
+        public WindowState GetWindowState()
+        {
+            return currentState;
         }
         #endregion
     }

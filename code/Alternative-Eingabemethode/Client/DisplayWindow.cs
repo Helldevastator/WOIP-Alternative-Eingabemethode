@@ -47,7 +47,7 @@ namespace Client
         {
             if (state != null)
             {
-                float opacity = 0.50f;
+                float opacity = state.MovingFlag ? 0.50f : 1.0f;
 
                 //rotate image
                 Matrix translationState = g.Transform;
