@@ -38,7 +38,7 @@ namespace Client
         /// </summary>
         private void ListenerMethod()
         {
-            listenerSocket.Listen(1);
+            listenerSocket.Listen(2);
             Socket handler = listenerSocket.Accept();
 
 

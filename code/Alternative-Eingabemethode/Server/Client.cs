@@ -17,31 +17,48 @@ namespace Server
     {
         //possible performance increase: save writeWindowData() byte array and update modified
 
-        public long Id { get; private set; }
-        public Socket UpdateSocket { get; private set; }
-        public EndPoint ResourceEndPoint { get; private set; } 
+        public readonly Socket UpdateSocket;
+        public readonly EndPoint ResourceEndPoint;
 
-        //constants
-        public double XFrictionFactor { get; private set; }
-        public double YFrictionFactor { get; private set; }
-        public int PixelWidth { get; private set; }
-        public int PixelHeight { get; private set; }
-        public int CmWidth { get; private set; }
-        public int CmHeight { get; private set; }
+        #region constants
+        public readonly long Id;
+        public readonly double XFrictionFactor;
+        public readonly double YFrictionFactor;
+        public readonly int PixelWidth;
+        public readonly int PixelHeight;
+        public readonly int CmWidth;
+        public readonly int CmHeight;
+        #endregion
 
         private readonly Object wLock = new Object();
         private readonly Dictionary<int, AnimationWindow> windows;
         private readonly Dictionary<int, AnimationWindow> removedWindows;
 
-        //threadsave?
-
-        public Client(EndPoint resourceEndPoint,int pixelWidth, int pixelHeight,int CmWidth,int cmHeight)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="updateSocket"></param>
+        /// <param name="resourceEndPoint"></param>
+        /// <param name="pixelWidth"></param>
+        /// <param name="pixelHeight"></param>
+        /// <param name="cmWidth"></param>
+        /// <param name="cmHeight"></param>
+        public Client(Socket updateSocket, EndPoint resourceEndPoint,int pixelWidth, int pixelHeight,int cmWidth,int cmHeight)
         {
+            this.UpdateSocket = updateSocket;
             this.ResourceEndPoint = resourceEndPoint;
+            this.PixelHeight = pixelHeight;
+            this.PixelWidth = PixelWidth;
+            this.CmWidth = cmWidth;
+            this.CmHeight = CmHeight;
             //this.WindowEndPoint = new IPEndPoint(IPAddress.Parse("10.0.0.1"), 3000);
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dt"></param>
         public void Animate(double dt)
         {
             lock (wLock)
