@@ -15,7 +15,7 @@ namespace Server
     /// <summary>
     /// Represents a server responsible for sending resources to the client asynchronously
     /// </summary>
-    class ResourceServer
+    public class ResourceServer
     {
         private delegate void SendResourceDelegate(Client client, int resourceId);
 

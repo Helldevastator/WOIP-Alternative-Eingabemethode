@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using Server.Input;
+using System.Timers;
 
 namespace Server
 {
@@ -22,19 +23,21 @@ namespace Server
         /// <param name="controllers"></param>
         /// <param name="clients"></param>
         /// <returns></returns>
-        internal static AnimationServer AnimationServerFactory(List<MoteController> controllers, Dictionary<int, Client> clients, ResourceServer resServer)
+        public static AnimationServer AnimationServerFactory(List<MoteController> controllers, Dictionary<int, Client> clients, ResourceServer resServer)
         {
             AnimationServer server = new AnimationServer(clients,resServer);
 
             foreach (MoteController mote in controllers)
                 server.cursors.Add(new CursorController(mote, server));
 
+            server.updateTimer.Start();
             return server;
         }
         #endregion
 
         private readonly Dictionary<int, Client> clients;
         private readonly ResourceServer resourceServer;
+        private readonly Timer updateTimer;
 
         //lock?
         private readonly List<CursorController> cursors;
@@ -43,13 +46,21 @@ namespace Server
         /// Private Constructor, otherwise the this reference would escape the constructor, which would be a problem with multithreaded apps.
         /// </summary>
         /// <param name="clients"></param>
-        private AnimationServer(Dictionary<int, Client> clients,ResourceServer resServer)
+        private AnimationServer(Dictionary<int, Client> clients,ResourceServer resServer,int intervalMS = 100)
         {
             this.clients = clients;
             cursors = new List<CursorController>(4);
             this.resourceServer = resServer;
+            updateTimer = new Timer(intervalMS);
+            updateTimer.AutoReset = true;
+            updateTimer.Elapsed += UpdateClients;
         }
 
+        private void UpdateClients(Object source, ElapsedEventArgs e)
+        {
+        }
+
+        #region Window Interactions
         /// <summary>
         /// Returns the client which has specified IRBarConfiguration
         /// </summary>
@@ -141,5 +152,7 @@ namespace Server
             window.move(startPosition);
             resourceServer.SendResource(client, window.ResourceId);  
         }
+
+#endregion
     }
 }
