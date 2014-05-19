@@ -9,10 +9,10 @@ namespace Common
     [Serializable]
     public sealed class CursorState
     {
-        public int cursorId;
-        public int x;
-        public int y;
-        public bool activated;
-        public bool removedFlag;
+        public int CursorId;
+        public int X;
+        public int Y;
+        public bool Activated;
+        public bool RemovedFlag;
     }
 }

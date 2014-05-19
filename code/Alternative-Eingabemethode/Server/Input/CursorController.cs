@@ -44,7 +44,7 @@ namespace Server.Input
             lock (lockCurrent)
             {
                 currentClient = this.currentClient;
-                cursorState = new CursorState() { cursorId = mote.Id, x = currentPoint.X, y = currentPoint.Y, activated = isActivated };
+                cursorState = new CursorState() { CursorId = mote.Id, X = currentPoint.X, Y = currentPoint.Y, Activated = isActivated };
             }
         }
 

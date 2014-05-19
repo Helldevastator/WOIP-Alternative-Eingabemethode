@@ -14,10 +14,7 @@ namespace Client
         [STAThread]
         static void Main(string[] args)
         {
-            
-            
-
-            System.Console.WriteLine("bla");
+            System.Console.WriteLine("Starting Client");
             EndPoint resourceListenerPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"),6556);
             EndPoint updatePoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5665);
 

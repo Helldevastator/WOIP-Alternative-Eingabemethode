@@ -51,18 +51,18 @@ namespace Client
             foreach (CursorState s in cursorStates)
             {
                 //remove
-                if (s.removedFlag)
-                    this.cursors.Remove(s.cursorId);
+                if (s.RemovedFlag)
+                    this.cursors.Remove(s.CursorId);
 
-                if (this.cursors.ContainsKey(s.cursorId))
+                if (this.cursors.ContainsKey(s.CursorId))
                 {
                     //update
-                    this.cursors[s.cursorId].Update(s);
+                    this.cursors[s.CursorId].Update(s);
                 }
                 else
                 {
                     //add
-                    this.cursors.Add(s.cursorId, new DisplayCursor(s));
+                    this.cursors.Add(s.CursorId, new DisplayCursor(s));
                 }
             }
 
