@@ -33,13 +33,8 @@ namespace Server
 
             foreach (MoteController mote in controllers)
                 server.cursors.Add(new CursorController(mote, server));
-
-            
-            lock (server.watch)
-                server.watch.Start();
             
             server.updateTimer.Start();
-
             return server;
         }
         #endregion
@@ -47,7 +42,7 @@ namespace Server
         private readonly Client[] clients;
         private readonly ResourceServer resourceServer;
         private readonly Timer updateTimer;
-        private readonly Stopwatch watch;
+        private readonly double dt;
         private readonly BinaryFormatter bf;
 
         //lock?
@@ -66,15 +61,11 @@ namespace Server
             updateTimer.AutoReset = true;
             updateTimer.Elapsed += UpdateClients;
             bf = new BinaryFormatter();
-            watch = new Stopwatch();
+            dt = 1.0 / (double)intervalMS;
         }
 
         private void UpdateClients(Object source, ElapsedEventArgs e)
         {
-            lock (watch)
-            {
-                watch.Stop();
-                double dt = watch.Elapsed.Seconds;
                 Dictionary<int,CursorState> cursorStates = new Dictionary<int,CursorState>(cursors.Count);
 
                 foreach(CursorController c in cursors) 
@@ -97,9 +88,6 @@ namespace Server
                     }
                     NetworkIO.SendObject(c.UpdateSocket, state);
                 }
-
-                watch.Restart();
-            }
         }
 
         #region Window Interactions

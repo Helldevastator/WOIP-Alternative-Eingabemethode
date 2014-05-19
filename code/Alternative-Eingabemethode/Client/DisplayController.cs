@@ -48,12 +48,12 @@ namespace Client
                 }
             }
 
+            //HACK: simply remove all cursors if the count isn't the same anymore
+            if (cursorStates.Count != this.cursors.Count)
+                this.cursors.Clear();
+
             foreach (CursorState s in cursorStates)
             {
-                //remove
-                if (s.RemovedFlag)
-                    this.cursors.Remove(s.CursorId);
-
                 if (this.cursors.ContainsKey(s.CursorId))
                 {
                     //update

@@ -39,21 +39,13 @@ namespace Client
             listenerSocket.Listen(2);
             Socket handler = listenerSocket.Accept();
 
-
-            BinaryFormatter bf = new BinaryFormatter();
-            NetworkStream toServer = new NetworkStream(handler);
-
             while (true)
             {
-                if (toServer.CanRead)
-                {
-                    ClientState state = (ClientState)bf.Deserialize(toServer);
-                    if (UpdateEvent != null)
-                        UpdateEvent.BeginInvoke(state, null, null);
-                }
+                ClientState state = (ClientState) NetworkIO.ReceiveObject(handler);
+                if (UpdateEvent != null)
+                    UpdateEvent.BeginInvoke(state, null, null);
             }
         }
-
 
         #region IDisposable implementation
         public void Dispose()

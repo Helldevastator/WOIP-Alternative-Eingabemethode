@@ -49,9 +49,11 @@ namespace Server
             this.UpdateSocket = updateSocket;
             this.ResourceEndPoint = resourceEndPoint;
             this.PixelHeight = pixelHeight;
-            this.PixelWidth = PixelWidth;
+            this.PixelWidth = pixelWidth;
             this.CmWidth = cmWidth;
             this.CmHeight = cmHeight;
+            windows = new Dictionary<int, AnimationWindow>();
+            removedWindows = new Dictionary<int, AnimationWindow>();
         }
 
         /// <summary>

@@ -141,7 +141,8 @@ namespace Server.Input
 
                 int xPixel = (int)(xPointAt / client.CmWidth * client.PixelWidth);
                 int yPixel = (int)(yPointAt / client.CmHeight * client.PixelHeight);
-
+                System.Console.WriteLine(xPointAt + " " + yPointAt);
+                System.Console.WriteLine(xPixel + " " + yPixel);
                 return new Point(xPixel, yPixel);
             }
             else

@@ -22,7 +22,6 @@ namespace Server
         public int WindowId { get; private set; }
 
         private readonly Object moveLock = new Object();
-        private bool moving = false;
         private WindowState lastState;
         private Client lastClient;
         public Client Client { get; private set; }
@@ -75,7 +74,6 @@ namespace Server
             {
                 lastState = currentState;
                 lastClient = Client;
-                moving = true;
                 currentState = new WindowState(lastState.WindowId, lastState.ResourceId);
                 currentState.Angle = lastState.Angle;
                 currentState.Height = lastState.Height;
@@ -103,7 +101,6 @@ namespace Server
                 currentState = lastState;
                 dx = 0;
                 dy = 0;
-                moving = false;
             }
         }
 
@@ -123,7 +120,6 @@ namespace Server
         {
             lock (moveLock)
             {
-                this.moving = false;
                 lastState = currentState;
                 lastClient = Client;
             }

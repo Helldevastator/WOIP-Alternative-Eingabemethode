@@ -13,6 +13,5 @@ namespace Common
         public int X;
         public int Y;
         public bool Activated;
-        public bool RemovedFlag;
     }
 }

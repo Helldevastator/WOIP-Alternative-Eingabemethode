@@ -24,10 +24,8 @@ namespace Client
         
         public Display()
         {
-            this.windows = windows;
-            this.cursors = cursors;
-
             InitializeComponent();
+            this.WindowState = FormWindowState.Maximized;
             /*PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Documents\GitHub\WOIP-Alternative-Eingabemethode\code\Alternative-Eingabemethode\example.bmp"));
             w = new DisplayWindow(res);
             w.Update(new Common.WindowState() { X = 300, Angle = 45, Y = 200, Height = 400, Width = 600, ResourceId = 0});*/
@@ -51,16 +49,21 @@ namespace Client
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
-            this.DrawBackground(g);
+            //this.DrawBackground(g);
             //w.Draw(g);
 
             lock (updateLock)
             {
-                foreach (KeyValuePair<int,DisplayWindow> entry in windows)
-                    entry.Value.Draw(g);
+                System.Console.WriteLine("inDraw");
+                if (windows != null && cursors != null)
+                {
+                    System.Console.WriteLine("Draw");
+                    foreach (DisplayWindow entry in windows.Values)
+                        entry.Draw(g);
 
-                foreach (KeyValuePair<int,DisplayCursor> entry in cursors)
-                    entry.Value.Draw(g);
+                    foreach (DisplayCursor entry in cursors.Values)
+                        entry.Draw(g);
+                }
             }
         }
     }

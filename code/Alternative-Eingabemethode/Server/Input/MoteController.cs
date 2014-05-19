@@ -297,24 +297,6 @@ namespace Server.Input
                     }
                 }
             }
-            switch (irCount)
-            {
-                case 4:
-                    //
-                    break;
-                case 3:
-                    double xDistance = 10000000;
-
-                    double yDistance = 10000000;
-                    break;
-                case 2:
-           
-                    break;
-
-                default:
-                    //nothing
-                    break;
-            }
         }
 
         /// <summary>
