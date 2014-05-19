@@ -19,10 +19,8 @@ namespace Client
         public delegate void UpdateClientListener(ClientState state);
 
         public event UpdateClientListener UpdateEvent;
-        private Socket listenerSocket;
-        private NetworkStream toServer;
-        private Display display;
-        private Thread listenerThread;
+        private readonly Socket listenerSocket;
+        private readonly Thread listenerThread;
 
         public UpdateListener(EndPoint adress)
         {
@@ -43,7 +41,7 @@ namespace Client
 
 
             BinaryFormatter bf = new BinaryFormatter();
-            toServer = new NetworkStream(handler);
+            NetworkStream toServer = new NetworkStream(handler);
 
             while (true)
             {
@@ -68,7 +66,6 @@ namespace Client
         {
             if (disp)
             {
-                if (this.toServer != null) toServer.Dispose();
                 if (this.listenerSocket != null) listenerSocket.Dispose();
             }
         }

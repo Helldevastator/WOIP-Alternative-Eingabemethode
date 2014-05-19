@@ -12,7 +12,8 @@ using Client.ResourceHandler;
 namespace Client
 {
     /// <summary>
-    /// Represents the actual display which is responsible for drawing the windows and cursors on the screen.
+    /// Represents the actual 
+    /// which is responsible for drawing the windows and cursors on the screen.
     /// Threadsafe
     /// </summary>
     internal partial class Display : Form
