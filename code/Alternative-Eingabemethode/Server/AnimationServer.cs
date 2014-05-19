@@ -22,12 +22,12 @@ namespace Server
         /// <param name="controllers"></param>
         /// <param name="clients"></param>
         /// <returns></returns>
-        public static AnimationServer AnimationServerFactory(List<MoteController> controllers,Dictionary<int,Client> clients)
+        internal static AnimationServer AnimationServerFactory(List<MoteController> controllers, Dictionary<int, Client> clients, ResourceServer resServer)
         {
-            AnimationServer server = new AnimationServer(clients);
+            AnimationServer server = new AnimationServer(clients,resServer);
 
             foreach (MoteController mote in controllers)
-                server.cursors.Add(new CursorController(mote,server));
+                server.cursors.Add(new CursorController(mote, server));
 
             return server;
         }
@@ -103,7 +103,7 @@ namespace Server
         {
             if (client != null)
             {
-                window.move(newPosition);
+                window.move(finalPosition);
                 window.finishMove();
             }
             else
@@ -125,7 +125,7 @@ namespace Server
         /// <param name="window"></param>
         public void RemoveWindowFromClient(Client client, AnimationWindow window)
         {
-            client.RemoveWindow(w);
+            client.RemoveWindow(window);
         }
 
         /// <summary>

@@ -18,14 +18,14 @@ namespace Server
         private static int nextId = 0;
         #endregion
 
-        public int ResourceId { public get; private set; }
-        public int WindowId { public get; private set; }
+        public int ResourceId { get; private set; }
+        public int WindowId { get; private set; }
 
         private readonly Object moveLock = new Object();
         private bool moving = false;
         private WindowState lastState;
         private Client lastClient;
-        public Client Client { public get; private set; }
+        public Client Client { get; private set; }
         private WindowState currentState;
 
         //for fancy moving
@@ -53,12 +53,16 @@ namespace Server
 
         public bool ContainsPoint(Point p)
         {
+            int maxX = 0;
+            int minX = 0;
+            int maxY = 0;
+            int minY = 0;
             lock (moveLock)
             {
-                int maxX = currentState.X + currentState.Width / 2;
-                int minX = currentState.X - currentState.Width / 2;
-                int maxY = currentState.Y + currentState.Height / 2;
-                int minY = currentState.Y - currentState.Height / 2;
+                maxX = currentState.X + currentState.Width / 2;
+                minX = currentState.X - currentState.Width / 2;
+                maxY = currentState.Y + currentState.Height / 2;
+                minY = currentState.Y - currentState.Height / 2;
             }
             bool answer = maxX >= p.X && minY <= p.X && maxY >= p.Y && minY <= p.Y;
             return answer;
@@ -75,7 +79,7 @@ namespace Server
                 currentState = new WindowState(lastState.WindowId, lastState.ResourceId);
                 currentState.Angle = lastState.Angle;
                 currentState.Height = lastState.Height;
-                currentState.Width = lastState.With;
+                currentState.Width = lastState.Width;
                 currentState.X = lastState.X;
                 currentState.Y = lastState.Y;
                 currentState.MovingFlag = true;
@@ -130,8 +134,8 @@ namespace Server
             lastPoint.X = currentState.X;
             lastPoint.Y = currentState.Y;
             
-            currentState.X = dx * dt;
-            currentState.Y = dy * dt;
+            currentState.X = (int) (dx * dt);
+            currentState.Y = (int) (dy * dt);
             dx *= Client.XFrictionFactor * dt;
             dy *= Client.YFrictionFactor * dt;
             if (currentState.X < 0)

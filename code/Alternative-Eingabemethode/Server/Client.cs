@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using Common;
 using System.Net.Sockets;
+using System.Drawing;
 
 namespace Server
 {
@@ -94,7 +95,7 @@ namespace Server
                     }
                 }
             }
-            return anwer;
+            return answer;
         }
 
         public void AddWindow(AnimationWindow w)

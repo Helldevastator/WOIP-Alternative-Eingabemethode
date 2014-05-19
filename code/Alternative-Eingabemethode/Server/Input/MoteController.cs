@@ -95,6 +95,8 @@ namespace Server.Input
         private const double dt = 1 / 200d;
         private const double distanceFactor = 1;
         private const double correctionFactor = 1;
+        public const int IR_PIXEL_WIDTH = 1024;
+        public const int IR_PIXEL_HEIGHT = 728;
         #endregion
 
         public MoteController(Wiimote mote)
