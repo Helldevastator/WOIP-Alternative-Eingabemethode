@@ -40,6 +40,9 @@ namespace Client
             this.factory = factory;
             this.resourceFolder = resourceFolder;
 
+            if (!resourceFolder.Exists)
+                resourceFolder.Create();
+
             //clear resourceFolder contents
             foreach (FileInfo f in resourceFolder.GetFiles())
                 f.Delete();
