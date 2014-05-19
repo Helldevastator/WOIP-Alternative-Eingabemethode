@@ -31,6 +31,8 @@ namespace Server
             System.Console.WriteLine(rot.CalculateRoll() * 180d / Math.PI); //rollInterpolated
             System.Console.WriteLine(rot.CalculateYaw() * 180d / Math.PI); //yaw
 
+
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
