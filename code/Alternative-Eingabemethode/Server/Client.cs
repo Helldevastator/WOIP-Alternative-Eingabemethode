@@ -30,6 +30,7 @@ namespace Server
 
         private readonly Object wLock = new Object();
         private readonly Dictionary<int, AnimationWindow> windows;
+        private readonly Dictionary<int, AnimationWindow> removedWindows;
 
         //threadsave?
 
@@ -58,13 +59,22 @@ namespace Server
         public ClientState GetAnimatedClientState() 
         {
             ClientState answer = new ClientState();
-            answer.Windows = new List<WindowState>(windows.Count);
+            answer.Windows = new List<WindowState>(windows.Count+removedWindows.Count);
             answer.Cursors = null;
             
             lock (wLock)
             {
                 foreach (AnimationWindow w in windows.Values)
                     answer.Windows.Add(w.GetWindowState());
+
+                foreach (AnimationWindow w in removedWindows.Values)
+                {
+                    WindowState state = w.GetWindowState();
+                    state.RemovedFlag = true;
+                    answer.Windows.Add(state);
+                }
+
+                removedWindows.Clear();
             }
 
             return answer;
@@ -95,8 +105,11 @@ namespace Server
 
         public void RemoveWindow(AnimationWindow w)
         {
-            lock(wLock)
-             windows.Remove(w.WindowId);
+            lock (wLock)
+            {
+                windows.Remove(w.WindowId);
+                removedWindows.Add(w.WindowId, w);
+            }
         }
     }
 }
