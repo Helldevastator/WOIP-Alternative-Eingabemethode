@@ -27,11 +27,11 @@ namespace Server
         /// <param name="controllers"></param>
         /// <param name="clients"></param>
         /// <returns></returns>
-        public static AnimationServer AnimationServerFactory(List<MoteController> controllers, Client[] clients, ResourceServer resServer)
+        public static AnimationServer AnimationServerFactory(List<WiimoteAdapter> controllers, Client[] clients, ResourceServer resServer)
         {
             AnimationServer server = new AnimationServer(clients,resServer);
 
-            foreach (MoteController mote in controllers)
+            foreach (WiimoteAdapter mote in controllers)
                 server.cursors.Add(new CursorController(mote, server));
             
             server.updateTimer.Start();

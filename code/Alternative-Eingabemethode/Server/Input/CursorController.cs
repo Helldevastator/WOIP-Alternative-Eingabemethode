@@ -15,7 +15,7 @@ namespace Server.Input
     {
         private const double barSizeCM = 20;
 
-        private readonly MoteController mote;
+        private readonly WiimoteAdapter mote;
         private readonly AnimationServer animator;
 
         //begin lock by lockCurrrent
@@ -27,7 +27,7 @@ namespace Server.Input
         private bool isActivated;
         //end lock
 
-        public CursorController(MoteController mote, AnimationServer animator)
+        public CursorController(WiimoteAdapter mote, AnimationServer animator)
         {
             this.animator = animator;
             this.mote = mote;
@@ -54,7 +54,7 @@ namespace Server.Input
         /// </summary>
         /// <param name="mote"></param>
         /// <param name="InputState"></param>
-        private void moteListener(MoteController mote, MoteState state)
+        private void moteListener(WiimoteAdapter mote, MoteState state)
         {
             lock (this.lockCurrent)
             {
@@ -102,8 +102,8 @@ namespace Server.Input
         {
             if (client != null && (state.horizontal != null || state.vertical != null))
             {
-                int moteWidth = MoteController.IR_PIXEL_WIDTH;
-                int moteHeight = MoteController.IR_PIXEL_HEIGHT;
+                int moteWidth = WiimoteAdapter.IR_PIXEL_WIDTH;
+                int moteHeight = WiimoteAdapter.IR_PIXEL_HEIGHT;
                 double xPointAt = 0;    // centimeters of where the wiimote is pointing. (0,0) is in the upper left corner
                 double yPointAt = 0;
 

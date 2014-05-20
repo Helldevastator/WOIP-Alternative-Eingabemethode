@@ -16,7 +16,7 @@ namespace Server
     {
         private Rectangle rec;
         private Image im;
-        private MoteController cursor;
+        private WiimoteAdapter cursor;
         private double barSizeCM = 20;
 
         public Form1()
@@ -24,7 +24,7 @@ namespace Server
             InitializeComponent();
             this.rec = new Rectangle(this.picBox.Size.Width / 2, this.picBox.Size.Height / 2, 20, 20);
             im = new Bitmap(picBox.Width, picBox.Height);
-            cursor = new MoteController(new Wiimote());
+            cursor = new WiimoteAdapter(new Wiimote());
             cursor.MoteUpdatedEvent += new StateListener(CursorListener);
             clb1.Items.AddRange(new object[] {
             "IR 1",
@@ -33,7 +33,7 @@ namespace Server
             "IR 4"});
         }
 
-        private void CursorListener(MoteController sender, MoteState c)
+        private void CursorListener(WiimoteAdapter sender, MoteState c)
         {
             this.Invoke((MethodInvoker)delegate
             {
@@ -42,7 +42,7 @@ namespace Server
             
         }
 
-        private void Update(MoteController sender, MoteState c)
+        private void Update(WiimoteAdapter sender, MoteState c)
         {
             this.lblRelX.Text = c.yaw.ToString("0.0")+" yaw d deg "+c.yawFast.ToString();
             this.lblRelY.Text = c.pitch.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();
@@ -104,8 +104,8 @@ namespace Server
         {
             if ((state.horizontal != null || state.vertical != null))
             {
-                int moteWidth = MoteController.IR_PIXEL_WIDTH;
-                int moteHeight = MoteController.IR_PIXEL_HEIGHT;
+                int moteWidth = WiimoteAdapter.IR_PIXEL_WIDTH;
+                int moteHeight = WiimoteAdapter.IR_PIXEL_HEIGHT;
                 double xPointAt = 0;    // centimeters of where the wiimote is pointing. (0,0) is in the upper left corner
                 double yPointAt = 0;
 

@@ -54,12 +54,12 @@ namespace Server.Input
         NONE = 4
     }
 
-    public delegate void StateListener(MoteController sender, MoteState i);
+    public delegate void StateListener(WiimoteAdapter sender, MoteState i);
 
     /// <summary>
     /// Responsible for accessing the Wiimote and correctly reading out the yaw, pitch and rollInterpolated values in relation to the screen pointed to.
     /// </summary>
-    public class MoteController : IDisposable
+    public class WiimoteAdapter : IDisposable
     {
         public event StateListener MoteUpdatedEvent;
         private double yaw = 0; //REMOVE
@@ -99,7 +99,7 @@ namespace Server.Input
         public const int IR_PIXEL_HEIGHT = 728;
         #endregion
 
-        public MoteController(Wiimote mote)
+        public WiimoteAdapter(Wiimote mote)
         {
             lock (nextLock)
             {
