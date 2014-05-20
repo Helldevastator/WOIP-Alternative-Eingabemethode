@@ -155,7 +155,6 @@ namespace Server.Input
                 state.configuration = configuration;
 
                
-
                 state.point1 = ws.IRState.IRSensors[0].Found;
                 state.point2 = ws.IRState.IRSensors[1].Found;
                 state.point3 = ws.IRState.IRSensors[2].Found;

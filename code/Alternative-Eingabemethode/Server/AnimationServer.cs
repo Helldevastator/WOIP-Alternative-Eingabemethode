@@ -130,7 +130,15 @@ namespace Server
         /// <param name="newPosition"></param>
         public void MoveWindow(Client client,AnimationWindow window, Point newPosition)
         {
-            window.move(newPosition);
+            if (window.Client == client)
+            {
+                window.move(newPosition);
+            }
+            else
+            {
+                this.RemoveWindowFromClient(window.Client, window);
+                this.AddWindowToClient(client, window, newPosition);
+            }
         }
 
         /// <summary>
