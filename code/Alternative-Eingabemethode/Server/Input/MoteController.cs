@@ -146,14 +146,15 @@ namespace Server.Input
                     if (ws.IRState.IRSensors[i].Found)
                         irCount++;
 
-                IRBarConfiguration configuration = GetIRBarConfiguration(ws, 0,irCount);
-                state.configuration = configuration;
-
                 BarPoints horizontal;
                 BarPoints vertical;
                 this.GetIRPosition(ws, irCount, out horizontal, out vertical);
                 state.vertical = vertical;
                 state.horizontal = horizontal;
+                IRBarConfiguration configuration = GetIRBarConfiguration(ws,irCount,vertical,horizontal);
+                state.configuration = configuration;
+
+               
 
                 state.point1 = ws.IRState.IRSensors[0].Found;
                 state.point2 = ws.IRState.IRSensors[1].Found;
@@ -242,7 +243,8 @@ namespace Server.Input
                 if (ws.IRState.IRSensors[i].Found)
                 {
                     IRSensor s = ws.IRState.IRSensors[i];
-                    points[index] = new InputPoint(s.Position.X, s.Position.Y);
+
+                    points[index] = new InputPoint(s.RawPosition.X / (double)IR_PIXEL_WIDTH, s.RawPosition.Y/(double)IR_PIXEL_HEIGHT);
                     index++;
                 }
             }
@@ -270,7 +272,7 @@ namespace Server.Input
 
                 InputPoint py1;
                 InputPoint py2;
-                double yDistance = InputPoint.MinimumXDistance(points, out py1, out py2);
+                double yDistance = InputPoint.MinimumYDistance(points, out py1, out py2);
 
                 if (irCount == 4)
                 {
@@ -311,13 +313,8 @@ namespace Server.Input
         /// <param name="ws"></param>
         /// <param name="irCount">Number of IR sensors with a signal</param>
         /// <returns></returns>
-        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws, double rollInterpolated,int irCount)
+        private IRBarConfiguration GetIRBarConfiguration(WiimoteState ws,int irCount,BarPoints vertical,BarPoints horizontal)
         {
-            //simplified rotation matrix
-            double sine = Math.Sin(rollInterpolated * Math.PI / 180);
-            double cosine = Math.Cos(rollInterpolated * Math.PI / 180);
-            double rotX = cosine * -sine;
-            double rotY = sine * cosine;
 
             //nothing was found, reset last configuration
             if (irCount == 0)
@@ -333,7 +330,7 @@ namespace Server.Input
             for (int i = 0; i < 4; i++)
             {
                 IRSensor s = ws.IRState.IRSensors[i];
-                points[i] = new InputPoint(s.Position.X * rotX, s.Position.Y * rotY);
+                points[i] = new InputPoint(s.Position.X, s.Position.Y);
             }
 
             /* 
@@ -347,7 +344,7 @@ namespace Server.Input
              * 2. Take one of the other points and compare its location to the diagonal.
              *     
              */
-
+            /*
             int indexD1 = 0;
             int indexD2 = 0;
             double distance = 1000000000;
@@ -374,13 +371,13 @@ namespace Server.Input
             if(!D1.IsTopOf(D2)) {
                 D1 = points[indexD2];
                 D2 = points[indexD1];
-            }
+            }*/
 
             //now compare the points and figure out the figure ;)
-            bool isRight = false;   //is one IR Bar on the top?
-            bool isTop = false;     //is one IR Bar on the right?
+            bool isRight = vertical.p1.IsRightOf(horizontal.p1) || vertical.p2.IsRightOf(horizontal.p2);   //is one IR Bar on the top?
+            bool isTop = horizontal.p1.IsTopOf(vertical.p1) || horizontal.p2.IsTopOf(vertical.p2);     //is one IR Bar on the right?
 
-            if (D1.IsRightOf(D2))
+            /*if (D1.IsRightOf(D2))
             {
                 if (D1.IsHorizontal(other))
                 {
@@ -398,7 +395,7 @@ namespace Server.Input
                     isRight = true;
                     isTop = true;
                 }
-            }
+            }*/
 
             //put in result integer and cast it to enum
             int result = Convert.ToInt32(isTop) << 1;

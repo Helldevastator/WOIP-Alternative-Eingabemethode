@@ -16,7 +16,7 @@ namespace Server
         static void Main(string[] args)
         {
 
-            System.Console.WriteLine("Starting server");
+            /*System.Console.WriteLine("Starting server");
             System.Console.WriteLine("Establishing connection to clients");
             EndPoint resourceEnd = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6556);
             EndPoint updateEnd = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5665);
@@ -36,10 +36,10 @@ namespace Server
             System.Console.WriteLine("Started");
 
             System.Threading.Thread.Sleep(60 * 1000);
-            System.Console.WriteLine("Server out");
-            /*Application.EnableVisualStyles();
+            System.Console.WriteLine("Server out");*/
+            Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());*/
+            Application.Run(new Form1());
         }
     }
 }

@@ -116,7 +116,7 @@ namespace Server.Input
                     double distance = Math.Sqrt(dx * dx + dy * dy);
                     
                     InputPoint centerDistance = CalcDistanceToCenter(state.horizontal);
-                    xPointAt = centerDistance.X * moteWidth / distance * barSizeCM + client.CmWidth / (double)2;
+                    xPointAt = centerDistance.X * moteWidth / distance * barSizeCM + client.CmWidth / 2.0;
                     if (state.configuration == IRBarConfiguration.LEFT_TOP || state.configuration == IRBarConfiguration.RIGHT_TOP)
                         yPointAt = (centerDistance.Y*moteHeight)/distance*barSizeCM;
             
@@ -132,9 +132,9 @@ namespace Server.Input
                     double distance = Math.Sqrt(dx * dx + dy * dy);
 
                     InputPoint centerDistance = CalcDistanceToCenter(state.vertical);
-                    yPointAt = centerDistance.Y * moteHeight / distance * barSizeCM + client.CmHeight /(double) 2;
+                    yPointAt = -centerDistance.Y * moteHeight / distance * barSizeCM + client.CmHeight /2.0;
                     if (state.configuration == IRBarConfiguration.RIGHT_BOTTOM || state.configuration == IRBarConfiguration.RIGHT_TOP)
-                        xPointAt = client.CmWidth + (centerDistance.X * moteWidth / distance * barSizeCM);
+                        xPointAt = client.CmWidth - (centerDistance.X * moteWidth / distance * barSizeCM);
                     else
                         xPointAt = (centerDistance.X * moteWidth / distance * barSizeCM);
                 }
