@@ -5,9 +5,6 @@ namespace Common
     [Serializable]
     public class Resource
     {
-        private static Object nextIdLock = new Object();
-        private static int nextId = 0;
-
          public int ResourceId { get; private set;}
          public int ResourceType { get; private set; } 
 

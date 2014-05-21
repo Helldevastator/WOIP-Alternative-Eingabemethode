@@ -55,7 +55,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Input\CursorController.cs" />
-    <Compile Include="Input\MoteController.cs" />
+    <Compile Include="Input\WiimoteAdapter.cs" />
     <Compile Include="Input\Matrix.cs" />
     <Compile Include="AnimationWindow.cs" />
     <Compile Include="Input\InputPoint.cs" />

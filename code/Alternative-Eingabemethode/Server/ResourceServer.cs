@@ -17,6 +17,9 @@ namespace Server
     /// </summary>
     public class ResourceServer
     {
+        private static Object nextIdLock = new Object();
+        private static int nextId = 0;
+
         private delegate void SendResourceDelegate(Client client, int resourceId);
 
         private readonly Object resourcesLock = new Object();
@@ -32,10 +35,25 @@ namespace Server
             this.resourceFolder = resourceFolder;
         }
 
-        public void AddResource(Resource resource,FileInfo f) {
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="f"></param>
+       /// <param name="typeId"></param>
+        /// <returns>resource resId</returns>
+        public int AddResource(FileInfo f,int typeId) {
+            int id = 0;
+            lock (nextIdLock)
+            {
+                id = nextId;
+                nextId++;
+            }
+
             f.CopyTo(Path.Combine(resourceFolder.FullName, resource.ResourceId.ToString()));
             lock(resourcesLock)
-                resources.Add(resource.ResourceId, resource);
+                resources.Add(new Resource(id,typeId), resource);
+
+            return id;
         }
         
 

@@ -69,7 +69,7 @@ namespace Server.Input
 
         private Wiimote mote;
 
-        #region id
+        #region resId
         private static int nextId = 0;
         private static Object nextLock = new Object();
         public int Id { get; private set; }
