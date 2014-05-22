@@ -136,15 +136,25 @@ namespace Server
         /// <param name="newPosition"></param>
         public void MoveWindow(Client client,AnimationWindow window, Point newPosition)
         {
-            if (window.Client == client)
+
+            if (client != null && window.Client == client)
             {
                 window.move(newPosition);
             }
-            else
+            else if (client == null)
             {
-                this.RemoveWindowFromClient(window.Client, window);
+                if(window.Client != null)
+                    this.RemoveWindowFromClient(window.Client, window);
+            }
+            else if (client != null)
+            {
                 this.AddWindowToClient(client, window, newPosition);
             }
+            
+            
+                
+                
+            
         }
 
         /// <summary>
@@ -181,6 +191,7 @@ namespace Server
         public void RemoveWindowFromClient(Client client, AnimationWindow window)
         {
             client.RemoveWindow(window);
+            window.Client = null;
         }
 
         /// <summary>
@@ -192,6 +203,7 @@ namespace Server
         public void AddWindowToClient(Client client, AnimationWindow window, Point startPosition)
         {
             client.AddWindow(window);
+            window.Client = client;
             window.resetSlide();
             window.move(startPosition);
             resourceServer.SendResource(client, window.ResourceId);  

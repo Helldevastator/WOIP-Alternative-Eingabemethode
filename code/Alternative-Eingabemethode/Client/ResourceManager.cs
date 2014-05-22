@@ -102,15 +102,23 @@ namespace Client
 
 
                 Resource myResource = (Resource)NetworkIO.ReceiveObject(handler);
-
-                FileInfo file = new FileInfo(Path.Combine(resourceFolder.FullName, myResource.ResourceId.ToString()));
-                NetworkIO.ReceiveFile(file, handler, new byte[bufferLength]);
-                IResourceHandler res = this.factory.CreateResourceHandler(myResource.ResourceType, file);
-
+                
+                bool resourceExists = false;
                 lock (resourcesLock)
-                    resources.Add(myResource.ResourceId, res);
+                    resourceExists = this.resources.ContainsKey(myResource.ResourceId);
 
-                this.UpdateWaitSet(myResource.ResourceId);
+                //if resource does not exist, create it
+                if (!resourceExists)
+                {
+                    FileInfo file = new FileInfo(Path.Combine(resourceFolder.FullName, myResource.ResourceId.ToString()));
+                    NetworkIO.ReceiveFile(file, handler, new byte[bufferLength]);
+                    IResourceHandler res = this.factory.CreateResourceHandler(myResource.ResourceType, file);
+
+                    lock (resourcesLock)
+                        resources.Add(myResource.ResourceId, res);
+
+                    this.UpdateWaitSet(myResource.ResourceId);
+                }
             }
         }
 

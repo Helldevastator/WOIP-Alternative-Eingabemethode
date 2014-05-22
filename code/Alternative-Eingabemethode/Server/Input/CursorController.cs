@@ -62,7 +62,6 @@ namespace Server.Input
                 this.currentPoint = this.CalculateScreenPosition(state, currentClient);
                 this.isActivated = state.buttonA || state.buttonB;
 
-                System.Console.WriteLine(this.currentInputState.ToString());
                 switch (currentInputState)
                 {
                     case State.NONE:
@@ -71,14 +70,11 @@ namespace Server.Input
                         if(this.isActivated)
                             this.currentWindow = animator.GetWindow(currentClient, currentPoint);
                             
-                        //System.Console.WriteLine("Found Client="+(currentClient != null).ToString() + " Currentwindow="+(currentWindow != null).ToString() +" activated="+isActivated.ToString());
-                        System.Console.WriteLine(state.buttonA.ToString() + " " + state.buttonB.ToString());
                         if (state.buttonA && currentWindow != null)
                             currentInputState = State.SCALE;
 
                         if (state.buttonB && currentWindow != null)
                         {
-                            System.Console.WriteLine("state change to moving");
                             animator.StartMoveWindow(currentClient, currentWindow, currentPoint);
                             currentInputState = State.MOVE;
                         }
@@ -93,16 +89,13 @@ namespace Server.Input
                         break;
 
                     case State.MOVE:
-                        System.Console.WriteLine("move");
                         if (!state.buttonB)
                         {
-                            System.Console.WriteLine("in moving");
                             animator.FinishMove(currentClient, currentWindow, currentPoint);
                             currentInputState = State.NONE;
                         }
                         else
                         {
-                            System.Console.WriteLine("Done Moving");
                             animator.MoveWindow(currentClient, currentWindow, currentPoint);
                         }
                         break;

@@ -24,7 +24,8 @@ namespace Server
         private readonly Object moveLock = new Object();
         private WindowState lastState;
         private Client lastClient;
-        public Client Client { get; private set; }
+        private readonly Object clientLock = new Object();
+        private Client client;
         private WindowState currentState;
 
         //for fancy moving
@@ -127,38 +128,50 @@ namespace Server
             {
                 lastState = currentState;
                 lastClient = Client;
+                currentState.MovingFlag = false;
             }
         }
 
         public void Animate(double dt)
         {
-            lastPoint.X = currentState.X;
-            lastPoint.Y = currentState.Y;
-            
-            currentState.X += (int) (dx * dt);
-            currentState.Y += (int) (dy * dt);
-            dx *= Client.XFrictionFactor * dt;
-            dy *= Client.YFrictionFactor * dt;
-            if (currentState.X < 0)
+            lock (moveLock)
             {
-                currentState.X = 0;
-                dx = -dx;
+                lastPoint.X = currentState.X;
+                lastPoint.Y = currentState.Y;
+
+                currentState.X += (int)(dx * dt);
+                currentState.Y += (int)(dy * dt);
+                dx *= Client.XFrictionFactor * dt;
+                dy *= Client.YFrictionFactor * dt;
+                if (currentState.X < 0)
+                {
+                    currentState.X = 0;
+                    dx = -dx;
+                }
+                if (currentState.Y < 0)
+                {
+                    currentState.Y = 0;
+                    dy = -dy;
+                }
+                if (currentState.X >= Client.PixelWidth)
+                {
+                    currentState.X = Client.PixelWidth - 1;
+                    dx = -dx;
+                }
+                if (currentState.Y >= Client.PixelHeight)
+                {
+                    currentState.Y = Client.PixelHeight - 1; ;
+                    dy = -dy;
+                }
             }
-            if (currentState.Y < 0)
-            {
-                currentState.Y = 0;
-                dy = -dy;
-            }
-            if (currentState.X >= Client.PixelWidth)
-            {
-                currentState.X = Client.PixelWidth - 1;
-                dx = -dx;
-            }
-            if (currentState.Y >= Client.PixelHeight)
-            {
-                currentState.Y = Client.PixelHeight - 1; ;
-                dy = -dy;
-            }
+            System.Console.WriteLine("windowPos: " + currentState.X.ToString() + " " + currentState.Y.ToString());
+          
+        }
+
+        public Client Client
+        {
+            get { lock (clientLock) { return this.client; } }
+            set { lock (clientLock) { this.client = value; } }
         }
 
         public WindowState GetWindowState()
