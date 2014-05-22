@@ -26,6 +26,8 @@ namespace Client
         {
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
+            this.SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer |
+              ControlStyles.AllPaintingInWmPaint | ControlStyles.SupportsTransparentBackColor, true);
             //PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Documents\GitHub\WOIP-Alternative-Eingabemethode\code\Alternative-Eingabemethode\example.bmp"));
             /*PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Desktop\testClient\0"));
             w = new DisplayWindow(res);
