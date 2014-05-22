@@ -32,8 +32,9 @@ namespace Client
         private readonly Dictionary<int, List<ResourceLoadedCallback>> waitSet; //guarded by resourcelock
         private readonly IResourceHandler waitResource;
 
-        public ResourceManager(EndPoint adress, DirectoryInfo resourceFolder,IResourceHandlerFactory factory)
+        public ResourceManager(EndPoint adress, DirectoryInfo resourceFolder,IResourceHandlerFactory factory, IResourceHandler waitResource)
         {
+            this.waitResource = waitResource;
             this.resources = new Dictionary<int, IResourceHandler>();
             this.waitSet = new Dictionary<int, List<ResourceLoadedCallback>>();
 
@@ -97,7 +98,6 @@ namespace Client
             while (true)
             {
                 Socket handler = listenerSocket.Accept();
-
                 //read resource
 
 

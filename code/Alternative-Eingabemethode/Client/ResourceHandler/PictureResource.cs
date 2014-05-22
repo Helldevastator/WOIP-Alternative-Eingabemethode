@@ -25,7 +25,7 @@ namespace Client.ResourceHandler
             g.InterpolationMode = InterpolationMode.HighQualityBilinear;
             GraphicsUnit unit = GraphicsUnit.Pixel;
             RectangleF bounds = im.GetBounds(ref unit);
-            g.ScaleTransform(width / bounds.Width, height / bounds.Height);
+            //g.ScaleTransform(width / bounds.Width, height / bounds.Height);
             g.DrawImage(im, new Rectangle(0, 0, width, height), 0, 0, width, height, GraphicsUnit.Pixel, attributes);
 
             g.Transform = transformationState;

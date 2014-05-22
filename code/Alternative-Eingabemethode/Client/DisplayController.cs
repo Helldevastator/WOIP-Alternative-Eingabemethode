@@ -24,6 +24,7 @@ namespace Client
 
         public void UpdateClient(ClientState state)
         {
+            System.Console.WriteLine("update received");
             var windowStates = state.Windows;
             var cursorStates = state.Cursors;
 
@@ -41,6 +42,7 @@ namespace Client
                 }
                 else
                 {
+                    System.Console.WriteLine("ADD NEW WINDOW");
                     //add
                     DisplayWindow window = new DisplayWindow(resources.GetWaitResource());
                     resources.SetOrUpdateResource(new ResourceManager.ResourceLoadedCallback(window.ResourceLoadedCallback), w.ResourceId);

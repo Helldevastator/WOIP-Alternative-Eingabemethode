@@ -66,28 +66,32 @@ namespace Server
 
         private void UpdateClients(Object source, ElapsedEventArgs e)
         {
-                Dictionary<int,CursorState> cursorStates = new Dictionary<int,CursorState>(cursors.Count);
+            Dictionary<int, CursorState> cursorStates = new Dictionary<int, CursorState>(cursors.Count);
 
-                foreach(CursorController c in cursors) 
-                {
-                    Client currentClient;
-                    CursorState state;
-                    c.GetCursorState(out currentClient,out state);
+            
+            foreach (CursorController c in cursors)
+            {  
+                Client currentClient;
+                CursorState state;
+                c.GetCursorState(out currentClient, out state);
+                
+                if(currentClient != null)
                     cursorStates.Add(currentClient.Id, state);
-                }
+            }
 
-                //paralell?
-                foreach (Client c in clients)
-                {
-                    c.Animate(dt);
-                    ClientState state = c.GetAnimatedClientState();
-                    if(cursorStates.ContainsKey(c.Id))
-                    {
-                        state.Cursors = new List<CursorState>();
-                        state.Cursors.Add(cursorStates[c.Id]);
-                    }
-                    NetworkIO.SendObject(c.UpdateSocket, state);
-                }
+            //paralell?
+            foreach (Client c in clients)
+            {
+                
+                c.Animate(dt);
+                ClientState state = c.GetAnimatedClientState();
+                state.Cursors = new List<CursorState>();
+                System.Console.WriteLine("Send update "+ state.Windows.Count);
+                if (cursorStates.ContainsKey(c.Id))
+                    state.Cursors.Add(cursorStates[c.Id]);
+                
+                NetworkIO.SendObject(c.UpdateSocket, state);
+            }
         }
 
         #region Window Interactions

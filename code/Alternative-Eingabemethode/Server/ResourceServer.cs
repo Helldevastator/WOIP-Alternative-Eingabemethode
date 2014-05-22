@@ -49,9 +49,13 @@ namespace Server
                 nextId++;
             }
 
-            f.CopyTo(Path.Combine(resourceFolder.FullName, resource.ResourceId.ToString()));
+            FileInfo file = new FileInfo(Path.Combine(resourceFolder.FullName, id.ToString()));
+            if(file.Exists)
+                file.Delete();
+
+            f.CopyTo(file.FullName);
             lock(resourcesLock)
-                resources.Add(new Resource(id,typeId), resource);
+                resources.Add(id,new Resource(id,typeId));
 
             return id;
         }

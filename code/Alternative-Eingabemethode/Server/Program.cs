@@ -27,8 +27,8 @@ namespace Server
             clients[0] = c;
 
             System.Console.WriteLine("Establishing connection to wiimote");
-            List<MoteController> controllers = new List<MoteController>();
-            controllers.Add(new MoteController(new WiimoteLib.Wiimote()));
+            List<WiimoteAdapter> controllers = new List<WiimoteAdapter>();
+            controllers.Add(new WiimoteAdapter(new WiimoteLib.Wiimote()));
 
             System.Console.WriteLine("Starting sub components");
             ResourceServer resServer = new ResourceServer(new System.IO.DirectoryInfo(@"C:\Users\Jon\Desktop\testServer"));
@@ -38,6 +38,7 @@ namespace Server
             System.Console.WriteLine("Add Window");
             int resId = resServer.AddResource(new System.IO.FileInfo(@"C:\Users\Jon\Desktop\resource.jpg"),0);
             AnimationWindow w = new AnimationWindow(c, new System.Drawing.Rectangle(25, 25, 400, 300), resId);
+            anmServer.AddWindowToClient(c, w, new System.Drawing.Point(25, 25));
 
             System.Threading.Thread.Sleep(60 * 1000);
             System.Console.WriteLine("Server out");
