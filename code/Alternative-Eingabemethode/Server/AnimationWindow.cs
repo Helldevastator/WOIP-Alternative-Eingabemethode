@@ -46,6 +46,11 @@ namespace Server
                 lastState = currentState = new WindowState(id, resourceId);
                 this.ResourceId = resourceId;
                 this.WindowId = WindowId;
+                currentState.Angle = 0.0F;
+                currentState.Height = windowDimensions.Height;
+                currentState.Width = windowDimensions.Width;
+                currentState.X = windowDimensions.X;
+                currentState.Y = windowDimensions.Y;
             }
             
         }
@@ -130,8 +135,8 @@ namespace Server
             lastPoint.X = currentState.X;
             lastPoint.Y = currentState.Y;
             
-            currentState.X = (int) (dx * dt);
-            currentState.Y = (int) (dy * dt);
+            currentState.X += (int) (dx * dt);
+            currentState.Y += (int) (dy * dt);
             dx *= Client.XFrictionFactor * dt;
             dy *= Client.YFrictionFactor * dt;
             if (currentState.X < 0)

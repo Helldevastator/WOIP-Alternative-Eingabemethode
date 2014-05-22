@@ -25,7 +25,7 @@ namespace Client
         public Display()
         {
             InitializeComponent();
-            //this.WindowState = FormWindowState.Maximized;
+            this.WindowState = FormWindowState.Maximized;
             //PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Documents\GitHub\WOIP-Alternative-Eingabemethode\code\Alternative-Eingabemethode\example.bmp"));
             /*PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Desktop\testClient\0"));
             w = new DisplayWindow(res);
@@ -61,8 +61,8 @@ namespace Client
                     foreach (DisplayWindow entry in windows.Values)
                         entry.Draw(g);
 
-                    /*foreach (DisplayCursor entry in cursors.Values)
-                        entry.Draw(g);*/
+                    foreach (DisplayCursor entry in cursors.Values)
+                        entry.Draw(g);
                 }
             }
         }

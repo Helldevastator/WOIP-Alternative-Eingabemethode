@@ -72,6 +72,7 @@ namespace Server.Input
 
                         if (state.buttonB && currentWindow != null)
                         {
+                            System.Console.WriteLine("state change to moving");
                             animator.StartMoveWindow(currentClient, currentWindow, currentPoint);
                             currentInputState = State.MOVE;
                         }
@@ -88,11 +89,15 @@ namespace Server.Input
                     case State.MOVE:
                         if (!state.buttonB)
                         {
+                            System.Console.WriteLine("in moving");
                             animator.FinishMove(currentClient, currentWindow, currentPoint);
                             currentInputState = State.NONE;
                         }
                         else
+                        {
+                            System.Console.WriteLine("Done Moving");
                             animator.MoveWindow(currentClient, currentWindow, currentPoint);
+                        }
                         break;
                 }
             }
@@ -141,8 +146,6 @@ namespace Server.Input
 
                 int xPixel = (int)(xPointAt / client.CmWidth * client.PixelWidth);
                 int yPixel = (int)(yPointAt / client.CmHeight * client.PixelHeight);
-                System.Console.WriteLine(xPointAt + " " + yPointAt);
-                System.Console.WriteLine(xPixel + " " + yPixel);
                 return new Point(xPixel, yPixel);
             }
             else

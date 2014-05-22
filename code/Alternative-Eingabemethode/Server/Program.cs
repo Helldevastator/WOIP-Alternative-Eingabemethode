@@ -37,8 +37,8 @@ namespace Server
 
             System.Console.WriteLine("Add Window");
             int resId = resServer.AddResource(new System.IO.FileInfo(@"C:\Users\Jon\Desktop\resource.jpg"),0);
-            AnimationWindow w = new AnimationWindow(c, new System.Drawing.Rectangle(25, 25, 400, 300), resId);
-            anmServer.AddWindowToClient(c, w, new System.Drawing.Point(25, 25));
+            AnimationWindow w = new AnimationWindow(c, new System.Drawing.Rectangle(1000, 500, 400, 300), resId);
+            anmServer.AddWindowToClient(c, w, new System.Drawing.Point(1000, 500));
 
             System.Threading.Thread.Sleep(60 * 1000);
             System.Console.WriteLine("Server out");

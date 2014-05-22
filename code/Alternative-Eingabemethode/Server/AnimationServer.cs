@@ -86,7 +86,6 @@ namespace Server
                 c.Animate(dt);
                 ClientState state = c.GetAnimatedClientState();
                 state.Cursors = new List<CursorState>();
-                System.Console.WriteLine("Send update "+ state.Windows.Count);
                 if (cursorStates.ContainsKey(c.Id))
                     state.Cursors.Add(cursorStates[c.Id]);
                 
