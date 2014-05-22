@@ -110,7 +110,10 @@ namespace Server
         public AnimationWindow GetWindow(Client client, Point atPoint)
         {
             if (client != null)
+            {
+                System.Console.WriteLine("tried");
                 return client.GetWindowAt(atPoint);
+            }
             else
                 return null;
         }

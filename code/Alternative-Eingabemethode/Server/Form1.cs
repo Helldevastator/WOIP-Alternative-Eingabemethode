@@ -44,10 +44,9 @@ namespace Server
 
         private void Update(WiimoteAdapter sender, MoteState c)
         {
-            this.lblRelX.Text = c.yaw.ToString("0.0")+" yaw d deg "+c.yawFast.ToString();
+            /*this.lblRelX.Text = c.yaw.ToString("0.0")+" yaw d deg "+c.yawFast.ToString();
             this.lblRelY.Text = c.pitch.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();
-            this.lblRelZ.Text = c.roll.ToString("0.0") + " roll deg " + c.rollFast.ToString();
-            this.lblIRBar.Text = c.configuration.ToString();
+            this.lblRelZ.Text = c.roll.ToString("0.0") + " roll deg " + c.rollFast.ToString();*/
             this.clb1.SetItemChecked(0, c.point1);
             this.clb1.SetItemChecked(1, c.point2);
             this.clb1.SetItemChecked(2, c.point3);

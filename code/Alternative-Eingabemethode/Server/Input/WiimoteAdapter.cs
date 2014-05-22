@@ -33,16 +33,6 @@ namespace Server.Input
         public bool point2;
         public bool point3;
         public bool point4;
-
-        public double yaw;
-        public double pitch;
-        public double roll;
-        public double rollInterpolated;
-        public double distance;
-
-        public double yawRaw;
-        public double pitchRaw;
-        public double rollRaw;
     }
     
     public enum IRBarConfiguration
@@ -153,27 +143,13 @@ namespace Server.Input
                 state.horizontal = horizontal;
                 IRBarConfiguration configuration = GetIRBarConfiguration(ws,irCount,vertical,horizontal);
                 state.configuration = configuration;
-
+                state.buttonA = ws.ButtonState.A;
+                state.buttonB = ws.ButtonState.B;
                
                 state.point1 = ws.IRState.IRSensors[0].Found;
                 state.point2 = ws.IRState.IRSensors[1].Found;
                 state.point3 = ws.IRState.IRSensors[2].Found;
                 state.point4 = ws.IRState.IRSensors[3].Found;
-
-                
-                //delete
-                state.distance = CalculateDistance(ws, configuration);//fill into update event
-                state.yaw = this.yaw;
-                state.pitch = this.pitch;
-                state.roll = this.rollInterpolated;
-                state.yawFast = ws.MotionPlusState.YawFast;
-                state.rollFast = ws.MotionPlusState.RollFast;
-                state.pitchFast = ws.MotionPlusState.PitchFast;
-                state.yawRaw = ws.MotionPlusState.RawValues.X;
-                state.pitchRaw = ws.MotionPlusState.RawValues.Z;
-                state.rollRaw = ws.MotionPlusState.RawValues.Y;
-
-
 
                 if (this.MoteUpdatedEvent != null)
                     this.MoteUpdatedEvent.Invoke(this, state);
