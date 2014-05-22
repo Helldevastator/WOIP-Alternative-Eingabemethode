@@ -80,12 +80,7 @@ namespace Server
             {
                 lastState = currentState;
                 lastClient = Client;
-                currentState = new WindowState(lastState.WindowId, lastState.ResourceId);
-                currentState.Angle = lastState.Angle;
-                currentState.Height = lastState.Height;
-                currentState.Width = lastState.Width;
-                currentState.X = lastState.X;
-                currentState.Y = lastState.Y;
+                currentState = Clone(lastState);
                 currentState.MovingFlag = true;
             }
         }
@@ -176,7 +171,19 @@ namespace Server
 
         public WindowState GetWindowState()
         {
-            return currentState;
+            return  Clone(currentState);
+        }
+
+        private WindowState Clone(WindowState s)
+        {
+            WindowState answer = new WindowState(s.WindowId, s.ResourceId);
+            answer.Angle = s.Angle;
+            answer.Height = s.Height;
+            answer.Width = s.Width;
+            answer.X = s.X;
+            answer.Y = s.Y;
+            answer.MovingFlag = s.MovingFlag;
+            return answer;
         }
         #endregion
     }

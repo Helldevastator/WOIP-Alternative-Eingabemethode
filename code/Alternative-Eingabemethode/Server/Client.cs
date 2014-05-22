@@ -91,6 +91,7 @@ namespace Server
 
                 foreach (AnimationWindow w in removedWindows.Values)
                 {
+                    System.Console.WriteLine("Sending removed flag");
                     WindowState state = w.GetWindowState();
                     state.RemovedFlag = true;
                     answer.Windows.Add(state);
@@ -122,7 +123,10 @@ namespace Server
         public void AddWindow(AnimationWindow w)
         {
             lock (wLock)
+            {
                 windows.Add(w.WindowId, w);
+                removedWindows.Remove(w.WindowId);
+            }
         }
 
         public void RemoveWindow(AnimationWindow w)
@@ -130,7 +134,8 @@ namespace Server
             lock (wLock)
             {
                 windows.Remove(w.WindowId);
-                removedWindows.Add(w.WindowId, w);
+                if(!removedWindows.ContainsKey(w.WindowId))
+                    removedWindows.Add(w.WindowId, w);
             }
         }
     }

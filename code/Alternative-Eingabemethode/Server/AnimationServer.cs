@@ -79,6 +79,7 @@ namespace Server
                     cursorStates.Add(currentClient.Id, state);
             }
 
+        
             //paralell?
             foreach (Client c in clients)
             {
@@ -111,7 +112,6 @@ namespace Server
         {
             if (client != null)
             {
-                System.Console.WriteLine("tried");
                 return client.GetWindowAt(atPoint);
             }
             else
@@ -148,13 +148,9 @@ namespace Server
             }
             else if (client != null)
             {
+                System.Console.WriteLine("add window=" + (window != null).ToString() + " " + newPosition.X.ToString()+" "+ newPosition.Y.ToString());
                 this.AddWindowToClient(client, window, newPosition);
-            }
-            
-            
-                
-                
-            
+            }            
         }
 
         /// <summary>
@@ -168,11 +164,13 @@ namespace Server
         {
             if (client != null)
             {
+                System.Console.WriteLine("Finish Move");
                 window.move(finalPosition);
                 window.finishMove();
             }
             else
             {
+                System.Console.WriteLine("Reset move");
                 window.resetMove();
                 window.Client.AddWindow(window);
             }
@@ -190,6 +188,7 @@ namespace Server
         /// <param name="window"></param>
         public void RemoveWindowFromClient(Client client, AnimationWindow window)
         {
+            System.Console.WriteLine("Remove Window");
             client.RemoveWindow(window);
             window.Client = null;
         }

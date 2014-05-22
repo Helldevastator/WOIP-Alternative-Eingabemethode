@@ -63,7 +63,6 @@ namespace Server
 
         private void SendAsync(Client client, int resourceId) 
         {
-            System.Console.WriteLine("sending");
             Resource r;
 
             lock (resourcesLock)
@@ -92,7 +91,6 @@ namespace Server
         /// <param name="resourceId"></param>
         public void SendResource(Client client, int resourceId)
         {
-            System.Console.WriteLine("start sending");
             this.sender.BeginInvoke(client, resourceId, null, null);
         }
 

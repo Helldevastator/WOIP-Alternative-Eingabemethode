@@ -33,7 +33,10 @@ namespace Client
                 int id = w.WindowId;
                 //remove
                 if (w.RemovedFlag)
+                {
+                    System.Console.WriteLine("Removed");
                     this.windows.Remove(id);
+                }
 
                 if (this.windows.ContainsKey(id))
                 {
