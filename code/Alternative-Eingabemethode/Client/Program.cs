@@ -16,7 +16,7 @@ namespace Client
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
+            
             System.Console.WriteLine("Starting Client");
             EndPoint resourceListenerPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"),6556);
             EndPoint updatePoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5665);
@@ -28,8 +28,7 @@ namespace Client
 
             DisplayController controller = new DisplayController(display, manager);
             upListener.UpdateEvent += controller.UpdateClient;
-
-            
+          
             Application.Run(display);
         }
     }

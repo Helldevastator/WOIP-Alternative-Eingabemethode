@@ -21,14 +21,15 @@ namespace Client
         private Object updateLock = new Object();
         Dictionary<int, DisplayWindow> windows;
         Dictionary<int, DisplayCursor> cursors;
-        
+
         public Display()
         {
             InitializeComponent();
             //this.WindowState = FormWindowState.Maximized;
-            /*PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Documents\GitHub\WOIP-Alternative-Eingabemethode\code\Alternative-Eingabemethode\example.bmp"));
+            //PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Documents\GitHub\WOIP-Alternative-Eingabemethode\code\Alternative-Eingabemethode\example.bmp"));
+            /*PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Desktop\testClient\0"));
             w = new DisplayWindow(res);
-            w.Update(new Common.WindowState() { X = 300, Angle = 45, Y = 200, Height = 400, Width = 600, ResourceId = 0});*/
+            w.Update(new Common.WindowState() { X = 300, Angle = 45, Y = 200, Height = 400, Width = 300, ResourceId = 0});*/
         }
 
         public void UpdateDisplay(Dictionary<int, DisplayWindow> windows,Dictionary<int, DisplayCursor> cursors)
