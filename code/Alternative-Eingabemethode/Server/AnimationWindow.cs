@@ -19,7 +19,7 @@ namespace Server
         #endregion
 
         private const double friction = 0.2;
-        private const double crashFriction = 0.7;
+        private const double crashFriction = 0.2;
 
         public int ResourceId { get; private set; }
         public int WindowId { get; private set; }
@@ -159,28 +159,33 @@ namespace Server
                     {
                         this.x = 0 + width2;
                         dx = -dx;
-                        dx -= dx * crashFriction * dt;
+                        dx -= dx * crashFriction;
+                        dy -= dy * crashFriction;
                     }
                     if (this.y - height2 < 0)
                     {
                         this.y = 0 + height2;
                         dy = -dy;
-                        dy -= dy * crashFriction * dt;
+                        dx -= dx * crashFriction;
+                        dy -= dy * crashFriction;
                     }
                     if (this.x + width2 >= Client.PixelWidth)
                     {
                         this.x = Client.PixelWidth - 1 - width2;
                         dx = -dx;
-                        dx -= dx * crashFriction * dt;
+                        dx -= dx * crashFriction;
+                        dy -= dy * crashFriction;
                     }
                     if (this.y + height2 >= Client.PixelHeight)
                     {
                         this.y = Client.PixelHeight - 1 - height2;
                         dy = -dy;
-                        dy -= dy * crashFriction * dt;
+                        dx -= dx * crashFriction;
+                        dy -= dy * crashFriction;
                     }
+
                 }
-                System.Console.WriteLine("windowPos: " + this.dx.ToString() + " " + this.dy.ToString());
+               
 
             }
         }
