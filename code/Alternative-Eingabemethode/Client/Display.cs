@@ -22,7 +22,7 @@ namespace Client
         private Dictionary<int, DisplayWindow> windows;
         private Dictionary<int, DisplayCursor> cursors;
         private Image background;
-        private DisplayWindow w;
+        
 
         public Display(string backgroundImage)
         {

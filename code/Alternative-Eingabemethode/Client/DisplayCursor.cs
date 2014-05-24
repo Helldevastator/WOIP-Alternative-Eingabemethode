@@ -15,10 +15,12 @@ namespace Client
     class DisplayCursor
     {
         CursorState state;
+        private static Image img = Image.FromFile("cursor.png");
 
         public DisplayCursor(CursorState state)
         {
             this.state = state;
+            
         }
 
         public void Update(CursorState state)
@@ -30,8 +32,9 @@ namespace Client
         {
             Matrix translationState = g.Transform;
             g.TranslateTransform(state.X, state.Y);
+            g.TranslateTransform(-img.Width / 2, -img.Height / 2);
             Rectangle rec = new Rectangle(0,0,20,20);
-            g.FillRectangle(Brushes.Red, rec);
+            g.DrawImage(img, new Point(0, 0));
             g.Transform = translationState;
         }
     }
