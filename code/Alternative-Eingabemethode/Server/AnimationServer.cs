@@ -52,7 +52,7 @@ namespace Server
         /// Private Constructor, otherwise the this reference would escape the constructor, which would be a problem with multithreaded apps.
         /// </summary>
         /// <param name="clients"></param>
-        private AnimationServer(Client[] clients,ResourceServer resServer,int intervalMS = 100)
+        private AnimationServer(Client[] clients,ResourceServer resServer,int intervalMS = 50)
         {
             this.clients = clients;
             cursors = new List<CursorController>(4);
@@ -126,7 +126,7 @@ namespace Server
         public void StartMoveWindow(Client client,AnimationWindow window, Point newPosition)
         {
             window.startMove();
-            window.move(newPosition);
+            window.move(newPosition,dt);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Server
 
             if (client != null && window.Client == client)
             {
-                window.move(newPosition);
+                window.move(newPosition,dt);
             }
             else if (client == null)
             {
@@ -165,7 +165,7 @@ namespace Server
             if (client != null)
             {
                 System.Console.WriteLine("Finish Move");
-                window.move(finalPosition);
+                window.move(finalPosition,dt);
                 window.finishMove();
             }
             else
@@ -203,7 +203,7 @@ namespace Server
         {
             client.AddWindow(window);
             window.Client = client;
-            window.move(startPosition);
+            window.move(startPosition,dt);
             window.resetSlide();
             resourceServer.SendResource(client, window.ResourceId);  
         }

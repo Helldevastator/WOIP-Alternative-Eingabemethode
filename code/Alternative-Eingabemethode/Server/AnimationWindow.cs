@@ -18,6 +18,9 @@ namespace Server
         private static int nextId = 0;
         #endregion
 
+        private const double friction = 0.2;
+        private const double crashFriction = 0.7;
+
         public int ResourceId { get; private set; }
         public int WindowId { get; private set; }
 
@@ -116,14 +119,14 @@ namespace Server
             }
         }
 
-        public void move(Point toPoint)
+        public void move(Point toPoint,double dt)
         {
             lock (moveLock)
             {
                 this.x = toPoint.X;
                 this.y = toPoint.Y;
-                this.dx = toPoint.X - lastPoint.X;
-                this.dy = toPoint.Y - lastPoint.Y;
+                this.dx = (toPoint.X - lastPoint.X)/dt;
+                this.dy = (toPoint.Y - lastPoint.Y)/dt;
                 lastPoint = toPoint;
             }
         }
@@ -142,37 +145,44 @@ namespace Server
         {
             lock (moveLock)
             {
-                lastPoint.X = (int)this.x;
-                lastPoint.Y = (int)this.y;
-                int height2 = currentState.Height / 2;
-                int width2 = currentState.Width / 2;
-                this.x += (dx * dt)*2;
-                this.y += (dy * dt)*2;
-                dx -= dx*0.3 * dt;
-                dy -= dy*0.3 * dt;
-                if (this.x-width2 < 0)
+                if (!currentState.MovingFlag)
                 {
-                    this.x = 0 + width2;
-                    dx = -dx;
+                    lastPoint.X = (int)this.x;
+                    lastPoint.Y = (int)this.y;
+                    int height2 = currentState.Height / 2;
+                    int width2 = currentState.Width / 2;
+                    this.x += (dx * dt);
+                    this.y += (dy * dt);
+                    dx -= dx * friction * dt;
+                    dy -= dy * friction * dt;
+                    if (this.x - width2 < 0)
+                    {
+                        this.x = 0 + width2;
+                        dx = -dx;
+                        dx -= dx * crashFriction * dt;
+                    }
+                    if (this.y - height2 < 0)
+                    {
+                        this.y = 0 + height2;
+                        dy = -dy;
+                        dy -= dy * crashFriction * dt;
+                    }
+                    if (this.x + width2 >= Client.PixelWidth)
+                    {
+                        this.x = Client.PixelWidth - 1 - width2;
+                        dx = -dx;
+                        dx -= dx * crashFriction * dt;
+                    }
+                    if (this.y + height2 >= Client.PixelHeight)
+                    {
+                        this.y = Client.PixelHeight - 1 - height2;
+                        dy = -dy;
+                        dy -= dy * crashFriction * dt;
+                    }
                 }
-                if (this.y-height2 < 0)
-                {
-                    this.y = 0 + height2;
-                    dy = -dy;
-                }
-                if (this.x+width2 >= Client.PixelWidth)
-                {
-                    this.x = Client.PixelWidth - 1 - width2;
-                    dx = -dx;
-                }
-                if (this.y+height2 >= Client.PixelHeight)
-                {
-                    this.y = Client.PixelHeight - 1 - height2;
-                    dy = -dy;
-                }
+                System.Console.WriteLine("windowPos: " + this.dx.ToString() + " " + this.dy.ToString());
+
             }
-            System.Console.WriteLine("windowPos: " + this.dx.ToString() + " " + this.dy.ToString());
-          
         }
 
         public Client Client

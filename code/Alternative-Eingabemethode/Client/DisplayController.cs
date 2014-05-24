@@ -13,6 +13,7 @@ namespace Client
         public readonly Dictionary<int, DisplayCursor> cursors;
         readonly Display display;
         readonly ResourceManager resources;
+        private Object updateLock = new Object();
 
         public DisplayController(Display display, ResourceManager resources)
         {
@@ -24,54 +25,57 @@ namespace Client
 
         public void UpdateClient(ClientState state)
         {
-            System.Console.WriteLine("update received");
-            var windowStates = state.Windows;
-            var cursorStates = state.Cursors;
-
-            foreach (WindowState w in windowStates)
+            lock (updateLock)
             {
-                int id = w.WindowId;
-                //remove
-                if (w.RemovedFlag)
+                System.Console.WriteLine("update received");
+                var windowStates = state.Windows;
+                var cursorStates = state.Cursors;
+                foreach (WindowState w in windowStates)
                 {
-                    System.Console.WriteLine("Removed");
-                    this.windows.Remove(id);
+                    int id = w.WindowId;
+                    //remove
+                    if (w.RemovedFlag)
+                    {
+                        System.Console.WriteLine("Removed");
+                        this.windows.Remove(id);
+                    }
+
+                    if (this.windows.ContainsKey(id))
+                    {
+                        //update
+                        this.windows[id].Update(w);
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("ADD NEW WINDOW");
+                        //add
+                        DisplayWindow window = new DisplayWindow(resources.GetWaitResource());
+                        resources.SetOrUpdateResource(new ResourceManager.ResourceLoadedCallback(window.ResourceLoadedCallback), w.ResourceId);
+                        this.windows.Add(id, window);
+                    }
+
                 }
 
-                if (this.windows.ContainsKey(id))
+                //HACK: simply remove all cursors if the count isn't the same anymore
+                if (cursorStates.Count != this.cursors.Count)
+                    this.cursors.Clear();
+
+                foreach (CursorState s in cursorStates)
                 {
-                    //update
-                    this.windows[id].Update(w);
+                    if (this.cursors.ContainsKey(s.CursorId))
+                    {
+                        //update
+                        this.cursors[s.CursorId].Update(s);
+                    }
+                    else
+                    {
+                        //add
+                        this.cursors.Add(s.CursorId, new DisplayCursor(s));
+                    }
                 }
-                else
-                {
-                    System.Console.WriteLine("ADD NEW WINDOW");
-                    //add
-                    DisplayWindow window = new DisplayWindow(resources.GetWaitResource());
-                    resources.SetOrUpdateResource(new ResourceManager.ResourceLoadedCallback(window.ResourceLoadedCallback), w.ResourceId);
-                    this.windows.Add(id, window);
-                }
+
+                display.UpdateDisplay(this.windows, this.cursors);
             }
-
-            //HACK: simply remove all cursors if the count isn't the same anymore
-            if (cursorStates.Count != this.cursors.Count)
-                this.cursors.Clear();
-
-            foreach (CursorState s in cursorStates)
-            {
-                if (this.cursors.ContainsKey(s.CursorId))
-                {
-                    //update
-                    this.cursors[s.CursorId].Update(s);
-                }
-                else
-                {
-                    //add
-                    this.cursors.Add(s.CursorId, new DisplayCursor(s));
-                }
-            }
-
-            display.UpdateDisplay(this.windows, this.cursors);
         }
     }
 }

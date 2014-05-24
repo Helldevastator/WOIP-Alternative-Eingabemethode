@@ -124,8 +124,11 @@ namespace Server
         {
             lock (wLock)
             {
-                windows.Add(w.WindowId, w);
-                removedWindows.Remove(w.WindowId);
+                if (!windows.ContainsKey(w.WindowId))
+                {
+                    windows.Add(w.WindowId, w);
+                    removedWindows.Remove(w.WindowId);
+                }
             }
         }
 
