@@ -19,10 +19,11 @@ namespace Client
     internal partial class Display : Form
     {
         private Object updateLock = new Object();
-        Dictionary<int, DisplayWindow> windows;
-        Dictionary<int, DisplayCursor> cursors;
+        private Dictionary<int, DisplayWindow> windows;
+        private Dictionary<int, DisplayCursor> cursors;
+        private Image background;
 
-        public Display()
+        public Display(string backgroundImage)
         {
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
@@ -32,6 +33,10 @@ namespace Client
             /*PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Desktop\testClient\0"));
             w = new DisplayWindow(res);
             w.Update(new Common.WindowState() { X = 300, Angle = 45, Y = 200, Height = 400, Width = 300, ResourceId = 0});*/
+            Rectangle dimensions = Screen.FromControl(this).Bounds;
+            this.background = new Bitmap(dimensions.Width, dimensions.Height);
+            using (Graphics g = Graphics.FromImage(this.background))
+                g.DrawImage(new Bitmap(backgroundImage),dimensions);
         }
 
         public void UpdateDisplay(Dictionary<int, DisplayWindow> windows,Dictionary<int, DisplayCursor> cursors)
@@ -46,6 +51,7 @@ namespace Client
 
         private void DrawBackground(Graphics g)
         {
+            g.DrawImage(this.background, new Point(0, 0));
         }
 
         protected override void OnPaint(PaintEventArgs e)

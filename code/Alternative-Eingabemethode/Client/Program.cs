@@ -24,7 +24,7 @@ namespace Client
             
             ResourceManager manager = new ResourceManager(resourceListenerPoint, new System.IO.DirectoryInfo(@"C:\Users\Jon\Desktop\testClient"), new ResourceHandlerFactory(), new WaitResource());
             UpdateListener upListener = new UpdateListener(updatePoint);
-            Display display = new Display();
+            Display display = new Display("background.png");
 
             DisplayController controller = new DisplayController(display, manager);
             upListener.UpdateEvent += controller.UpdateClient;
