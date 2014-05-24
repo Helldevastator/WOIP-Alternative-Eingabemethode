@@ -22,6 +22,7 @@ namespace Client
         private Dictionary<int, DisplayWindow> windows;
         private Dictionary<int, DisplayCursor> cursors;
         private Image background;
+        private DisplayWindow w;
 
         public Display(string backgroundImage)
         {
@@ -29,8 +30,9 @@ namespace Client
             this.WindowState = FormWindowState.Maximized;
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer |
               ControlStyles.AllPaintingInWmPaint | ControlStyles.SupportsTransparentBackColor, true);
-            //PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Documents\GitHub\WOIP-Alternative-Eingabemethode\code\Alternative-Eingabemethode\example.bmp"));
-            /*PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Desktop\resource.jpg"));
+            
+            //PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Desktop\resource.jpg"));
+            /*WaitResource res = new WaitResource(new Bitmap("loading.png"));
             w = new DisplayWindow(res);
             w.Update(new Common.WindowState() { X = 1000, Angle = 0, Y = 500, Height = 450, Width = 500, ResourceId = 0});*/
             Rectangle dimensions = Screen.FromControl(this).Bounds;
@@ -59,6 +61,7 @@ namespace Client
             base.OnPaint(e);
             Graphics g = e.Graphics;
             this.DrawBackground(g);
+            
 
             lock (updateLock)
             {
