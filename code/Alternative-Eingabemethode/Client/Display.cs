@@ -22,7 +22,6 @@ namespace Client
         private Dictionary<int, DisplayWindow> windows;
         private Dictionary<int, DisplayCursor> cursors;
         private Image background;
-        
 
         public Display(string backgroundImage)
         {
@@ -35,6 +34,7 @@ namespace Client
             /*WaitResource res = new WaitResource(new Bitmap("loading.png"));
             w = new DisplayWindow(res);
             w.Update(new Common.WindowState() { X = 1000, Angle = 0, Y = 500, Height = 450, Width = 500, ResourceId = 0});*/
+            
             Rectangle dimensions = Screen.FromControl(this).Bounds;
             this.background = new Bitmap(dimensions.Width, dimensions.Height);
             using (Graphics g = Graphics.FromImage(this.background))
@@ -61,7 +61,6 @@ namespace Client
             base.OnPaint(e);
             Graphics g = e.Graphics;
             this.DrawBackground(g);
-            
 
             lock (updateLock)
             {
