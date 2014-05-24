@@ -52,8 +52,8 @@ namespace Server
             this.PixelWidth = pixelWidth;
             this.CmWidth = cmWidth;
             this.CmHeight = cmHeight;
-            this.XFrictionFactor = 0.9;
-            this.YFrictionFactor = 0.9;
+            this.XFrictionFactor = 0.1;
+            this.YFrictionFactor = 0.1;
             windows = new Dictionary<int, AnimationWindow>();
             removedWindows = new Dictionary<int, AnimationWindow>();
         }

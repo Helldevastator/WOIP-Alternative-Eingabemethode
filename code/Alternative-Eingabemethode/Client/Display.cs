@@ -30,9 +30,9 @@ namespace Client
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer |
               ControlStyles.AllPaintingInWmPaint | ControlStyles.SupportsTransparentBackColor, true);
             //PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Documents\GitHub\WOIP-Alternative-Eingabemethode\code\Alternative-Eingabemethode\example.bmp"));
-            /*PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Desktop\testClient\0"));
+            /*PictureResource res = new PictureResource(new Bitmap(@"C:\Users\Jon\Desktop\resource.jpg"));
             w = new DisplayWindow(res);
-            w.Update(new Common.WindowState() { X = 300, Angle = 45, Y = 200, Height = 400, Width = 300, ResourceId = 0});*/
+            w.Update(new Common.WindowState() { X = 1000, Angle = 0, Y = 500, Height = 450, Width = 500, ResourceId = 0});*/
             Rectangle dimensions = Screen.FromControl(this).Bounds;
             this.background = new Bitmap(dimensions.Width, dimensions.Height);
             using (Graphics g = Graphics.FromImage(this.background))

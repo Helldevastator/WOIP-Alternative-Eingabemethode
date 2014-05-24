@@ -203,8 +203,8 @@ namespace Server
         {
             client.AddWindow(window);
             window.Client = client;
-            window.resetSlide();
             window.move(startPosition);
+            window.resetSlide();
             resourceServer.SendResource(client, window.ResourceId);  
         }
 

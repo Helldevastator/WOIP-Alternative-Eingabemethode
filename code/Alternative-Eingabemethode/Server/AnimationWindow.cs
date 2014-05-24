@@ -30,6 +30,9 @@ namespace Server
 
         //for fancy moving
         private Point lastPoint;
+        private double x;
+        private double y;
+
         private double dx;
         private double dy;
 
@@ -52,6 +55,10 @@ namespace Server
                 currentState.Width = windowDimensions.Width;
                 currentState.X = windowDimensions.X;
                 currentState.Y = windowDimensions.Y;
+                this.x = windowDimensions.X;
+                this.y = windowDimensions.Y;
+                this.dx = 0;
+                this.dy = 0;
             }
             
         }
@@ -78,6 +85,8 @@ namespace Server
         {
             lock (moveLock)
             {
+                x = 0;
+                y = 0;
                 lastState = currentState;
                 lastClient = Client;
                 currentState = Clone(lastState);
@@ -100,6 +109,8 @@ namespace Server
             {
                 Client = lastClient;
                 currentState = lastState;
+                this.x = currentState.X;
+                this.y = currentState.Y;
                 dx = 0;
                 dy = 0;
             }
@@ -109,8 +120,8 @@ namespace Server
         {
             lock (moveLock)
             {
-                currentState.X = toPoint.X;
-                currentState.Y = toPoint.Y;
+                this.x = toPoint.X;
+                this.y = toPoint.Y;
                 this.dx = toPoint.X - lastPoint.X;
                 this.dy = toPoint.Y - lastPoint.Y;
                 lastPoint = toPoint;
@@ -131,35 +142,36 @@ namespace Server
         {
             lock (moveLock)
             {
-                lastPoint.X = currentState.X;
-                lastPoint.Y = currentState.Y;
-
-                currentState.X += (int)(dx * dt);
-                currentState.Y += (int)(dy * dt);
-                dx *= Client.XFrictionFactor * dt;
-                dy *= Client.YFrictionFactor * dt;
-                if (currentState.X < 0)
+                lastPoint.X = (int)this.x;
+                lastPoint.Y = (int)this.y;
+                int height2 = currentState.Height / 2;
+                int width2 = currentState.Width / 2;
+                this.x += (dx * dt)*2;
+                this.y += (dy * dt)*2;
+                dx -= dx*0.3 * dt;
+                dy -= dy*0.3 * dt;
+                if (this.x-width2 < 0)
                 {
-                    currentState.X = 0;
+                    this.x = 0 + width2;
                     dx = -dx;
                 }
-                if (currentState.Y < 0)
+                if (this.y-height2 < 0)
                 {
-                    currentState.Y = 0;
+                    this.y = 0 + height2;
                     dy = -dy;
                 }
-                if (currentState.X >= Client.PixelWidth)
+                if (this.x+width2 >= Client.PixelWidth)
                 {
-                    currentState.X = Client.PixelWidth - 1;
+                    this.x = Client.PixelWidth - 1 - width2;
                     dx = -dx;
                 }
-                if (currentState.Y >= Client.PixelHeight)
+                if (this.y+height2 >= Client.PixelHeight)
                 {
-                    currentState.Y = Client.PixelHeight - 1; ;
+                    this.y = Client.PixelHeight - 1 - height2;
                     dy = -dy;
                 }
             }
-            System.Console.WriteLine("windowPos: " + currentState.X.ToString() + " " + currentState.Y.ToString());
+            System.Console.WriteLine("windowPos: " + this.dx.ToString() + " " + this.dy.ToString());
           
         }
 
@@ -171,6 +183,8 @@ namespace Server
 
         public WindowState GetWindowState()
         {
+            this.currentState.X = (int)x;
+            this.currentState.Y = (int)y;
             return  Clone(currentState);
         }
 
