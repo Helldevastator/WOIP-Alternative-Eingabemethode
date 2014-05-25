@@ -31,15 +31,18 @@ namespace Client
 
         public void Draw(Graphics g)
         {
-            float angle = (float)(timeMillis() / 1000.0 % 360.0);
-            System.Console.WriteLine(angle.ToString());
-            Matrix translationState = g.Transform;
-            g.TranslateTransform(state.X, state.Y);
-            g.RotateTransform(angle);
-            g.TranslateTransform(-img.Width / 2, -img.Height / 2);
-            Rectangle rec = new Rectangle(0,0,20,20);
-            g.DrawImage(img, new Point(0, 0));
-            g.Transform = translationState;
+            if (state.X >= 0 && state.Y >= 0)
+            {
+                float angle = (float)(timeMillis() / 1000.0 % 360.0);
+                System.Console.WriteLine(angle.ToString());
+                Matrix translationState = g.Transform;
+                g.TranslateTransform(state.X, state.Y);
+                g.RotateTransform(angle);
+                g.TranslateTransform(-img.Width / 2, -img.Height / 2);
+                Rectangle rec = new Rectangle(0, 0, 20, 20);
+                g.DrawImage(img, new Point(0, 0));
+                g.Transform = translationState;
+            }
         }
 
         private static long timeMillis()

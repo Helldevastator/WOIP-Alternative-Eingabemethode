@@ -146,10 +146,11 @@ namespace Server.Input
 
                 int xPixel = (int)(xPointAt / client.CmWidth * client.PixelWidth);
                 int yPixel = (int)(yPointAt / client.CmHeight * client.PixelHeight);
-                return new Point(xPixel, yPixel);
+                if(xPixel >= 0 && xPixel < client.PixelWidth  && yPixel >= 0 && yPixel < client.PixelHeight)
+                    return new Point(xPixel, yPixel);
             }
-            else
-                return new Point(-1,-1);
+          
+            return new Point(-1,-1);
         }
 
         private InputPoint CalcDistanceToCenter(BarPoints bar)

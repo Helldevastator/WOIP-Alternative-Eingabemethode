@@ -137,16 +137,16 @@ namespace Server
         public void MoveWindow(Client client,AnimationWindow window, Point newPosition)
         {
 
-            if (client != null && window.Client == client)
+            if (client != null && window.Client == client && newPosition.X > -1 && newPosition.Y > -1)
             {
                 window.move(newPosition,dt);
             }
-            else if (client == null)
+            else if (client == null || newPosition.X <= -1)
             {
                 if(window.Client != null)
                     this.RemoveWindowFromClient(window.Client, window);
             }
-            else if (client != null)
+            else if (client != null && newPosition.X > -1 && newPosition.Y > -1)
             {
                 System.Console.WriteLine("add window=" + (window != null).ToString() + " " + newPosition.X.ToString()+" "+ newPosition.Y.ToString());
                 this.AddWindowToClient(client, window, newPosition);
