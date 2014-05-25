@@ -40,7 +40,7 @@ namespace Server
             AnimationWindow w = new AnimationWindow(c, new System.Drawing.Rectangle(1000, 500, 600, 450), resId);
             anmServer.AddWindowToClient(c, w, new System.Drawing.Point(1000, 500));
 
-            System.Threading.Thread.Sleep(60 * 1000);
+            System.Console.Read();
             System.Console.WriteLine("Server out");
             /*Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

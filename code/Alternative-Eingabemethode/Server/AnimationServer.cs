@@ -162,7 +162,7 @@ namespace Server
         /// <param name="finalPosition"></param>
         public void FinishMove(Client client, AnimationWindow window, Point finalPosition)
         {
-            if (client != null)
+            if (client != null && finalPosition.X > -1 && finalPosition.Y > -1)
             {
                 System.Console.WriteLine("Finish Move");
                 window.move(finalPosition,dt);
