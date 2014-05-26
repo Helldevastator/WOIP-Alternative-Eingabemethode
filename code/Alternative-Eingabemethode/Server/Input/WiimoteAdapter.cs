@@ -20,9 +20,7 @@ namespace Server.Input
         public bool buttonA;
         public bool buttonB;
 
-        public bool yawFast;
-        public bool rollFast;
-        public bool pitchFast;
+        public float roll;
         
         public IRBarConfiguration configuration;
 
@@ -58,6 +56,17 @@ namespace Server.Input
         private volatile IRBarConfiguration lastConfiguration = IRBarConfiguration.NONE;
 
         private Wiimote mote;
+
+        #region accelFields
+        double sumX = 0;
+        double sumY = 0;
+        double sumZ = 0;
+        float[] accelX;
+        float[] accelY;
+        float[] accelZ;
+        int index = 0;
+        Object accelLock = new Object();
+        #endregion
 
         #region resId
         private static int nextId = 0;
@@ -97,6 +106,16 @@ namespace Server.Input
                 nextId++;
             }
 
+            accelX = new float[50];
+            accelY = new float[50];
+            accelZ = new float[50];
+            for (int i = 0; i < accelX.Length; i++)
+            {
+                accelX[i] = 0;
+                accelY[i] = 0;
+                accelZ[i] = 0;
+            }
+
             this.mote = mote;
             mote.WiimoteChanged += wm_WiimoteChanged;
             mote.WiimoteExtensionChanged += wm_WiimoteExtensionChanged;
@@ -123,6 +142,44 @@ namespace Server.Input
             if (!this.isCalibrating)
             {
                 MoteState state = new MoteState();
+
+                //update acceleration
+                lock (accelLock)
+                {
+                    if (!float.IsInfinity(ws.AccelState.Values.X))
+                    {
+                        sumX -= accelX[index];
+                        accelX[index] = ws.AccelState.Values.X;
+                        sumX += accelX[index];
+                    }
+
+                    if (!float.IsInfinity(ws.AccelState.Values.Y))
+                    {
+                        sumY -= accelY[index];
+                        accelY[index] = ws.AccelState.Values.Y;
+                        sumY += accelY[index];
+                    }
+                    if (!float.IsInfinity(ws.AccelState.Values.Z))
+                    {
+                        sumZ -= accelZ[index];
+                        accelZ[index] = ws.AccelState.Values.Z;
+                        sumZ += accelZ[index];
+                        index = ++index % accelX.Length;
+                    }
+
+                    double meanX = sumX / accelX.Length;
+                    double meanY = sumY / accelX.Length;
+                    double meanZ = sumZ / accelX.Length;
+                    meanZ = Math.Max(meanZ, -1.0);
+                    meanZ = Math.Min(meanZ, 1.0);
+                    System.Console.WriteLine(meanZ.ToString("0.000000000"));
+
+                    state.roll = (float)(Math.Asin(meanZ) / Math.PI * 180)-90;
+
+                    state.roll = sumX >= 0 ? -1 * Math.Abs(state.roll) : Math.Abs(state.roll);
+                    
+                }
+                
 
                 double yaw, roll, pitch;
                 this.CalculateToDegrees(ws, out yaw,out roll,out pitch);

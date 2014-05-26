@@ -16,7 +16,7 @@ namespace Server
         static void Main(string[] args)
         {
 
-            System.Console.WriteLine("Starting server");
+           /* System.Console.WriteLine("Starting server");
             System.Console.WriteLine("Establishing connection to clients");
             EndPoint resourceEnd = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6556);
             EndPoint updateEnd = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5665);
@@ -40,11 +40,11 @@ namespace Server
             AnimationWindow w = new AnimationWindow(c, new System.Drawing.Rectangle(1000, 500, 600, 450), resId);
             anmServer.AddWindowToClient(c, w, new System.Drawing.Point(1000, 500));
 
-            System.Console.Read();
+            System.Console.Read();*/
             
-            /*Application.EnableVisualStyles();
+            Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());*/
+            Application.Run(new Form1());
             System.Console.WriteLine("Server out");
         }
     }

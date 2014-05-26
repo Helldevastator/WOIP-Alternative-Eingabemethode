@@ -72,6 +72,7 @@ namespace WiimoteTest
 			clbButtons.SetItemChecked(9, ws.ButtonState.Left);
 			clbButtons.SetItemChecked(10, ws.ButtonState.Right);
 
+            System.Console.WriteLine(ws.AccelState.Values.X.ToString("0.00000000"));
 			lblAccel.Text = ws.AccelState.Values.ToString();
 
 			chkLED1.Checked = ws.LEDState.LED1;

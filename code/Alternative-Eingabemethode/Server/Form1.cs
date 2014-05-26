@@ -47,6 +47,7 @@ namespace Server
             /*this.lblRelX.Text = c.yaw.ToString("0.0")+" yaw d deg "+c.yawFast.ToString();
             this.lblRelY.Text = c.pitch.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();
             this.lblRelZ.Text = c.roll.ToString("0.0") + " roll deg " + c.rollFast.ToString();*/
+            this.lblRoll.Text = c.roll.ToString("0.000");
             this.clb1.SetItemChecked(0, c.point1);
             this.clb1.SetItemChecked(1, c.point2);
             this.clb1.SetItemChecked(2, c.point3);
@@ -142,8 +143,7 @@ namespace Server
 
                 int xPixel = (int)(xPointAt / 30 * im.Width);
                 int yPixel = (int)(yPointAt / 20 * im.Height);
-                System.Console.WriteLine(xPointAt + " " + yPointAt);
-                System.Console.WriteLine(xPixel + " " + yPixel);
+
                 return new System.Drawing.Point(xPixel, yPixel);
             }
             else

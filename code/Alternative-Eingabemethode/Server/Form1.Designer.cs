@@ -53,6 +53,7 @@
             this.lblH1 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.lblH2 = new System.Windows.Forms.Label();
+            this.lblRoll = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -269,11 +270,21 @@
             this.lblH2.TabIndex = 31;
             this.lblH2.Text = "label8";
             // 
+            // lblRoll
+            // 
+            this.lblRoll.AutoSize = true;
+            this.lblRoll.Location = new System.Drawing.Point(248, 419);
+            this.lblRoll.Name = "lblRoll";
+            this.lblRoll.Size = new System.Drawing.Size(46, 17);
+            this.lblRoll.TabIndex = 32;
+            this.lblRoll.Text = "label8";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(983, 511);
+            this.Controls.Add(this.lblRoll);
             this.Controls.Add(this.lblH2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.lblH1);
@@ -334,5 +345,6 @@
         private System.Windows.Forms.Label lblH1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label lblH2;
+        private System.Windows.Forms.Label lblRoll;
     }
 }
