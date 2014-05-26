@@ -20,6 +20,7 @@ namespace Server.Input
         public bool buttonA;
         public bool buttonB;
 
+        public bool isRolling;
         public float roll;
         
         public IRBarConfiguration configuration;
@@ -172,7 +173,7 @@ namespace Server.Input
                     double meanZ = sumZ / accelX.Length;
                     meanZ = Math.Max(meanZ, -1.0);
                     meanZ = Math.Min(meanZ, 1.0);
-                    System.Console.WriteLine(meanZ.ToString("0.000000000"));
+                    state.isRolling = true;
 
                     state.roll = (float)(Math.Asin(meanZ) / Math.PI * 180)-90;
 

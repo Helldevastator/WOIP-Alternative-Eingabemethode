@@ -15,7 +15,6 @@ namespace Server
         [STAThread]
         static void Main(string[] args)
         {
-
            /* System.Console.WriteLine("Starting server");
             System.Console.WriteLine("Establishing connection to clients");
             EndPoint resourceEnd = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6556);

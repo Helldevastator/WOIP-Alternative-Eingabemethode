@@ -31,6 +31,7 @@ namespace Server
         private Client client;
         private WindowState currentState;
 
+
         //for fancy moving
         private Point lastPoint;
         private double x;
@@ -128,6 +129,15 @@ namespace Server
                 this.dx = (toPoint.X - lastPoint.X)/dt;
                 this.dy = (toPoint.Y - lastPoint.Y)/dt;
                 lastPoint = toPoint;
+            }
+        }
+
+        public void scale(double factor)
+        {
+            lock (moveLock)
+            {
+                this.currentState.Width = (int)(factor * this.currentState.Width);
+                this.currentState.Height = (int)(factor * this.currentState.Height);
             }
         }
 

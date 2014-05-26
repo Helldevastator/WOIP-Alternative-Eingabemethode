@@ -14,7 +14,7 @@ namespace Server.Input
     public class CursorController
     {
         private const double barSizeCM = 20;
-
+        private const double scaleFactor = 3.0 / 90.0;  //3 times for a 90 degrees pixel rotation
         private readonly WiimoteAdapter mote;
         private readonly AnimationServer animator;
 
@@ -25,6 +25,11 @@ namespace Server.Input
         private Client currentClient;
         private AnimationWindow currentWindow;
         private bool isActivated;
+        private float currentRoll;
+
+        //HACK!! used to correctly implement rotation. it isn't nice because it's a fucking workaround for the fucking gyroscope not fucking working.
+        private Client lastClient;
+        private Point lastPoint;
         //end lock
 
         public CursorController(WiimoteAdapter mote, AnimationServer animator)
@@ -69,13 +74,20 @@ namespace Server.Input
 
                         if(this.isActivated)
                             this.currentWindow = animator.GetWindow(currentClient, currentPoint);
-                            
+
                         if (state.buttonA && currentWindow != null)
+                        {
+                            animator.StartMoveWindow(currentClient, currentWindow);
                             currentInputState = State.SCALE;
+                            this.lastClient = currentClient;
+                            this.lastPoint = currentPoint;
+                            this.currentRoll = state.roll;
+                        }
 
                         if (state.buttonB && currentWindow != null)
                         {
                             animator.StartMoveWindow(currentClient, currentWindow, currentPoint);
+                            animator.MoveWindow(currentClient, currentWindow, currentPoint);
                             currentInputState = State.MOVE;
                         }
                         break;
@@ -84,6 +96,10 @@ namespace Server.Input
                         if (!state.buttonA)
                             currentInputState = State.NONE;
 
+                        //begin hack
+                        currentPoint = lastPoint;
+                        currentClient = lastClient;
+                        //end hack
                         double factor = CalculateScaleFactor(state);
                         animator.ScaleWindow(currentClient, currentWindow, factor);
                         break;
@@ -91,7 +107,8 @@ namespace Server.Input
                     case State.MOVE:
                         if (!state.buttonB)
                         {
-                            animator.FinishMove(currentClient, currentWindow, currentPoint);
+                            animator.MoveWindow(currentClient, currentWindow, currentPoint);
+                            animator.FinishMove(currentClient, currentWindow);
                             currentInputState = State.NONE;
                         }
                         else
@@ -129,8 +146,6 @@ namespace Server.Input
                 int yPixel = (int)(yPointAt / client.CmHeight * client.PixelHeight);
                 if (xPixel >= 0 && xPixel < client.PixelWidth && yPixel >= 0 && yPixel < client.PixelHeight)
                     return new Point(xPixel, yPixel);
-
-
             }
           
             return new Point(-1,-1);
@@ -149,7 +164,9 @@ namespace Server.Input
 
         private double CalculateScaleFactor(MoteState state)
         {
-            return 1.0;
+            double factor = (state.roll - currentRoll) * scaleFactor;
+            this.currentRoll = state.roll;
+            return factor;
         }
 
 

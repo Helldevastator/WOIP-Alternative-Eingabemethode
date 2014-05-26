@@ -123,10 +123,9 @@ namespace Server
         /// </summary>
         /// <param name="w"></param>
         /// <param name="newPosition">first new position</param>
-        public void StartMoveWindow(Client client,AnimationWindow window, Point newPosition)
+        public void StartMoveWindow(Client client,AnimationWindow window)
         {
             window.startMove();
-            window.move(newPosition,dt);
         }
 
         /// <summary>
@@ -160,17 +159,15 @@ namespace Server
         /// <param name="client">can be null, if the window has been moved out of the original client'InputState window and not inside a new one</param>
         /// <param name="window"></param>
         /// <param name="finalPosition"></param>
-        public void FinishMove(Client client, AnimationWindow window, Point finalPosition)
+        public void FinishMove(Client client, AnimationWindow window)
         {
-            if (client != null && finalPosition.X > -1 && finalPosition.Y > -1)
+            if (client != null)
             {
-                System.Console.WriteLine("Finish Move");
                 window.move(finalPosition,dt);
                 window.finishMove();
             }
             else
             {
-                System.Console.WriteLine("Reset move");
                 window.resetMove();
                 window.Client.AddWindow(window);
             }
