@@ -30,6 +30,7 @@ namespace Server.Input
         //HACK!! used to correctly implement rotation. it isn't nice because it's a fucking workaround for the fucking gyroscope not fucking working.
         private Client lastClient;
         private Point lastPoint;
+        private AnimationWindow lastWindow;
         //end lock
 
         public CursorController(WiimoteAdapter mote, AnimationServer animator)
@@ -81,12 +82,13 @@ namespace Server.Input
                             currentInputState = State.SCALE;
                             this.lastClient = currentClient;
                             this.lastPoint = currentPoint;
+                            this.lastWindow = currentWindow;
                             this.currentRoll = state.roll;
                         }
 
                         if (state.buttonB && currentWindow != null)
                         {
-                            animator.StartMoveWindow(currentClient, currentWindow, currentPoint);
+                            animator.StartMoveWindow(currentClient, currentWindow);
                             animator.MoveWindow(currentClient, currentWindow, currentPoint);
                             currentInputState = State.MOVE;
                         }
@@ -94,13 +96,18 @@ namespace Server.Input
 
                     case State.SCALE:
                         if (!state.buttonA)
+                        {
                             currentInputState = State.NONE;
+                            animator.FinishMove(this.lastClient, this.lastWindow);
+                        }
 
                         //begin hack
                         currentPoint = lastPoint;
                         currentClient = lastClient;
+                        currentWindow = lastWindow;
                         //end hack
                         double factor = CalculateScaleFactor(state);
+                        System.Console.WriteLine(factor.ToString("0.000000000"));
                         animator.ScaleWindow(currentClient, currentWindow, factor);
                         break;
 
@@ -165,7 +172,7 @@ namespace Server.Input
         private double CalculateScaleFactor(MoteState state)
         {
             double factor = (state.roll - currentRoll) * scaleFactor;
-            this.currentRoll = state.roll;
+            factor = 1 + factor;
             return factor;
         }
 

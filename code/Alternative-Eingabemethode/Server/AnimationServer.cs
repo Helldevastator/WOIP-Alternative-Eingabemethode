@@ -147,7 +147,6 @@ namespace Server
             }
             else if (client != null && newPosition.X > -1 && newPosition.Y > -1)
             {
-                System.Console.WriteLine("add window=" + (window != null).ToString() + " " + newPosition.X.ToString()+" "+ newPosition.Y.ToString());
                 this.AddWindowToClient(client, window, newPosition);
             }            
         }
@@ -163,7 +162,6 @@ namespace Server
         {
             if (client != null)
             {
-                window.move(finalPosition,dt);
                 window.finishMove();
             }
             else
@@ -175,7 +173,7 @@ namespace Server
 
         public void ScaleWindow(Client client, AnimationWindow window, double factor)
         {
-
+            window.scale(factor);
         }
 
         /// <summary>
@@ -185,7 +183,6 @@ namespace Server
         /// <param name="window"></param>
         public void RemoveWindowFromClient(Client client, AnimationWindow window)
         {
-            System.Console.WriteLine("Remove Window");
             client.RemoveWindow(window);
             window.Client = null;
         }
