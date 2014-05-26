@@ -27,7 +27,6 @@ namespace Client
         {
             lock (updateLock)
             {
-                System.Console.WriteLine("update received");
                 var windowStates = state.Windows;
                 var cursorStates = state.Cursors;
                 foreach (WindowState w in windowStates)
@@ -36,7 +35,6 @@ namespace Client
                     //remove
                     if (w.RemovedFlag)
                     {
-                        System.Console.WriteLine("Removed");
                         this.windows.Remove(id);
                     }
 
@@ -47,7 +45,6 @@ namespace Client
                     }
                     else
                     {
-                        System.Console.WriteLine("ADD NEW WINDOW");
                         //add
                         DisplayWindow window = new DisplayWindow(resources.GetWaitResource());
                         resources.SetOrUpdateResource(new ResourceManager.ResourceLoadedCallback(window.ResourceLoadedCallback), w.ResourceId);

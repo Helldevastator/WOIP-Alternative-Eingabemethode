@@ -89,8 +89,8 @@ namespace Server
         {
             lock (moveLock)
             {
-                x = 0;
-                y = 0;
+                x = lastState.X;
+                y = lastState.Y;
                 lastState = currentState;
                 lastClient = Client;
                 currentState = Clone(lastState);
@@ -132,12 +132,20 @@ namespace Server
             }
         }
 
+        //scale by factor. The factor is always multiplied by size before scaling has begun
         public void scale(double factor)
         {
             lock (moveLock)
             {
-                this.currentState.Width = (int)(factor * this.currentState.Width);
-                this.currentState.Height = (int)(factor * this.currentState.Height);
+                int width = (int)(factor * this.lastState.Width);
+                int height = (int)(factor * this.lastState.Height);
+                if (width >= 300 && width <= client.PixelWidth && height >= 200 && height <= client.PixelHeight)
+                {
+
+                    this.currentState.Width = width;
+                    System.Console.WriteLine(this.currentState.Width.ToString());
+                    this.currentState.Height = height;
+                }
             }
         }
 

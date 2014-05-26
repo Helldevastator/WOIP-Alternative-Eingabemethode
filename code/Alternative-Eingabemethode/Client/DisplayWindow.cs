@@ -61,7 +61,6 @@ namespace Client
                 matrix.Matrix33 = opacity;
                 ImageAttributes attributes = new ImageAttributes();
                 attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-                System.Console.WriteLine(resource.ToString());
                 this.resource.Draw(g, state.Width, state.Height, attributes);
                 g.Transform = translationState;
             }

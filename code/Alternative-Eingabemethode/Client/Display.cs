@@ -66,7 +66,6 @@ namespace Client
             {
                 if (windows != null && cursors != null)
                 {
-                    System.Console.WriteLine("inDraw: "+windows.Count + " " + cursors.Count);
                     
                     foreach (DisplayWindow entry in windows.Values)
                         entry.Draw(g);

@@ -14,11 +14,12 @@ namespace Server
 {
     public partial class Form1 : Form
     {
+        const double scaleFactor = 3 / 90.0;
         private Rectangle rec;
         private Image im;
         private WiimoteAdapter cursor;
         private double barSizeCM = 20;
-
+        private double lastRoll = 0;
         public Form1()
         {
             InitializeComponent();
@@ -48,6 +49,7 @@ namespace Server
             this.lblRelY.Text = c.pitch.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();
             this.lblRelZ.Text = c.roll.ToString("0.0") + " roll deg " + c.rollFast.ToString();*/
             this.lblRoll.Text = c.roll.ToString("0.000");
+            this.CalculateScaleFactor(c);
             this.clb1.SetItemChecked(0, c.point1);
             this.clb1.SetItemChecked(1, c.point2);
             this.clb1.SetItemChecked(2, c.point3);
@@ -88,6 +90,19 @@ namespace Server
             
             g.Dispose();
             this.picBox.Image = this.im;
+        }
+
+
+        private double CalculateScaleFactor(MoteState state)
+        {
+            double factor = (state.roll - lastRoll);
+            
+            factor = factor * scaleFactor;
+            
+            factor = 1+factor;
+            System.Console.WriteLine(factor.ToString("0.00000000"));
+            this.lastRoll = state.roll;
+            return factor;
         }
 
         private void button1_Click(object sender, EventArgs e)

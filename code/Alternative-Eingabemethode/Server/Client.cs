@@ -91,7 +91,6 @@ namespace Server
 
                 foreach (AnimationWindow w in removedWindows.Values)
                 {
-                    System.Console.WriteLine("Sending removed flag");
                     WindowState state = w.GetWindowState();
                     state.RemovedFlag = true;
                     answer.Windows.Add(state);

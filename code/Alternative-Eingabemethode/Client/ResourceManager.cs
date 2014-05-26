@@ -153,7 +153,6 @@ namespace Client
 
         private void Dispose(bool disp)
         {
-            System.Console.WriteLine("Dispose");
             if (disp)
             {
                 if (this.listenerSocket != null) listenerSocket.Dispose();
