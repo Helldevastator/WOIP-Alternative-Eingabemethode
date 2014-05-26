@@ -41,10 +41,11 @@ namespace Server
             anmServer.AddWindowToClient(c, w, new System.Drawing.Point(1000, 500));
 
             System.Console.Read();
-            System.Console.WriteLine("Server out");
+            
             /*Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());*/
+            System.Console.WriteLine("Server out");
         }
     }
 }
