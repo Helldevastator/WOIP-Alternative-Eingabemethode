@@ -98,7 +98,7 @@ namespace Server.Input
                         if (!state.buttonA)
                         {
                             currentInputState = State.NONE;
-                            animator.FinishMove(this.lastClient, this.lastWindow);
+                            animator.FinishMove(this.lastClient, this.lastWindow,this.lastPoint);
                         }
 
                         //begin hack
@@ -115,7 +115,7 @@ namespace Server.Input
                         if (!state.buttonB)
                         {
                             animator.MoveWindow(currentClient, currentWindow, currentPoint);
-                            animator.FinishMove(currentClient, currentWindow);
+                            animator.FinishMove(currentClient, currentWindow,currentPoint);
                             currentInputState = State.NONE;
                         }
                         else

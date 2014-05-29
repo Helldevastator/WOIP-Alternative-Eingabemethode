@@ -158,9 +158,9 @@ namespace Server
         /// <param name="client">can be null, if the window has been moved out of the original client'InputState window and not inside a new one</param>
         /// <param name="window"></param>
         /// <param name="finalPosition"></param>
-        public void FinishMove(Client client, AnimationWindow window)
+        public void FinishMove(Client client, AnimationWindow window,Point lastPoint)
         {
-            if (client != null)
+            if (client != null && lastPoint.X > -1 && lastPoint.Y > -1)
             {
                 window.finishMove();
             }
