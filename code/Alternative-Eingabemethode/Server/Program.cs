@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Server.Input;
+using System.IO;
+using System.Drawing;
 
 namespace Server
 {
@@ -34,10 +36,19 @@ namespace Server
             AnimationServer anmServer = AnimationServer.AnimationServerFactory(controllers, clients, resServer);
             System.Console.WriteLine("Started");
 
-            System.Console.WriteLine("Add Window");
-            int resId = resServer.AddResource(new System.IO.FileInfo(@"C:\Users\Jon\Desktop\resource.jpg"),0);
-            AnimationWindow w = new AnimationWindow(c, new System.Drawing.Rectangle(1000, 500, 600, 450), resId);
-            anmServer.AddWindowToClient(c, w, new System.Drawing.Point(1000, 500));
+
+            System.Console.WriteLine("Add Windows");
+            DirectoryInfo dir = new DirectoryInfo(@"C:\Users\Jon\Desktop\tesdata");
+            Random rand = new Random();
+            foreach (FileInfo f in dir.GetFiles())
+            {
+                int resId = resServer.AddResource(f, 0);
+                Image im = new Bitmap(f.FullName);
+                int x = rand.Next(1920);
+                int y = rand.Next(1080);
+                AnimationWindow w = new AnimationWindow(c, new System.Drawing.Rectangle(x, y, im.Width, im.Height), resId);
+                anmServer.AddWindowToClient(c, w, new System.Drawing.Point(x, y));
+            }
 
             System.Console.Read();
             
@@ -46,5 +57,7 @@ namespace Server
             Application.Run(new Form1());
             System.Console.WriteLine("Server out");*/
         }
+
+
     }
 }
