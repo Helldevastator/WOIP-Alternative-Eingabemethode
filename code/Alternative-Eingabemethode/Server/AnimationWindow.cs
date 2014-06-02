@@ -219,12 +219,12 @@ namespace Server
 
         public WindowState GetWindowState()
         {
-            this.currentState.X = Math.Min((int)x,0);
-            this.currentState.Y = Math.Min((int)y,0);
+            this.currentState.X = Math.Max((int)x,0);
+            this.currentState.Y = Math.Max((int)y,0);
             if (client != null)
             {
-                this.currentState.X = Math.Max((int)x, client.PixelWidth);
-                this.currentState.Y = Math.Max((int)y, client.PixelHeight);
+                this.currentState.X = Math.Min((int)x, client.PixelWidth);
+                this.currentState.Y = Math.Min((int)y, client.PixelHeight);
             }
             return  Clone(currentState);
         }

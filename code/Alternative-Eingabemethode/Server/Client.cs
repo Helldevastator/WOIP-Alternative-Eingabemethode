@@ -32,6 +32,7 @@ namespace Server
 
         private readonly Object wLock = new Object();
         private readonly Dictionary<int, AnimationWindow> windows;
+        private readonly LinkedList<AnimationWindow> windowList;
         private readonly Dictionary<int, AnimationWindow> removedWindows;
 
         /// <summary>
@@ -56,6 +57,7 @@ namespace Server
             this.YFrictionFactor = 0.1;
             windows = new Dictionary<int, AnimationWindow>();
             removedWindows = new Dictionary<int, AnimationWindow>();
+            windowList = new LinkedList<AnimationWindow>();
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace Server
             
             lock (wLock)
             {
-                foreach (AnimationWindow w in windows.Values)
+                foreach (AnimationWindow w in windowList)
                     answer.Windows.Add(w.GetWindowState());
 
                 foreach (AnimationWindow w in removedWindows.Values)
@@ -107,7 +109,7 @@ namespace Server
             AnimationWindow answer = null;
             lock (wLock)
             {
-                foreach (AnimationWindow w in windows.Values)
+                foreach (AnimationWindow w in windowList)
                 {
                     System.Console.WriteLine("check");
                     if (w.ContainsPoint(p))
@@ -116,6 +118,12 @@ namespace Server
                         answer = w;
                         break;
                     }
+                }
+
+                if (answer != null)
+                {
+                    windowList.Remove(answer);
+                    windowList.AddFirst(answer);
                 }
             }
             return answer;
@@ -128,6 +136,7 @@ namespace Server
                 if (!windows.ContainsKey(w.WindowId))
                 {
                     windows.Add(w.WindowId, w);
+                    windowList.AddFirst(w);
                     removedWindows.Remove(w.WindowId);
                 }
             }
@@ -137,6 +146,7 @@ namespace Server
         {
             lock (wLock)
             {
+                windowList.Remove(w);
                 windows.Remove(w.WindowId);
                 if(!removedWindows.ContainsKey(w.WindowId))
                     removedWindows.Add(w.WindowId, w);

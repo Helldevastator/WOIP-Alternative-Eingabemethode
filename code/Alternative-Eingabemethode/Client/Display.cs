@@ -45,8 +45,8 @@ namespace Client
         {
             lock (updateLock)
             {
-                this.windows = windows;
-                this.cursors = cursors;
+                this.windows = new Dictionary<int,DisplayWindow>(windows);
+                this.cursors = new Dictionary<int,DisplayCursor>(cursors);
             }
             this.Invalidate();
         }
