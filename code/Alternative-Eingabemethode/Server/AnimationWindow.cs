@@ -83,7 +83,8 @@ namespace Server
                 maxY = currentState.Y + currentState.Height / 2;
                 minY = currentState.Y - currentState.Height / 2;
             }
-            bool answer = maxX >= p.X && minY <= p.X && maxY >= p.Y && minY <= p.Y;
+            bool answer = maxX >= p.X && minX <= p.X && maxY >= p.Y && minY <= p.Y;
+            
             return answer;
         }
 

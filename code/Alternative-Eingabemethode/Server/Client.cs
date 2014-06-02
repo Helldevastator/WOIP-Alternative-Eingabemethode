@@ -111,10 +111,9 @@ namespace Server
             {
                 foreach (AnimationWindow w in windowList)
                 {
-                    System.Console.WriteLine("check");
                     if (w.ContainsPoint(p))
                     {
-                        System.Console.WriteLine("found");
+                        System.Console.WriteLine("found:"+w.WindowId.ToString());
                         answer = w;
                         break;
                     }
