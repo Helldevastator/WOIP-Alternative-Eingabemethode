@@ -19,7 +19,7 @@ namespace Client
     internal partial class Display : Form
     {
         private Object updateLock = new Object();
-        private Dictionary<int, DisplayWindow> windows;
+        private List<DisplayWindow> windows;
         private Dictionary<int, DisplayCursor> cursors;
         private Image background;
 
@@ -41,11 +41,11 @@ namespace Client
                 g.DrawImage(new Bitmap(backgroundImage),dimensions);
         }
 
-        public void UpdateDisplay(Dictionary<int, DisplayWindow> windows,Dictionary<int, DisplayCursor> cursors)
+        public void UpdateDisplay(List<DisplayWindow> windows,Dictionary<int, DisplayCursor> cursors)
         {
             lock (updateLock)
             {
-                this.windows = new Dictionary<int,DisplayWindow>(windows);
+                this.windows = new List<DisplayWindow>(windows);
                 this.cursors = new Dictionary<int,DisplayCursor>(cursors);
             }
             this.Invalidate();
@@ -67,8 +67,8 @@ namespace Client
                 if (windows != null && cursors != null)
                 {
                     
-                    foreach (DisplayWindow entry in windows.Values)
-                        entry.Draw(g);
+                    for(int i = windows.Count -1;i >= 0; i--)
+                        windows[i].Draw(g);
 
                     foreach (DisplayCursor entry in cursors.Values)
                         entry.Draw(g);

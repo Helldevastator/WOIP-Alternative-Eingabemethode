@@ -25,13 +25,18 @@ namespace Client
 
         public void UpdateClient(ClientState state)
         {
+            List<DisplayWindow> windowList = new List<DisplayWindow>(windows.Count);
+
             lock (updateLock)
             {
+                
                 var windowStates = state.Windows;
                 var cursorStates = state.Cursors;
+                System.Console.WriteLine("update received");
                 foreach (WindowState w in windowStates)
                 {
                     int id = w.WindowId;
+                    System.Console.WriteLine(id.ToString());
                     //remove
                     if (w.RemovedFlag)
                     {
@@ -42,6 +47,8 @@ namespace Client
                     {
                         //update
                         this.windows[id].Update(w);
+                        windowList.Add(this.windows[id]);
+
                     }
                     else
                     {
@@ -49,6 +56,7 @@ namespace Client
                         DisplayWindow window = new DisplayWindow(resources.GetWaitResource());
                         resources.SetOrUpdateResource(new ResourceManager.ResourceLoadedCallback(window.ResourceLoadedCallback), w.ResourceId);
                         this.windows.Add(id, window);
+                        windowList.Add(window);
                     }
 
                 }
@@ -71,7 +79,7 @@ namespace Client
                     }
                 }
 
-                display.UpdateDisplay(this.windows, this.cursors);
+                display.UpdateDisplay(windowList, this.cursors);
             }
         }
     }

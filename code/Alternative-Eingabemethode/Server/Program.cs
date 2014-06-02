@@ -50,7 +50,7 @@ namespace Server
                 int x = rand.Next(1920);
                 int y = rand.Next(1080);
                 AnimationWindow w = new AnimationWindow(c, new System.Drawing.Rectangle(x, y, im.Width, im.Height), resId);
-                System.Console.WriteLine("another one "+w.WindowId);
+                System.Console.WriteLine("another one "+w.WindowId+" name:"+f.Name);
                 anmServer.AddWindowToClient(c, w, new System.Drawing.Point(x, y));
             }
 
