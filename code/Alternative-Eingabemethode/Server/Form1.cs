@@ -49,6 +49,7 @@ namespace Server
             this.lblRelY.Text = c.pitch.ToString("0.0") + " pitch d deg " + c.pitchFast.ToString();
             this.lblRelZ.Text = c.roll.ToString("0.0") + " roll deg " + c.rollFast.ToString();*/
             this.lblRoll.Text = c.roll.ToString("0.000");
+            this.lblIRBar.Text = c.configuration.ToString();
             this.CalculateScaleFactor(c);
             this.clb1.SetItemChecked(0, c.point1);
             this.clb1.SetItemChecked(1, c.point2);

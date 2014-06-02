@@ -14,7 +14,7 @@ namespace Server
     public class AnimationWindow
     {
         #region idGeneration
-        private static Object nextIdLock = new Object();
+        private static readonly Object nextIdLock = new Object();
         private static int nextId = 0;
         #endregion
 
@@ -43,17 +43,20 @@ namespace Server
         public AnimationWindow(Client c, Rectangle windowDimensions,int resourceId)
         {
             int id = 0;
-            lock(nextIdLock) {
+            lock (nextIdLock)
+            {
                 id = nextId;
+                System.Console.WriteLine("bla: " + nextId.ToString());
                 nextId++;
             }
 
             lock (moveLock)
             {
+                
                 Client = lastClient = c;
                 lastState = currentState = new WindowState(id, resourceId);
                 this.ResourceId = resourceId;
-                this.WindowId = WindowId;
+                this.WindowId = id;
                 currentState.Angle = 0.0F;
                 currentState.Height = windowDimensions.Height;
                 currentState.Width = windowDimensions.Width;

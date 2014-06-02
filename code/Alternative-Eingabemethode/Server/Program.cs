@@ -38,15 +38,17 @@ namespace Server
 
 
             System.Console.WriteLine("Add Windows");
-            DirectoryInfo dir = new DirectoryInfo(@"C:\Users\Jon\Desktop\tesdata");
+            DirectoryInfo dir = new DirectoryInfo(@"C:\Users\Jon\Desktop\testdata");
             Random rand = new Random();
             foreach (FileInfo f in dir.GetFiles())
             {
+                
                 int resId = resServer.AddResource(f, 0);
                 Image im = new Bitmap(f.FullName);
                 int x = rand.Next(1920);
                 int y = rand.Next(1080);
                 AnimationWindow w = new AnimationWindow(c, new System.Drawing.Rectangle(x, y, im.Width, im.Height), resId);
+                System.Console.WriteLine("another one "+w.WindowId);
                 anmServer.AddWindowToClient(c, w, new System.Drawing.Point(x, y));
             }
 
@@ -54,8 +56,8 @@ namespace Server
             
             /*Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
-            System.Console.WriteLine("Server out");*/
+            Application.Run(new Form1());*/
+            System.Console.WriteLine("Server out");
         }
 
 
