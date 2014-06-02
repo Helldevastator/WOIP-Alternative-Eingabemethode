@@ -95,20 +95,22 @@ namespace Server.Input
                         break;
 
                     case State.SCALE:
-                        if (!state.buttonA)
-                        {
-                            currentInputState = State.NONE;
-                            animator.FinishMove(this.lastClient, this.lastWindow,this.lastPoint);
-                        }
-
                         //begin hack
                         currentPoint = lastPoint;
                         currentClient = lastClient;
                         currentWindow = lastWindow;
-                        //end hack
-                        double factor = CalculateScaleFactor(state);
-                        System.Console.WriteLine(factor.ToString("0.000000000"));
-                        animator.ScaleWindow(currentClient, currentWindow, factor);
+                        if (!state.buttonA)
+                        {
+                            currentInputState = State.NONE;
+                            animator.FinishMove(this.lastClient, this.lastWindow, this.lastPoint);
+                        }
+                        else
+                        {
+                            //end hack
+                            double factor = CalculateScaleFactor(state);
+                            System.Console.WriteLine(factor.ToString("0.000000000"));
+                            animator.ScaleWindow(currentClient, currentWindow, factor);
+                        }
                         break;
 
                     case State.MOVE:

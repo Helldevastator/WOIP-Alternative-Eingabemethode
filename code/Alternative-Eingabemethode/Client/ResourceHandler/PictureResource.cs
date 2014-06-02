@@ -23,10 +23,11 @@ namespace Client.ResourceHandler
             Matrix transformationState = g.Transform;
 
             g.InterpolationMode = InterpolationMode.HighQualityBilinear;
+            g.CompositingQuality = CompositingQuality.HighQuality;
             GraphicsUnit unit = GraphicsUnit.Pixel;
             RectangleF bounds = im.GetBounds(ref unit);
-            g.ScaleTransform(width / bounds.Width, height / bounds.Height);
-            g.DrawImage(im, new Rectangle(0, 0, width, height), 0, 0, width, height, GraphicsUnit.Pixel, attributes);
+
+            g.DrawImage(im, new Rectangle(0, 0, width, height), 0, 0, im.Width, im.Height, GraphicsUnit.Pixel, attributes);
 
             g.Transform = transformationState;
         }

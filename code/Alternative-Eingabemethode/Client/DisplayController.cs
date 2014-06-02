@@ -32,11 +32,9 @@ namespace Client
                 
                 var windowStates = state.Windows;
                 var cursorStates = state.Cursors;
-                System.Console.WriteLine("update received");
                 foreach (WindowState w in windowStates)
                 {
                     int id = w.WindowId;
-                    System.Console.WriteLine(id.ToString());
                     //remove
                     if (w.RemovedFlag)
                     {

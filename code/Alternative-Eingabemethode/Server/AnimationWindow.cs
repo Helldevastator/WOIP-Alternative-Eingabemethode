@@ -147,7 +147,7 @@ namespace Server
                 {
 
                     this.currentState.Width = width;
-                    System.Console.WriteLine(this.currentState.Width.ToString());
+                    //System.Console.WriteLine(this.currentState.Width.ToString());
                     this.currentState.Height = height;
                 }
             }
