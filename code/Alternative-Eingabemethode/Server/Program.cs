@@ -18,6 +18,8 @@ namespace Server
         static void Main(string[] args)
         {
             System.Console.WriteLine("Starting server");
+
+            //once client
             System.Console.WriteLine("Establishing connection to clients");
             EndPoint resourceEnd = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6556);
             EndPoint updateEnd = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5665);

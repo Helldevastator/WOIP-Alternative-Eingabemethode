@@ -17,11 +17,12 @@ namespace Client
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
-            System.Console.WriteLine("Starting Client");
-            EndPoint resourceListenerPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"),6556);
-            EndPoint updatePoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5665);
 
+            string localIP = args.Length > 0 ? args[0]: LocalIPAddress();
+            localIP = "127.0.0.1";
+            System.Console.WriteLine("Starting Client, listening at:"+localIP);
+            EndPoint resourceListenerPoint = new IPEndPoint(IPAddress.Parse(localIP),6556);
+            EndPoint updatePoint = new IPEndPoint(IPAddress.Parse(localIP), 5665);
             
             ResourceManager manager = new ResourceManager(resourceListenerPoint, new System.IO.DirectoryInfo(@"C:\Users\Jon\Desktop\testClient"), new ResourceHandlerFactory(), new WaitResource());
             UpdateListener upListener = new UpdateListener(updatePoint);
@@ -31,6 +32,22 @@ namespace Client
             upListener.UpdateEvent += controller.UpdateClient;
           
             Application.Run(display);
+        }
+
+        private static string LocalIPAddress()
+        {
+            IPHostEntry host;
+            string localIP = "";
+            host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    localIP = ip.ToString();
+                    break;
+                }
+            }
+            return localIP;
         }
     }
 }
