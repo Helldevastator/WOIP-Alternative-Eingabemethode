@@ -47,22 +47,24 @@ namespace Client
         {
             if (state != null)
             {
-                float opacity = state.MovingFlag ? 0.50f : 1.0f;
 
-                //rotate image
-                Matrix translationState = g.Transform;
+                    float opacity = state.MovingFlag ? 0.50f : 1.0f;
 
-                g.TranslateTransform(state.X, state.Y);
-                g.RotateTransform(state.Angle, MatrixOrder.Prepend);
-                g.TranslateTransform(-state.Width / 2, -state.Height / 2);
+                    //rotate image
+                    Matrix translationState = g.Transform;
 
-                //draw opaque
-                ColorMatrix matrix = new ColorMatrix();
-                matrix.Matrix33 = opacity;
-                ImageAttributes attributes = new ImageAttributes();
-                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-                this.resource.Draw(g, state.Width, state.Height, attributes);
-                g.Transform = translationState;
+                    g.TranslateTransform(state.X, state.Y);
+                    g.RotateTransform(state.Angle, MatrixOrder.Prepend);
+                    g.TranslateTransform(-state.Width / 2, -state.Height / 2);
+
+                    //draw opaque
+                    ColorMatrix matrix = new ColorMatrix();
+                    matrix.Matrix33 = opacity;
+                    ImageAttributes attributes = new ImageAttributes();
+                    attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                    this.resource.Draw(g, state.Width, state.Height, attributes);
+                    g.Transform = translationState;
+                
             }
         }
 
@@ -79,6 +81,7 @@ namespace Client
                 this.resource = resource;
             }
         }
+
 
     }
 }

@@ -14,7 +14,7 @@ namespace Server.Input
     public class CursorController
     {
         private const double barSizeCM = 20;
-        private const double scaleFactor = 3.0 / 90.0;  //3 times for a 90 degrees pixel rotation
+        private const double scaleFactor = 2.0 / 90.0;  //3 times for a 90 degrees pixel rotation
         private readonly WiimoteAdapter mote;
         private readonly AnimationServer animator;
 

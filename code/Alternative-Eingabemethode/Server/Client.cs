@@ -109,8 +109,10 @@ namespace Server
             {
                 foreach (AnimationWindow w in windows.Values)
                 {
+                    System.Console.WriteLine("check");
                     if (w.ContainsPoint(p))
                     {
+                        System.Console.WriteLine("found");
                         answer = w;
                         break;
                     }
